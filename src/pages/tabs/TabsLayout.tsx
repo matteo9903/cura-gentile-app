@@ -14,14 +14,14 @@ const TabsLayout = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       {/* Page Content */}
-      <main className="flex-1 overflow-hidden">
+      <main className="pb-20">
         <Outlet />
       </main>
 
-      {/* Tab Bar */}
-      <nav className="bg-tab-bar border-t border-border safe-area-bottom">
+      {/* Tab Bar - Fixed */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-tab-bar border-t border-border safe-area-bottom z-50">
         <div className="flex items-center justify-around py-2">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;

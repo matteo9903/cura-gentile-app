@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 
 const PatientDiary = () => {
   return (
-    <div className="h-full flex flex-col safe-area-top">
-      {/* Header */}
-      <header className="bg-primary px-4 py-4 shrink-0">
+    <div className="min-h-screen bg-background safe-area-top">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-4 z-40 safe-area-top">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-primary-foreground">
@@ -21,7 +21,7 @@ const PatientDiary = () => {
       </header>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="pt-20 flex flex-col items-center justify-center p-6 min-h-screen">
         <Card className="w-full max-w-sm text-center">
           <CardContent className="pt-8 pb-6">
             <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary/50 flex items-center justify-center">

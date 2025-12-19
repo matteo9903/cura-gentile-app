@@ -58,9 +58,9 @@ const Homepage = () => {
   }
 
   return (
-    <div className="h-full flex flex-col safe-area-top overflow-hidden">
-      {/* Header */}
-      <header className="bg-primary px-4 py-4 shrink-0">
+    <div className="min-h-screen bg-background safe-area-top">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-4 z-40 safe-area-top">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-primary-foreground">
@@ -75,7 +75,7 @@ const Homepage = () => {
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="pt-20 p-4 space-y-4">
         {/* Patient Info Card */}
         <Card className="border-secondary border-2">
           <CardHeader className="pb-2">

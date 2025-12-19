@@ -111,9 +111,9 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="h-full flex flex-col safe-area-top">
-      {/* Header */}
-      <header className="bg-primary px-4 py-3 shrink-0">
+    <div className="min-h-screen bg-background safe-area-top">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-3 z-40 safe-area-top">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
@@ -144,7 +144,7 @@ const Chatbot = () => {
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="pt-20 pb-24 p-4 space-y-4 min-h-screen"
       >
         {isLoadingOlder && (
           <div className="flex justify-center py-2">
@@ -217,8 +217,8 @@ const Chatbot = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Bar */}
-      <div className="bg-card border-t border-border p-3 safe-area-bottom">
+      {/* Input Bar - Fixed */}
+      <div className="fixed bottom-20 left-0 right-0 bg-card border-t border-border p-3 z-40">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
