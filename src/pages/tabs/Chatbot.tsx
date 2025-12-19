@@ -140,81 +140,86 @@ const Chatbot = () => {
         </div>
       </header>
 
-      {/* Messages */}
+      {/* Messages Container - Fills space and scrolls from bottom */}
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="pt-20 pb-24 p-4 space-y-4 min-h-screen"
+        className="fixed top-16 bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
       >
-        {isLoadingOlder && (
-          <div className="flex justify-center py-2">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          </div>
-        )}
+        {/* Spacer to push messages to bottom when few messages */}
+        <div className="flex-1" />
+        {/* Messages list */}
+        <div className="space-y-4">
+          {isLoadingOlder && (
+            <div className="flex justify-center py-2">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          )}
 
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "flex animate-fade-in",
-              message.role === "user" ? "justify-end" : "justify-start"
-            )}
-          >
+          {messages.map((message) => (
             <div
+              key={message.id}
               className={cn(
-                "max-w-[80%] rounded-2xl px-4 py-3 relative group",
-                message.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-sm"
-                  : "bg-card border border-border rounded-bl-sm"
+                "flex animate-fade-in",
+                message.role === "user" ? "justify-end" : "justify-start"
               )}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               <div
                 className={cn(
-                  "flex items-center gap-2 mt-1",
-                  message.role === "user" ? "justify-end" : "justify-start"
+                  "max-w-[80%] rounded-2xl px-4 py-3 relative group",
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    : "bg-card border border-border rounded-bl-sm"
                 )}
               >
-                <span
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                <div
                   className={cn(
-                    "text-xs",
-                    message.role === "user"
-                      ? "text-primary-foreground/70"
-                      : "text-muted-foreground"
+                    "flex items-center gap-2 mt-1",
+                    message.role === "user" ? "justify-end" : "justify-start"
                   )}
                 >
-                  {formatTime(message.timestamp)}
-                </span>
-                <button
-                  onClick={() => handleVoice(message.content)}
-                  className={cn(
-                    "opacity-0 group-hover:opacity-100 transition-opacity",
-                    message.role === "user"
-                      ? "text-primary-foreground/70 hover:text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Volume2 className="h-3 w-3" />
-                </button>
+                  <span
+                    className={cn(
+                      "text-xs",
+                      message.role === "user"
+                        ? "text-primary-foreground/70"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {formatTime(message.timestamp)}
+                  </span>
+                  <button
+                    onClick={() => handleVoice(message.content)}
+                    className={cn(
+                      "opacity-0 group-hover:opacity-100 transition-opacity",
+                      message.role === "user"
+                        ? "text-primary-foreground/70 hover:text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Volume2 className="h-3 w-3" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        {isLoading && (
-          <div className="flex justify-start animate-fade-in">
-            <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                <span className="text-sm text-muted-foreground">
-                  Lia sta scrivendo...
-                </span>
+          {isLoading && (
+            <div className="flex justify-start animate-fade-in">
+              <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">
+                    Lia sta scrivendo...
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Input Bar - Fixed */}

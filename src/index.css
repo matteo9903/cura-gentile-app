@@ -148,4 +148,15 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  
+  /* IOV Green color utility */
+  .bg-iov-green {
+    background-color: hsl(var(--iov-green));
+  }
+  .text-iov-green {
+    color: hsl(var(--iov-green));
+  }
+  .border-iov-green {
+    border-color: hsl(var(--iov-green));
+  }
 }
