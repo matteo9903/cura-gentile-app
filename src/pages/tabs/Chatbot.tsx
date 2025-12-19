@@ -1,0 +1,292 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { chatService, ChatMessage } from "@/services/chatService";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import {
+  Info,
+  Send,
+  Mic,
+  Volume2,
+  Loader2,
+  Bot,
+} from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+const Chatbot = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+  const [hasOlderMessages, setHasOlderMessages] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const chatbotInfo = chatService.getChatbotInfo();
+
+  useEffect(() => {
+    const loadInitialMessages = async () => {
+      const initialMessages = await chatService.getInitialMessages();
+      setMessages(initialMessages);
+    };
+    loadInitialMessages();
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleScroll = useCallback(async () => {
+    const container = messagesContainerRef.current;
+    if (!container || isLoadingOlder || !hasOlderMessages) return;
+
+    if (container.scrollTop < 50) {
+      setIsLoadingOlder(true);
+      const olderMessages = await chatService.loadOlderMessages();
+      if (olderMessages.length > 0) {
+        setMessages((prev) => [...olderMessages, ...prev]);
+      } else {
+        setHasOlderMessages(false);
+      }
+      setIsLoadingOlder(false);
+    }
+  }, [isLoadingOlder, hasOlderMessages]);
+
+  const handleSend = async () => {
+    if (!inputValue.trim() || isLoading) return;
+
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      content: inputValue.trim(),
+      role: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsLoading(true);
+
+    try {
+      const response = await chatService.sendMessage(userMessage.content);
+      setMessages((prev) => [...prev, response]);
+    } catch {
+      toast({
+        title: "Errore",
+        description: "Impossibile inviare il messaggio. Riprova.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleVoice = (text: string) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "it-IT";
+      speechSynthesis.speak(utterance);
+    } else {
+      toast({
+        title: "Non disponibile",
+        description: "La sintesi vocale non è supportata dal tuo browser.",
+      });
+    }
+  };
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString("it-IT", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  return (
+    <div className="h-full flex flex-col safe-area-top">
+      {/* Header */}
+      <header className="bg-primary px-4 py-3 shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+              <Bot className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-primary-foreground">
+                {chatbotInfo.nome}
+              </h1>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
+                <span className="text-xs text-primary-foreground/80">online</span>
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary-foreground hover:bg-primary-foreground/10"
+            onClick={() => setShowInfo(true)}
+          >
+            <Info className="h-5 w-5" />
+          </Button>
+        </div>
+      </header>
+
+      {/* Messages */}
+      <div
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+      >
+        {isLoadingOlder && (
+          <div className="flex justify-center py-2">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={cn(
+              "flex animate-fade-in",
+              message.role === "user" ? "justify-end" : "justify-start"
+            )}
+          >
+            <div
+              className={cn(
+                "max-w-[80%] rounded-2xl px-4 py-3 relative group",
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground rounded-br-sm"
+                  : "bg-card border border-border rounded-bl-sm"
+              )}
+            >
+              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <div
+                className={cn(
+                  "flex items-center gap-2 mt-1",
+                  message.role === "user" ? "justify-end" : "justify-start"
+                )}
+              >
+                <span
+                  className={cn(
+                    "text-xs",
+                    message.role === "user"
+                      ? "text-primary-foreground/70"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {formatTime(message.timestamp)}
+                </span>
+                <button
+                  onClick={() => handleVoice(message.content)}
+                  className={cn(
+                    "opacity-0 group-hover:opacity-100 transition-opacity",
+                    message.role === "user"
+                      ? "text-primary-foreground/70 hover:text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Volume2 className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="flex justify-start animate-fade-in">
+            <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">
+                  Lia sta scrivendo...
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Bar */}
+      <div className="bg-card border-t border-border p-3 safe-area-bottom">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 text-muted-foreground"
+            onClick={() =>
+              toast({
+                title: "Microfono",
+                description: "Funzionalità vocale in arrivo...",
+              })
+            }
+          >
+            <Mic className="h-5 w-5" />
+          </Button>
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Scrivi un messaggio..."
+            className="flex-1"
+            disabled={isLoading}
+          />
+          <Button
+            size="icon"
+            onClick={handleSend}
+            disabled={!inputValue.trim() || isLoading}
+            className="shrink-0"
+          >
+            <Send className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Info Modal */}
+      <Dialog open={showInfo} onOpenChange={setShowInfo}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="h-6 w-6 text-primary" />
+              {chatbotInfo.nome} - {chatbotInfo.descrizione}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Scopri cosa può fare {chatbotInfo.nome} per te:
+            </p>
+            {chatbotInfo.funzionalita.map((func, idx) => (
+              <Card key={idx} className="bg-muted/50">
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-primary mb-1">
+                    {func.titolo}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {func.descrizione}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+            <div className="bg-accent/20 border border-accent rounded-lg p-4">
+              <p className="text-xs text-muted-foreground">
+                <strong>Disclaimer:</strong> {chatbotInfo.disclaimer}
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Chatbot;
