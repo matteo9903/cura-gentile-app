@@ -115,7 +115,6 @@ const Homepage = () => {
                 <span className="font-mono text-xs">{carta.paziente.codiceFiscale}</span>
               </p>
               <p className="flex items-center gap-2">
-                <CreditCard className="h-3 w-3 text-muted-foreground" />
                 <span className="text-muted-foreground">TS:</span>
                 <span className="font-mono text-xs">800 123 456 789012</span>
               </p>

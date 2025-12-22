@@ -132,18 +132,10 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
       {/* Action Modal - Fullscreen, compact */}
       <Dialog open={!!actionModal} onOpenChange={() => resetForm()}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle>
               {actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => resetForm()}
-            >
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           
           <div className="flex-1 overflow-y-auto space-y-4 py-4">

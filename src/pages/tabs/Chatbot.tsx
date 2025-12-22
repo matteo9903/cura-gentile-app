@@ -266,19 +266,11 @@ const Chatbot = () => {
       {/* Info Modal - Fullscreen */}
       <Dialog open={showInfo} onOpenChange={setShowInfo}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle className="flex items-center gap-2">
               <Bot className="h-6 w-6 text-primary" />
               {chatbotInfo.nome} - {chatbotInfo.descrizione}
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => setShowInfo(false)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <p className="text-sm text-muted-foreground">

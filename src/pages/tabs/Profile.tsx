@@ -208,19 +208,11 @@ const Profile = () => {
       {/* Change Password Modal - Fullscreen */}
       <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-primary" />
               Cambia password
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => setShowChangePassword(false)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <div className="space-y-2">
@@ -288,19 +280,11 @@ const Profile = () => {
       {/* Privacy Modal - Fullscreen */}
       <Dialog open={showPrivacy} onOpenChange={setShowPrivacy}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               Privacy e sicurezza
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => setShowPrivacy(false)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <section>

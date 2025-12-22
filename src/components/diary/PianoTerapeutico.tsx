@@ -29,6 +29,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
   const [noteStrutturate, setNoteStrutturate] = useState<NoteStrutturate | null>(null);
   const [newFarmacoNome, setNewFarmacoNome] = useState("");
   const [newFarmacoDosaggio, setNewFarmacoDosaggio] = useState("");
+  const [showAddFarmacoFields, setShowAddFarmacoFields] = useState(false);
   const [domandeSpecialista, setDomandeSpecialista] = useState("");
   const [actionModal, setActionModal] = useState<{ assunzione: AssunzioneGiornaliera; type: 'conferma' | 'salta' } | null>(null);
   const [effettiCollaterali, setEffettiCollaterali] = useState("");
@@ -61,6 +62,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     const data = await diaryService.getNoteStrutturate();
     setNoteStrutturate(data);
     toast({ title: "Farmaco aggiunto" });
+    setShowAddFarmacoFields(false);
   };
 
   const handleRemoveFarmaco = async (id: string) => {
@@ -198,8 +200,19 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
         </CardHeader>
         <CardContent className="pt-0 space-y-4">
           {/* Altri farmaci assunti */}
-          <div className="space-y-2">
-            <Label className="text-xs font-medium text-muted-foreground">Altri farmaci assunti</Label>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs font-medium text-muted-foreground">Altri farmaci assunti</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAddFarmacoFields((prev) => !prev)}
+                className="flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                {showAddFarmacoFields ? "Chiudi" : "Aggiungi"}
+              </Button>
+            </div>
             {noteStrutturate?.altriFarmaci.map((f) => (
               <div key={f.id} className="flex items-center gap-2 bg-muted/50 p-2 rounded">
                 <div className="flex-1">
@@ -211,13 +224,29 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                 </Button>
               </div>
             ))}
-            <div className="flex gap-2">
-              <Input placeholder="Nome farmaco" value={newFarmacoNome} onChange={(e) => setNewFarmacoNome(e.target.value)} className="flex-1 px-3" />
-              <Input placeholder="Dosaggio" value={newFarmacoDosaggio} onChange={(e) => setNewFarmacoDosaggio(e.target.value)} className="w-32 px-3" />
-              <Button size="icon" onClick={handleAddFarmaco} disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            {showAddFarmacoFields && (
+              <div className="space-y-2 pt-2">
+                <Input
+                  placeholder="Nome farmaco"
+                  value={newFarmacoNome}
+                  onChange={(e) => setNewFarmacoNome(e.target.value)}
+                  className="w-full px-3"
+                />
+                <Input
+                  placeholder="Dosaggio"
+                  value={newFarmacoDosaggio}
+                  onChange={(e) => setNewFarmacoDosaggio(e.target.value)}
+                  className="w-full px-3"
+                />
+                <Button
+                  onClick={handleAddFarmaco}
+                  disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}
+                  className="w-full"
+                >
+                  Aggiungi farmaco
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Domande per lo specialista */}
@@ -232,14 +261,11 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Drug Info Modal - Fullscreen */}
       <Dialog open={!!selectedFarmaco} onOpenChange={() => setSelectedFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle className="flex items-center gap-2">
               <Pill className="h-5 w-5 text-primary" />
               {selectedFarmaco?.nome}
             </DialogTitle>
-            <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setSelectedFarmaco(null)}>
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           
           {selectedFarmaco && (
@@ -294,14 +320,11 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Calendar Modal - Fullscreen */}
       <Dialog open={!!showCalendarioFarmaco} onOpenChange={() => setShowCalendarioFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+          <DialogHeader className="shrink-0 flex flex-row items-center">
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
               Calendario - {showCalendarioFarmaco?.nome}
             </DialogTitle>
-            <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setShowCalendarioFarmaco(null)}>
-              <X className="h-6 w-6" />
-            </Button>
           </DialogHeader>
           
           <div className="flex-1 overflow-hidden py-4">
