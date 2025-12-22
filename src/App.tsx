@@ -12,10 +12,16 @@ import Chatbot from "./pages/tabs/Chatbot";
 import Profile from "./pages/tabs/Profile";
 import NotFound from "./pages/NotFound";
 
+import { PushNotificationSchema, PushNotifications, ActionPerformed, Token } from '@capacitor/push-notifications';
+import { Capacitor } from '@capacitor/core';
+
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
+
+  console.log("CAPACITOR PLATFORM",Capacitor.getPlatform())
 
   if (isLoading) {
     return (

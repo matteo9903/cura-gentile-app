@@ -179,7 +179,7 @@ const Homepage = () => {
             <AccordionTrigger className="py-3">
               <div className="flex items-center gap-2">
                 <Stethoscope className="h-5 w-5 text-iov-blue" />
-                <span>Specialisti</span>
+                <span>Contatti Specialisti</span>
                 <Badge variant="secondary" className="ml-2">
                   {carta.specialisti.length}
                 </Badge>
