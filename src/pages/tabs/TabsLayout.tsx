@@ -32,18 +32,30 @@ const TabsLayout = () => {
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
                 className={cn(
-                  "flex flex-col items-center justify-center px-4 py-2 min-w-[64px] transition-colors",
-                  isActive ? "text-tab-active" : "text-tab-inactive"
+                  "flex flex-col items-center justify-center px-3 py-2 min-w-[64px] transition-colors"
                 )}
               >
-                <Icon
+                <div
                   className={cn(
-                    "h-6 w-6 mb-1",
-                    isActive && "fill-current"
+                    "flex items-center justify-center w-10 h-10 rounded-full mb-1 transition-colors",
+                    isActive 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-secondary/50 text-muted-foreground"
                   )}
-                  strokeWidth={isActive ? 2.5 : 2}
-                />
-                <span className="text-xs font-medium">{tab.label}</span>
+                >
+                  <Icon
+                    className="h-5 w-5"
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                </div>
+                <span 
+                  className={cn(
+                    "text-xs font-medium",
+                    isActive ? "text-tab-active" : "text-tab-inactive"
+                  )}
+                >
+                  {tab.label}
+                </span>
               </button>
             );
           })}

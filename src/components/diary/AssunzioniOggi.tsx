@@ -20,41 +20,41 @@ interface AssunzioniOggiProps {
 }
 
 const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
-  const [skipModal, setSkipModal] = useState<AssunzioneGiornaliera | null>(null);
+  const [actionModal, setActionModal] = useState<{ assunzione: AssunzioneGiornaliera; type: 'conferma' | 'salta' } | null>(null);
   const [effettiCollaterali, setEffettiCollaterali] = useState("");
+  const [motivo, setMotivo] = useState("");
   const [intensita, setIntensita] = useState<"bassa" | "media" | "alta">("media");
   const [isLoading, setIsLoading] = useState(false);
 
   const pendingAssunzioni = assunzioni.filter(a => a.stato === 'da_confermare');
 
-  const handleConferma = async (assunzione: AssunzioneGiornaliera) => {
-    setIsLoading(true);
-    try {
-      await diaryService.confermaAssunzione(assunzione.id);
-      toast({
-        title: "Assunzione confermata",
-        description: `${assunzione.farmacoNome} alle ${assunzione.orario}`,
-        className: "bg-iov-green text-white border-iov-green",
-      });
-      onUpdate();
-    } finally {
-      setIsLoading(false);
-    }
+  const resetForm = () => {
+    setEffettiCollaterali("");
+    setMotivo("");
+    setIntensita("media");
+    setActionModal(null);
   };
 
-  const handleSalta = async () => {
-    if (!skipModal) return;
+  const handleAction = async () => {
+    if (!actionModal) return;
     setIsLoading(true);
     try {
-      await diaryService.saltaAssunzione(skipModal.id, effettiCollaterali, intensita);
-      toast({
-        title: "Assunzione saltata",
-        description: `${skipModal.farmacoNome} alle ${skipModal.orario}`,
-        variant: "destructive",
-      });
-      setSkipModal(null);
-      setEffettiCollaterali("");
-      setIntensita("media");
+      if (actionModal.type === 'conferma') {
+        await diaryService.confermaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita);
+        toast({
+          title: "Assunzione confermata",
+          description: `${actionModal.assunzione.farmacoNome} alle ${actionModal.assunzione.orario}`,
+          className: "bg-iov-green text-white border-iov-green",
+        });
+      } else {
+        await diaryService.saltaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita, motivo);
+        toast({
+          title: "Assunzione saltata",
+          description: `${actionModal.assunzione.farmacoNome} alle ${actionModal.assunzione.orario}`,
+          variant: "destructive",
+        });
+      }
+      resetForm();
       onUpdate();
     } finally {
       setIsLoading(false);
@@ -82,13 +82,13 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
       <Swiper
         modules={[Pagination]}
         pagination={{ clickable: true }}
-        spaceBetween={12}
-        slidesPerView={1.1}
+        spaceBetween={16}
+        slidesPerView={1}
         className="!pb-8"
       >
         {pendingAssunzioni.map((assunzione) => (
           <SwiperSlide key={assunzione.id}>
-            <Card className="border-secondary">
+            <Card className="border-secondary mx-1">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
@@ -106,7 +106,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleConferma(assunzione)}
+                    onClick={() => setActionModal({ assunzione, type: 'conferma' })}
                     disabled={isLoading}
                     className="flex-1 bg-iov-green hover:bg-iov-green/90"
                   >
@@ -115,7 +115,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => setSkipModal(assunzione)}
+                    onClick={() => setActionModal({ assunzione, type: 'salta' })}
                     disabled={isLoading}
                     className="flex-1 border-destructive text-destructive hover:bg-destructive/10"
                   >
@@ -129,19 +129,29 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         ))}
       </Swiper>
 
-      {/* Skip Modal */}
-      <Dialog open={!!skipModal} onOpenChange={() => setSkipModal(null)}>
+      {/* Action Modal - Fullscreen, compact */}
+      <Dialog open={!!actionModal} onOpenChange={() => resetForm()}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0">
-            <DialogTitle>Salta assunzione</DialogTitle>
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
+            <DialogTitle>
+              {actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => resetForm()}
+            >
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
           
-          <div className="flex-1 overflow-y-auto space-y-6 py-4">
-            {skipModal && (
+          <div className="flex-1 overflow-y-auto space-y-4 py-4">
+            {actionModal && (
               <>
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <p className="font-medium">{skipModal.farmacoNome}</p>
-                  <p className="text-sm text-muted-foreground">{skipModal.orario} - {skipModal.unita} {skipModal.unita === 1 ? 'compressa' : 'compresse'}</p>
+                <div className="bg-muted/50 p-3 rounded-lg">
+                  <p className="font-medium">{actionModal.assunzione.farmacoNome}</p>
+                  <p className="text-sm text-muted-foreground">{actionModal.assunzione.orario} - {actionModal.assunzione.unita} {actionModal.assunzione.unita === 1 ? 'compressa' : 'compresse'}</p>
                 </div>
 
                 <div className="space-y-2">
@@ -150,11 +160,12 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                     value={effettiCollaterali}
                     onChange={(e) => setEffettiCollaterali(e.target.value)}
                     placeholder="Descrivi eventuali effetti collaterali..."
-                    rows={4}
+                    rows={3}
+                    className="px-3"
                   />
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label>Intensità</Label>
                   <RadioGroup value={intensita} onValueChange={(v) => setIntensita(v as "bassa" | "media" | "alta")}>
                     <div className="flex items-center space-x-2">
@@ -171,18 +182,30 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                     </div>
                   </RadioGroup>
                 </div>
+
+                {actionModal.type === 'salta' && (
+                  <div className="space-y-2">
+                    <Label>Motivo (opzionale)</Label>
+                    <Textarea
+                      value={motivo}
+                      onChange={(e) => setMotivo(e.target.value)}
+                      placeholder="Indica il motivo per cui hai saltato l'assunzione..."
+                      rows={2}
+                      className="px-3"
+                    />
+                  </div>
+                )}
               </>
             )}
           </div>
 
           <div className="shrink-0 pt-4 border-t">
             <Button
-              onClick={handleSalta}
+              onClick={handleAction}
               disabled={isLoading}
-              className="w-full"
-              variant="destructive"
+              className={cn("w-full", actionModal?.type === 'salta' && "bg-destructive hover:bg-destructive/90")}
             >
-              Conferma salto assunzione
+              {actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Conferma salto assunzione'}
             </Button>
           </div>
         </DialogContent>

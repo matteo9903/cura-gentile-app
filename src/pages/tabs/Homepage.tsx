@@ -18,14 +18,13 @@ import {
   Stethoscope,
   Heart,
   AlertTriangle,
-  Pill,
-  FileText,
   Phone,
   Mail,
   MapPin,
   Scale,
   Ruler,
   Droplets,
+  CreditCard,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -45,10 +44,10 @@ const Homepage = () => {
   if (isLoading || !carta) {
     return (
       <div className="h-full flex flex-col safe-area-top">
-        <header className="bg-primary px-4 py-4">
-          <Skeleton className="h-6 w-48 bg-primary-foreground/20" />
+        <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
+          <Skeleton className="h-5 w-48 bg-primary-foreground/20" />
         </header>
-        <div className="flex-1 p-4 space-y-4">
+        <div className="pt-16 flex-1 p-4 space-y-4">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
@@ -59,23 +58,15 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-background safe-area-top">
-      {/* Header - Fixed */}
-      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-4 z-40 safe-area-top">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-primary-foreground">
-              Carta d'Identità Terapeutica
-            </h1>
-            <p className="text-xs text-primary-foreground/80">
-              v. {carta.versione} del {carta.dataAggiornamento}
-            </p>
-          </div>
-          <FileText className="h-6 w-6 text-primary-foreground" />
-        </div>
+      {/* Header - Fixed, uniform height */}
+      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
+        <h1 className="text-lg font-bold text-primary-foreground">
+          Carta d'Identità Farmacologica
+        </h1>
       </header>
 
       {/* Content */}
-      <div className="pt-20 p-4 space-y-4">
+      <div className="pt-16 p-4 space-y-4 pb-24">
         {/* Patient Info Card */}
         <Card className="border-secondary border-2">
           <CardHeader className="pb-2">
@@ -106,6 +97,11 @@ const Homepage = () => {
               <p className="flex items-center gap-2">
                 <span className="text-muted-foreground">CF:</span>
                 <span className="font-mono text-xs">{carta.paziente.codiceFiscale}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <CreditCard className="h-3 w-3 text-muted-foreground" />
+                <span className="text-muted-foreground">TS:</span>
+                <span className="font-mono text-xs">800 123 456 789012</span>
               </p>
               <p className="flex items-center gap-2">
                 <MapPin className="h-3 w-3 text-muted-foreground" />
@@ -210,7 +206,7 @@ const Homepage = () => {
             </AccordionContent>
           </AccordionItem>
 
-          {/* Diagnosi */}
+          {/* Diagnosi Oncologica - Simplified */}
           <AccordionItem value="diagnosi" className="border rounded-lg px-4">
             <AccordionTrigger className="py-3">
               <div className="flex items-center gap-2">
@@ -220,22 +216,28 @@ const Homepage = () => {
             </AccordionTrigger>
             <AccordionContent>
               <Card className="bg-muted/50">
-                <CardContent className="p-3 space-y-2">
-                  <p className="font-semibold">{carta.diagnosiOncologica.tipo}</p>
-                  <div className="flex gap-2 flex-wrap">
-                    <Badge variant="outline">
+                <CardContent className="p-3 space-y-3">
+                  {/* Tumor info */}
+                  <div>
+                    <p className="font-semibold">{carta.diagnosiOncologica.tipo}</p>
+                    <Badge variant="outline" className="mt-1">
                       Stadio: {carta.diagnosiOncologica.stadio}
                     </Badge>
-                    <Badge variant="outline">
-                      {carta.diagnosiOncologica.istologia}
-                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Data diagnosi: {carta.diagnosiOncologica.datadiagnosi}
-                  </p>
-                  <p className="text-sm bg-secondary/50 p-2 rounded">
-                    {carta.diagnosiOncologica.note}
-                  </p>
+
+                  {/* Oncological therapies as text annotations */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Terapie oncologiche:</p>
+                    {carta.terapieOncologiche.map((tp, idx) => (
+                      <div key={idx} className="text-sm">
+                        <span className="font-medium">{tp.farmaco}</span>
+                        <span className="text-muted-foreground"> - {tp.dosaggio}, {tp.frequenza}</span>
+                        <span className="text-muted-foreground block text-xs">
+                          {tp.note && `(${tp.note})`} • Via orale • {new Date(tp.dataInizio.split('/').reverse().join('-')).getFullYear()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </AccordionContent>
@@ -310,62 +312,7 @@ const Homepage = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
-
-          {/* Terapie */}
-          <AccordionItem value="terapie" className="border rounded-lg px-4">
-            <AccordionTrigger className="py-3">
-              <div className="flex items-center gap-2">
-                <Pill className="h-5 w-5 text-iov-green" />
-                <span>Terapie Oncologiche</span>
-                <Badge variant="secondary" className="ml-2">
-                  {carta.terapieOncologiche.length}
-                </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Swiper
-                modules={[Pagination]}
-                pagination={{ clickable: true }}
-                spaceBetween={12}
-                slidesPerView={1}
-                className="pb-8"
-              >
-                {carta.terapieOncologiche.map((tp, idx) => (
-                  <SwiperSlide key={idx}>
-                    <Card className="bg-secondary/30 border-l-4 border-l-iov-green">
-                      <CardContent className="p-3">
-                        <p className="font-semibold text-lg">{tp.farmaco}</p>
-                        <div className="flex gap-2 my-2">
-                          <Badge>{tp.dosaggio}</Badge>
-                          <Badge variant="outline">{tp.frequenza}</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Inizio: {tp.dataInizio}
-                        </p>
-                        {tp.note && (
-                          <p className="text-sm mt-2 bg-muted p-2 rounded">
-                            {tp.note}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </AccordionContent>
-          </AccordionItem>
         </Accordion>
-
-        {/* Note Generali */}
-        <Card className="bg-accent/20 border-accent">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Note Generali
-            </h3>
-            <p className="text-sm">{carta.noteGenerali}</p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

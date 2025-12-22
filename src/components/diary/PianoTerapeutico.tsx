@@ -4,12 +4,15 @@ import { Pagination } from "swiper/modules";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Pill, Calendar, Info, Clock, ChevronDown, ChevronRight, FileText, Plus, Check, X, AlertCircle } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Pill, Calendar, Info, Clock, FileText, Plus, Check, X, AlertCircle, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { PianoTerapeutico as PianoTerapeuticoType, Farmaco, GiornoCalendario, NotaAggiuntiva, diaryService, AssunzioneGiornaliera } from "@/services/diaryService";
+import { PianoTerapeutico as PianoTerapeuticoType, Farmaco, GiornoCalendario, NotaAggiuntiva, diaryService, AssunzioneGiornaliera, NoteStrutturate } from "@/services/diaryService";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -20,14 +23,27 @@ interface PianoTerapeuticoProps {
   onUpdate: () => void;
 }
 
-const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeuticoProps) => {
+const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps) => {
   const [selectedFarmaco, setSelectedFarmaco] = useState<Farmaco | null>(null);
-  const [showCalendario, setShowCalendario] = useState(false);
   const [showCalendarioFarmaco, setShowCalendarioFarmaco] = useState<Farmaco | null>(null);
-  const [noteExpanded, setNoteExpanded] = useState(false);
-  const [newNota, setNewNota] = useState("");
-  const [isAddingNota, setIsAddingNota] = useState(false);
-  const [confirmPopup, setConfirmPopup] = useState<AssunzioneGiornaliera | null>(null);
+  const [noteStrutturate, setNoteStrutturate] = useState<NoteStrutturate | null>(null);
+  const [newFarmacoNome, setNewFarmacoNome] = useState("");
+  const [newFarmacoDosaggio, setNewFarmacoDosaggio] = useState("");
+  const [domandeSpecialista, setDomandeSpecialista] = useState("");
+  const [actionModal, setActionModal] = useState<{ assunzione: AssunzioneGiornaliera; type: 'conferma' | 'salta' } | null>(null);
+  const [effettiCollaterali, setEffettiCollaterali] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [intensita, setIntensita] = useState<"bassa" | "media" | "alta">("media");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const loadNoteStrutturate = async () => {
+      const data = await diaryService.getNoteStrutturate();
+      setNoteStrutturate(data);
+      setDomandeSpecialista(data.domandeSpecialista);
+    };
+    loadNoteStrutturate();
+  }, []);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("it-IT", { day: "numeric", month: "short" });
@@ -37,42 +53,67 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
     return new Date(dateStr).toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "short" });
   };
 
-  const handleAddNota = async () => {
-    if (!newNota.trim()) return;
-    setIsAddingNota(true);
+  const handleAddFarmaco = async () => {
+    if (!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()) return;
+    await diaryService.aggiungiFarmacoAggiuntivo(newFarmacoNome, newFarmacoDosaggio);
+    setNewFarmacoNome("");
+    setNewFarmacoDosaggio("");
+    const data = await diaryService.getNoteStrutturate();
+    setNoteStrutturate(data);
+    toast({ title: "Farmaco aggiunto" });
+  };
+
+  const handleRemoveFarmaco = async (id: string) => {
+    await diaryService.rimuoviFarmacoAggiuntivo(id);
+    const data = await diaryService.getNoteStrutturate();
+    setNoteStrutturate(data);
+  };
+
+  const handleSaveDomande = async () => {
+    await diaryService.aggiornaDomandeSpecialista(domandeSpecialista);
+    toast({ title: "Domande salvate" });
+  };
+
+  const resetActionForm = () => {
+    setEffettiCollaterali("");
+    setMotivo("");
+    setIntensita("media");
+    setActionModal(null);
+  };
+
+  const handleCalendarAction = async () => {
+    if (!actionModal) return;
+    setIsLoading(true);
     try {
-      await diaryService.aggiungiNota(newNota);
-      setNewNota("");
-      toast({ title: "Nota aggiunta", description: "La nota è stata salvata con successo" });
+      if (actionModal.type === 'conferma') {
+        await diaryService.confermaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita);
+        toast({ title: "Assunzione confermata", className: "bg-iov-green text-white" });
+      } else {
+        await diaryService.saltaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita, motivo);
+        toast({ title: "Assunzione saltata", variant: "destructive" });
+      }
+      resetActionForm();
       onUpdate();
     } finally {
-      setIsAddingNota(false);
+      setIsLoading(false);
     }
   };
 
-  const handleConfirmAssunzione = async (assunzione: AssunzioneGiornaliera, conferma: boolean) => {
-    try {
-      if (conferma) {
-        await diaryService.confermaAssunzione(assunzione.id);
-        toast({
-          title: "Assunzione confermata",
-          className: "bg-iov-green text-white",
-        });
-      } else {
-        await diaryService.saltaAssunzione(assunzione.id, "", "media");
-        toast({
-          title: "Assunzione saltata",
-          variant: "destructive",
-        });
-      }
-      setConfirmPopup(null);
-      onUpdate();
-    } catch {
-      toast({ title: "Errore", variant: "destructive" });
-    }
+  const isDatePast = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
   };
 
-  // Group calendar days into weeks for horizontal swiping
+  const isDateFuture = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    return date > today;
+  };
+
+  // Group calendar days into weeks
   const groupedDays = [];
   for (let i = 0; i < calendario.length; i += 7) {
     groupedDays.push(calendario.slice(i, i + 7));
@@ -95,17 +136,11 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
         </CardContent>
       </Card>
 
-      {/* Drug Cards Carousel */}
-      <Swiper
-        modules={[Pagination]}
-        pagination={{ clickable: true }}
-        spaceBetween={12}
-        slidesPerView={1.1}
-        className="!pb-8"
-      >
+      {/* Drug Cards Carousel - One at a time */}
+      <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="!pb-8">
         {piano.farmaci.map((farmaco) => (
           <SwiperSlide key={farmaco.id}>
-            <Card className="h-full">
+            <Card className="h-full mx-1">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
@@ -138,21 +173,11 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
                 </div>
 
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setSelectedFarmaco(farmaco)}
-                  >
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => setSelectedFarmaco(farmaco)}>
                     <Info className="h-4 w-4 mr-1" />
                     Info farmaco
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setShowCalendarioFarmaco(farmaco)}
-                  >
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => setShowCalendarioFarmaco(farmaco)}>
                     <Calendar className="h-4 w-4 mr-1" />
                     Calendario
                   </Button>
@@ -163,70 +188,66 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
         ))}
       </Swiper>
 
-      {/* Note Aggiuntive - Collapsible */}
-      <Collapsible open={noteExpanded} onOpenChange={setNoteExpanded}>
-        <Card>
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer py-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <CardTitle className="text-sm font-medium">Note aggiuntive</CardTitle>
-                  <span className="text-xs text-muted-foreground">({note.length})</span>
+      {/* Note Aggiuntive - Refactored as single editable block */}
+      <Card>
+        <CardHeader className="py-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-semibold">Note aggiuntive</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0 space-y-4">
+          {/* Altri farmaci assunti */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-muted-foreground">Altri farmaci assunti</Label>
+            {noteStrutturate?.altriFarmaci.map((f) => (
+              <div key={f.id} className="flex items-center gap-2 bg-muted/50 p-2 rounded">
+                <div className="flex-1">
+                  <span className="text-sm font-medium">{f.nome}</span>
+                  <span className="text-xs text-muted-foreground ml-2">- {f.dosaggio}</span>
                 </div>
-                {noteExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent className="pt-0 space-y-3">
-              {note.map((nota) => (
-                <div key={nota.id} className="bg-muted/50 p-3 rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">{formatDateFull(nota.data)}</p>
-                  <p className="text-sm">{nota.contenuto}</p>
-                </div>
-              ))}
-              
-              <div className="pt-2 border-t space-y-2">
-                <Textarea
-                  value={newNota}
-                  onChange={(e) => setNewNota(e.target.value)}
-                  placeholder="Aggiungi una nota..."
-                  rows={2}
-                />
-                <Button
-                  size="sm"
-                  onClick={handleAddNota}
-                  disabled={!newNota.trim() || isAddingNota}
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Aggiungi nota
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveFarmaco(f.id)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+            ))}
+            <div className="flex gap-2">
+              <Input placeholder="Nome farmaco" value={newFarmacoNome} onChange={(e) => setNewFarmacoNome(e.target.value)} className="flex-1 px-3" />
+              <Input placeholder="Dosaggio" value={newFarmacoDosaggio} onChange={(e) => setNewFarmacoDosaggio(e.target.value)} className="w-32 px-3" />
+              <Button size="icon" onClick={handleAddFarmaco} disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}>
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Domande per lo specialista */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-muted-foreground">Domande per lo specialista</Label>
+            <Textarea value={domandeSpecialista} onChange={(e) => setDomandeSpecialista(e.target.value)} placeholder="Scrivi qui le domande che vuoi fare al tuo specialista..." rows={3} className="px-3" />
+            <Button size="sm" onClick={handleSaveDomande} className="w-full">Salva domande</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Drug Info Modal - Fullscreen */}
       <Dialog open={!!selectedFarmaco} onOpenChange={() => setSelectedFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0">
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Pill className="h-5 w-5 text-primary" />
               {selectedFarmaco?.nome}
             </DialogTitle>
+            <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setSelectedFarmaco(null)}>
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
           
           {selectedFarmaco && (
             <div className="flex-1 overflow-y-auto space-y-6 py-4">
-              {/* Drug Image Placeholder */}
               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                 <Pill className="h-16 w-16 text-muted-foreground/30" />
               </div>
 
-              {/* Posologia Section - FIRST */}
               <div className="space-y-2">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary" />
@@ -239,7 +260,6 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
                 </div>
               </div>
 
-              {/* Misure Contraccettive - Dedicated Section */}
               <div className="space-y-2">
                 <h3 className="font-semibold flex items-center gap-2 text-destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -250,7 +270,6 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
                 </div>
               </div>
 
-              {/* Side Effects */}
               <div className="space-y-2">
                 <h3 className="font-semibold">Possibili effetti collaterali</h3>
                 <ul className="space-y-1">
@@ -263,7 +282,6 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
                 </ul>
               </div>
 
-              {/* Warnings */}
               <div className="space-y-2">
                 <h3 className="font-semibold">Avvertenze</h3>
                 <p className="text-sm text-muted-foreground">{selectedFarmaco.infoFarmaco.avvertenze}</p>
@@ -273,56 +291,57 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
         </DialogContent>
       </Dialog>
 
-      {/* Calendar Modal - Fullscreen with Swipeable Weeks */}
+      {/* Calendar Modal - Fullscreen */}
       <Dialog open={!!showCalendarioFarmaco} onOpenChange={() => setShowCalendarioFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0">
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
               Calendario - {showCalendarioFarmaco?.nome}
             </DialogTitle>
+            <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setShowCalendarioFarmaco(null)}>
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
           
           <div className="flex-1 overflow-hidden py-4">
-            <Swiper
-              modules={[Pagination]}
-              pagination={{ clickable: true }}
-              spaceBetween={16}
-              slidesPerView={1}
-              className="h-full !pb-8"
-            >
+            <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="h-full !pb-8">
               {groupedDays.map((week, weekIdx) => (
                 <SwiperSlide key={weekIdx}>
                   <div className="space-y-2 h-full overflow-y-auto pr-2">
                     <p className="text-xs text-muted-foreground font-medium mb-3">Settimana {weekIdx + 1}</p>
                     {week.map((giorno) => {
-                      const farmacoAssunzioni = giorno.assunzioni.filter(
-                        a => a.farmacoId === showCalendarioFarmaco?.id
-                      );
-                      
+                      const farmacoAssunzioni = giorno.assunzioni.filter(a => a.farmacoId === showCalendarioFarmaco?.id);
                       if (farmacoAssunzioni.length === 0) return null;
+                      const isFuture = isDateFuture(giorno.data);
+                      const isPast = isDatePast(giorno.data);
                       
                       return (
                         <div key={giorno.data} className="bg-muted/50 p-3 rounded-lg">
                           <p className="text-sm font-medium mb-2">{formatDateFull(giorno.data)}</p>
                           <div className="flex flex-wrap gap-2">
-                            {farmacoAssunzioni.map((assunzione) => (
-                              <button
-                                key={assunzione.id}
-                                onClick={() => assunzione.stato === 'da_confermare' && setConfirmPopup(assunzione)}
-                                disabled={assunzione.stato !== 'da_confermare'}
-                                className={cn(
-                                  "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-                                  assunzione.stato === 'confermata' && "bg-iov-green/20 text-iov-green",
-                                  assunzione.stato === 'saltata' && "bg-destructive/20 text-destructive",
-                                  assunzione.stato === 'da_confermare' && "bg-muted border border-border hover:bg-accent/20 cursor-pointer"
-                                )}
-                              >
-                                {assunzione.orario} - {assunzione.unita} {assunzione.unita === 1 ? 'cpr' : 'cpr'}
-                                {assunzione.stato === 'confermata' && <Check className="h-3 w-3 ml-1 inline" />}
-                                {assunzione.stato === 'saltata' && <X className="h-3 w-3 ml-1 inline" />}
-                              </button>
-                            ))}
+                            {farmacoAssunzioni.map((assunzione) => {
+                              const isForgotten = isPast && assunzione.stato === 'da_confermare';
+                              return (
+                                <button
+                                  key={assunzione.id}
+                                  onClick={() => !isFuture && assunzione.stato === 'da_confermare' && setActionModal({ assunzione, type: 'conferma' })}
+                                  disabled={isFuture || assunzione.stato !== 'da_confermare'}
+                                  className={cn(
+                                    "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                                    assunzione.stato === 'confermata' && "bg-iov-green/20 text-iov-green",
+                                    assunzione.stato === 'saltata' && "bg-destructive/20 text-destructive",
+                                    isForgotten && "bg-orange-500/20 text-orange-600 hover:bg-orange-500/30 cursor-pointer",
+                                    !isForgotten && assunzione.stato === 'da_confermare' && !isFuture && "bg-muted border border-border hover:bg-accent/20 cursor-pointer",
+                                    isFuture && assunzione.stato === 'da_confermare' && "bg-muted/50 text-muted-foreground cursor-not-allowed"
+                                  )}
+                                >
+                                  {assunzione.orario} - {assunzione.unita} cpr
+                                  {assunzione.stato === 'confermata' && <Check className="h-3 w-3 ml-1 inline" />}
+                                  {assunzione.stato === 'saltata' && <X className="h-3 w-3 ml-1 inline" />}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       );
@@ -335,36 +354,47 @@ const PianoTerapeutico = ({ piano, calendario, note, onUpdate }: PianoTerapeutic
         </DialogContent>
       </Dialog>
 
-      {/* Confirm Popup */}
-      <Dialog open={!!confirmPopup} onOpenChange={() => setConfirmPopup(null)}>
-        <DialogContent className="max-w-sm">
+      {/* Calendar Action Modal */}
+      <Dialog open={!!actionModal} onOpenChange={() => resetActionForm()}>
+        <DialogContent className="max-w-sm mx-4">
           <DialogHeader>
-            <DialogTitle>Conferma assunzione</DialogTitle>
+            <DialogTitle>{actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}</DialogTitle>
           </DialogHeader>
-          {confirmPopup && (
+          {actionModal && (
             <div className="space-y-4">
-              <div className="bg-muted/50 p-4 rounded-lg text-center">
-                <p className="font-medium">{confirmPopup.farmacoNome}</p>
-                <p className="text-sm text-muted-foreground">{confirmPopup.orario}</p>
-                <p className="text-lg font-bold text-primary mt-2">
-                  {confirmPopup.unita} {confirmPopup.unita === 1 ? 'compressa' : 'compresse'}
-                </p>
+              <div className="bg-muted/50 p-3 rounded-lg text-center">
+                <p className="font-medium">{actionModal.assunzione.farmacoNome}</p>
+                <p className="text-sm text-muted-foreground">{actionModal.assunzione.orario}</p>
+                <p className="text-lg font-bold text-primary mt-2">{actionModal.assunzione.unita} {actionModal.assunzione.unita === 1 ? 'compressa' : 'compresse'}</p>
               </div>
+              
+              <div className="space-y-2">
+                <Label className="text-sm">Effetti collaterali</Label>
+                <Textarea value={effettiCollaterali} onChange={(e) => setEffettiCollaterali(e.target.value)} placeholder="Descrivi eventuali effetti..." rows={2} className="px-3" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm">Intensità</Label>
+                <RadioGroup value={intensita} onValueChange={(v) => setIntensita(v as "bassa" | "media" | "alta")} className="flex gap-4">
+                  <div className="flex items-center space-x-1"><RadioGroupItem value="bassa" id="cal-bassa" /><Label htmlFor="cal-bassa" className="text-sm">Bassa</Label></div>
+                  <div className="flex items-center space-x-1"><RadioGroupItem value="media" id="cal-media" /><Label htmlFor="cal-media" className="text-sm">Media</Label></div>
+                  <div className="flex items-center space-x-1"><RadioGroupItem value="alta" id="cal-alta" /><Label htmlFor="cal-alta" className="text-sm">Alta</Label></div>
+                </RadioGroup>
+              </div>
+
+              {actionModal.type === 'salta' && (
+                <div className="space-y-2">
+                  <Label className="text-sm">Motivo</Label>
+                  <Textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} placeholder="Motivo..." rows={2} className="px-3" />
+                </div>
+              )}
+
               <div className="flex gap-2">
-                <Button
-                  className="flex-1 bg-iov-green hover:bg-iov-green/90"
-                  onClick={() => handleConfirmAssunzione(confirmPopup, true)}
-                >
-                  <Check className="h-4 w-4 mr-2" />
-                  Conferma
+                <Button className={cn("flex-1", actionModal.type === 'conferma' ? "bg-iov-green hover:bg-iov-green/90" : "")} onClick={() => { setActionModal({ ...actionModal, type: 'conferma' }); handleCalendarAction(); }} disabled={isLoading}>
+                  <Check className="h-4 w-4 mr-1" />Conferma
                 </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 border-destructive text-destructive"
-                  onClick={() => handleConfirmAssunzione(confirmPopup, false)}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Salta
+                <Button variant="outline" className="flex-1 border-destructive text-destructive" onClick={() => { setActionModal({ ...actionModal, type: 'salta' }); handleCalendarAction(); }} disabled={isLoading}>
+                  <X className="h-4 w-4 mr-1" />Salta
                 </Button>
               </div>
             </div>

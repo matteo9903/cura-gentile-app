@@ -12,6 +12,7 @@ import {
   Volume2,
   Loader2,
   Bot,
+  X,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -112,39 +113,37 @@ const Chatbot = () => {
 
   return (
     <div className="min-h-screen bg-background safe-area-top">
-      {/* Header - Fixed */}
-      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-3 z-40 safe-area-top">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <Bot className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-primary-foreground">
-                {chatbotInfo.nome}
-              </h1>
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
-                <span className="text-xs text-primary-foreground/80">online</span>
-              </div>
+      {/* Header - Fixed, uniform height */}
+      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center justify-between z-40 safe-area-top">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+            <Bot className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-primary-foreground">
+              {chatbotInfo.nome}
+            </h1>
+            <div className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
+              <span className="text-xs text-primary-foreground/80">online</span>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-foreground hover:bg-primary-foreground/10"
-            onClick={() => setShowInfo(true)}
-          >
-            <Info className="h-5 w-5" />
-          </Button>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
+          onClick={() => setShowInfo(true)}
+        >
+          <Info className="h-7 w-7" />
+        </Button>
       </header>
 
       {/* Messages Container - Fills space and scrolls from bottom */}
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="fixed top-16 bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
+        className="fixed top-14 bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
       >
         {/* Spacer to push messages to bottom when few messages */}
         <div className="flex-1" />
@@ -243,7 +242,7 @@ const Chatbot = () => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Scrivi un messaggio..."
-            className="flex-1"
+            className="flex-1 px-4"
             disabled={isLoading}
           />
           <Button
@@ -257,16 +256,24 @@ const Chatbot = () => {
         </div>
       </div>
 
-      {/* Info Modal */}
+      {/* Info Modal - Fullscreen */}
       <Dialog open={showInfo} onOpenChange={setShowInfo}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Bot className="h-6 w-6 text-primary" />
               {chatbotInfo.nome} - {chatbotInfo.descrizione}
             </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setShowInfo(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
               Scopri cosa può fare {chatbotInfo.nome} per te:
             </p>

@@ -37,6 +37,7 @@ export interface AssunzioneGiornaliera {
   stato: 'da_confermare' | 'confermata' | 'saltata';
   effettiCollaterali?: string;
   intensita?: 'bassa' | 'media' | 'alta';
+  motivo?: string;
 }
 
 export interface GiornoCalendario {
@@ -74,6 +75,26 @@ export interface NotaAggiuntiva {
   id: string;
   data: string;
   contenuto: string;
+}
+
+export interface AltriFarmaci {
+  id: string;
+  nome: string;
+  dosaggio: string;
+}
+
+export interface NoteStrutturate {
+  altriFarmaci: AltriFarmaci[];
+  domandeSpecialista: string;
+}
+
+export interface FAQ {
+  id: string;
+  domanda: string;
+  risposta: string;
+  categoria: string;
+  immagine?: string;
+  tipo: 'testo' | 'infografica';
 }
 
 export interface PianoTerapeutico {
@@ -279,6 +300,77 @@ const mockNote: NotaAggiuntiva[] = [
   }
 ];
 
+// Structured notes
+let noteStrutturate: NoteStrutturate = {
+  altriFarmaci: [
+    { id: 'af1', nome: 'Paracetamolo', dosaggio: '500mg al bisogno' }
+  ],
+  domandeSpecialista: ''
+};
+
+// FAQ Pool
+const mockFAQPool: FAQ[] = [
+  {
+    id: 'faq1',
+    domanda: 'Cosa devo fare se dimentico di prendere una dose?',
+    risposta: 'Se dimentica una dose, la prenda non appena se ne ricorda, a meno che non sia quasi ora della dose successiva. In tal caso, salti la dose dimenticata e continui con l\'orario normale. Non prenda mai una dose doppia.',
+    categoria: 'Assunzione',
+    tipo: 'testo'
+  },
+  {
+    id: 'faq2',
+    domanda: 'Posso assumere altri farmaci durante la terapia?',
+    risposta: 'Prima di assumere qualsiasi altro farmaco, anche da banco o integratori, consulti sempre il suo oncologo o farmacista. Alcune interazioni potrebbero essere pericolose.',
+    categoria: 'Interazioni',
+    tipo: 'testo'
+  },
+  {
+    id: 'faq3',
+    domanda: 'Quali effetti collaterali devo segnalare immediatamente?',
+    risposta: 'Contatti immediatamente il medico in caso di: febbre superiore a 38°C, sanguinamento insolito, difficoltà respiratorie, dolore toracico, o qualsiasi sintomo grave o inaspettato.',
+    categoria: 'Effetti collaterali',
+    tipo: 'testo'
+  },
+  {
+    id: 'faq4',
+    domanda: 'Come conservo i farmaci?',
+    risposta: 'Conservi i farmaci a temperatura ambiente, lontano da luce diretta e umidità. Tenga i farmaci fuori dalla portata dei bambini. Verifichi sempre la data di scadenza.',
+    categoria: 'Conservazione',
+    tipo: 'testo'
+  },
+  {
+    id: 'faq5',
+    domanda: 'Cosa fare in caso di nausea?',
+    risposta: 'In caso di nausea, può essere utile mangiare piccoli pasti frequenti, evitare cibi grassi o piccanti, e bere liquidi a piccoli sorsi. Se la nausea persiste, contatti il suo medico.',
+    categoria: 'Effetti collaterali',
+    tipo: 'testo',
+    immagine: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400'
+  },
+  {
+    id: 'faq6',
+    domanda: 'Come gestire la stanchezza?',
+    risposta: 'La stanchezza è un effetto comune. Pianifichi le attività nei momenti di maggiore energia, faccia pause regolari e non esiti a chiedere aiuto. Un\'attività fisica leggera può aiutare.',
+    categoria: 'Benessere',
+    tipo: 'infografica',
+    immagine: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400'
+  },
+  {
+    id: 'faq7',
+    domanda: 'Alimentazione durante la terapia',
+    risposta: 'Mantenere una dieta equilibrata è importante. Preferisca cibi freschi, frutta e verdura. Eviti alcol e limiti i cibi processati. Beva almeno 2 litri di acqua al giorno.',
+    categoria: 'Alimentazione',
+    tipo: 'infografica',
+    immagine: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400'
+  },
+  {
+    id: 'faq8',
+    domanda: 'Quando chiamare il medico?',
+    risposta: 'Chiami subito il medico se: febbre >38°C, difficoltà respiratorie, sanguinamento anomalo, forte dolore, sintomi neurologici, reazioni allergiche gravi.',
+    categoria: 'Emergenze',
+    tipo: 'testo'
+  }
+];
+
 // State for mutable data
 let calendario = generateCalendario();
 let note = [...mockNote];
@@ -301,24 +393,24 @@ export const diaryService = {
     return giorno?.assunzioni || [];
   },
 
-  // Conferma assunzione
-  confermaAssunzione: async (id: string): Promise<void> => {
+  // Conferma assunzione with optional side effects
+  confermaAssunzione: async (id: string, effettiCollaterali?: string, intensita?: 'bassa' | 'media' | 'alta'): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     calendario = calendario.map(giorno => ({
       ...giorno,
       assunzioni: giorno.assunzioni.map(a => 
-        a.id === id ? { ...a, stato: 'confermata' as const } : a
+        a.id === id ? { ...a, stato: 'confermata' as const, effettiCollaterali, intensita } : a
       )
     }));
   },
 
-  // Salta assunzione con effetti collaterali
-  saltaAssunzione: async (id: string, effettiCollaterali: string, intensita: 'bassa' | 'media' | 'alta'): Promise<void> => {
+  // Salta assunzione con effetti collaterali e motivo
+  saltaAssunzione: async (id: string, effettiCollaterali: string, intensita: 'bassa' | 'media' | 'alta', motivo?: string): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     calendario = calendario.map(giorno => ({
       ...giorno,
       assunzioni: giorno.assunzioni.map(a => 
-        a.id === id ? { ...a, stato: 'saltata' as const, effettiCollaterali, intensita } : a
+        a.id === id ? { ...a, stato: 'saltata' as const, effettiCollaterali, intensita, motivo } : a
       )
     }));
   },
@@ -359,13 +451,41 @@ export const diaryService = {
     return compilazioni;
   },
 
-  // Note aggiuntive
+  // Note aggiuntive (legacy)
   getNote: async (): Promise<NotaAggiuntiva[]> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     return note;
   },
 
-  // Aggiungi nota
+  // Note strutturate
+  getNoteStrutturate: async (): Promise<NoteStrutturate> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return noteStrutturate;
+  },
+
+  // Aggiungi farmaco aggiuntivo
+  aggiungiFarmacoAggiuntivo: async (nome: string, dosaggio: string): Promise<void> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    noteStrutturate.altriFarmaci.push({
+      id: `af-${Date.now()}`,
+      nome,
+      dosaggio
+    });
+  },
+
+  // Rimuovi farmaco aggiuntivo
+  rimuoviFarmacoAggiuntivo: async (id: string): Promise<void> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    noteStrutturate.altriFarmaci = noteStrutturate.altriFarmaci.filter(f => f.id !== id);
+  },
+
+  // Aggiorna domande specialista
+  aggiornaDomandeSpecialista: async (domande: string): Promise<void> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    noteStrutturate.domandeSpecialista = domande;
+  },
+
+  // Aggiungi nota (legacy)
   aggiungiNota: async (contenuto: string): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     note.push({
@@ -375,27 +495,24 @@ export const diaryService = {
     });
   },
 
-  // FAQ
+  // FAQ - Get highlighted FAQs (random selection)
+  getHighlightedFAQ: async (): Promise<FAQ[]> => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    // Shuffle and take first 5-6
+    const shuffled = [...mockFAQPool].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  },
+
+  // FAQ - Get all FAQs
+  getAllFAQ: async (): Promise<FAQ[]> => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return mockFAQPool;
+  },
+
+  // Legacy FAQ
   getFAQ: async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
-    return [
-      {
-        domanda: 'Cosa devo fare se dimentico di prendere una dose?',
-        risposta: 'Se dimentica una dose, la prenda non appena se ne ricorda, a meno che non sia quasi ora della dose successiva. In tal caso, salti la dose dimenticata e continui con l\'orario normale. Non prenda mai una dose doppia.'
-      },
-      {
-        domanda: 'Posso assumere altri farmaci durante la terapia?',
-        risposta: 'Prima di assumere qualsiasi altro farmaco, anche da banco o integratori, consulti sempre il suo oncologo o farmacista. Alcune interazioni potrebbero essere pericolose.'
-      },
-      {
-        domanda: 'Quali effetti collaterali devo segnalare immediatamente?',
-        risposta: 'Contatti immediatamente il medico in caso di: febbre superiore a 38°C, sanguinamento insolito, difficoltà respiratorie, dolore toracico, o qualsiasi sintomo grave o inaspettato.'
-      },
-      {
-        domanda: 'Come conservo i farmaci?',
-        risposta: 'Conservi i farmaci a temperatura ambiente, lontano da luce diretta e umidità. Tenga i farmaci fuori dalla portata dei bambini. Verifichi sempre la data di scadenza.'
-      }
-    ];
+    return mockFAQPool.map(f => ({ domanda: f.domanda, risposta: f.risposta }));
   }
 };
 
