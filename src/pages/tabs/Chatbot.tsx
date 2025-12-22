@@ -114,19 +114,26 @@ const Chatbot = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center justify-between z-40 safe-area-top">
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center justify-between z-40 safe-area-top">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <Bot className="h-6 w-6 text-primary" />
+          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+            <Bot className="h-7 w-7 text-primary" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-primary-foreground">
               {chatbotInfo.nome}
             </h1>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
-              <span className="text-xs text-primary-foreground/80">online</span>
-            </div>
+            <p className="text-xs text-primary-foreground/80">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
+                <span className="text-xs text-primary-foreground/80">online</span>
+              </div>
+            </p>
+            {/* <div className="flex items-center gap-2">
+              <p className="text-xs text-primary-foreground/80">
+                Assistente virtuale per il tuo supporto terapeutico
+              </p>
+            </div> */}
           </div>
         </div>
         <Button
@@ -143,7 +150,7 @@ const Chatbot = () => {
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="fixed top-14 bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
+        className="fixed top-[70px] bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
       >
         {/* Spacer to push messages to bottom when few messages */}
         <div className="flex-1" />

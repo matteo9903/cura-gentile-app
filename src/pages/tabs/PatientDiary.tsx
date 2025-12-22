@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Pill, ClipboardList, Calendar, HelpCircle } from "lucide-react";
+import { Pill, ClipboardList, Calendar, HelpCircle, BookOpen } from "lucide-react";
 import { diaryService, AssunzioneGiornaliera, PianoTerapeutico as PianoTerapeuticoType, GiornoCalendario, Questionario, CompilazioneQuestionario, NotaAggiuntiva } from "@/services/diaryService";
 import AssunzioniOggi from "@/components/diary/AssunzioniOggi";
 import PianoTerapeutico from "@/components/diary/PianoTerapeutico";
@@ -49,10 +49,16 @@ const PatientDiary = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background safe-area-top">
-        <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
-          <Skeleton className="h-5 w-32 bg-primary-foreground/20" />
+        <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-12 w-12 rounded-full bg-primary-foreground/20" />
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-32 bg-primary-foreground/20" />
+              <Skeleton className="h-3 w-28 bg-primary-foreground/20" />
+            </div>
+          </div>
         </header>
-        <div className="pt-16 pb-24 p-4 space-y-6">
+        <div className="pt-[94px] pb-24 p-4 space-y-6">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-48 w-full" />
         </div>
@@ -63,14 +69,24 @@ const PatientDiary = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height with title */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
-        <h1 className="text-lg font-bold text-primary-foreground">
-          Diario paziente
-        </h1>
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+            <BookOpen className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-primary-foreground">
+              Diario paziente
+            </h1>
+            <p className="text-xs text-primary-foreground/80">
+              Monitora il tuo piano terapeutico
+            </p>
+          </div>
+        </div>
       </header>
 
       {/* Content */}
-      <div className="pt-16 pb-24 px-4 space-y-6">
+      <div className="pt-[94px] pb-24 px-4 space-y-6">
         {/* 1. Assunzioni di oggi - First section */}
         <section>
           <div className="flex items-center gap-2 mb-4">

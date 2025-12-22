@@ -44,10 +44,16 @@ const Homepage = () => {
   if (isLoading || !carta) {
     return (
       <div className="h-full flex flex-col safe-area-top">
-        <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
-          <Skeleton className="h-5 w-48 bg-primary-foreground/20" />
+        <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-12 w-12 rounded-full bg-primary-foreground/20" />
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-44 bg-primary-foreground/20" />
+              <Skeleton className="h-3 w-32 bg-primary-foreground/20" />
+            </div>
+          </div>
         </header>
-        <div className="pt-16 flex-1 p-4 space-y-4">
+        <div className="pt-[94px] flex-1 p-4 space-y-4">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
@@ -59,14 +65,24 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
-        <h1 className="text-lg font-bold text-primary-foreground">
-          Carta d'Identità Farmacologica
-        </h1>
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+            <CreditCard className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-primary-foreground">
+              Carta d'Identità Farmacologica
+            </h1>
+            <p className="text-xs text-primary-foreground/80">
+              I tuoi dati anagrafici e clinici
+            </p>
+          </div>
+        </div>
       </header>
 
       {/* Content */}
-      <div className="pt-16 p-4 space-y-4 pb-24">
+      <div className="pt-[94px] p-4 space-y-4 pb-24">
         {/* Patient Info Card */}
         <Card className="border-secondary border-2">
           <CardHeader className="pb-2">
@@ -233,7 +249,7 @@ const Homepage = () => {
                         <span className="font-medium">{tp.farmaco}</span>
                         <span className="text-muted-foreground"> - {tp.dosaggio}, {tp.frequenza}</span>
                         <span className="text-muted-foreground block text-xs">
-                          {tp.note && `(${tp.note})`} • Via orale • {new Date(tp.dataInizio.split('/').reverse().join('-')).getFullYear()}
+                          {tp.note && `(${tp.note})`} ƒ?½ Via orale ƒ?½ {new Date(tp.dataInizio.split('/').reverse().join('-')).getFullYear()}
                         </span>
                       </div>
                     ))}

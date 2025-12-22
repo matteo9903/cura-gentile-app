@@ -101,14 +101,24 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
-        <h1 className="text-lg font-bold text-primary-foreground">
-          Il mio profilo
-        </h1>
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+            <User className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-primary-foreground">
+              Il mio profilo
+            </h1>
+            <p className="text-xs text-primary-foreground/80">
+              Gestisci il tuo account 
+            </p>
+          </div>
+        </div>
       </header>
 
       {/* Content */}
-      <div className="pt-16 p-4 space-y-4 pb-24">
+      <div className="pt-[94px] p-4 space-y-4 pb-24">
         {/* User Card */}
         <Card>
           <CardContent className="p-6">
