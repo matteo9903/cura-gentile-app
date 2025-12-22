@@ -17,6 +17,7 @@ import {
   LogOut,
   Loader2,
   ChevronRight,
+  X,
 } from "lucide-react";
 
 const Profile = () => {
@@ -99,23 +100,15 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background safe-area-top">
-      {/* Header - Fixed */}
-      <header className="fixed top-0 left-0 right-0 bg-primary px-4 py-4 z-40 safe-area-top">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-primary-foreground">
-              Il Mio Profilo
-            </h1>
-            <p className="text-xs text-primary-foreground/80">
-              Gestisci il tuo account
-            </p>
-          </div>
-          <User className="h-6 w-6 text-primary-foreground" />
-        </div>
+      {/* Header - Fixed, uniform height */}
+      <header className="fixed top-0 left-0 right-0 h-14 bg-primary px-4 flex items-center z-40 safe-area-top">
+        <h1 className="text-lg font-bold text-primary-foreground">
+          Il mio profilo
+        </h1>
       </header>
 
       {/* Content */}
-      <div className="pt-20 p-4 space-y-4">
+      <div className="pt-16 p-4 space-y-4 pb-24">
         {/* User Card */}
         <Card>
           <CardContent className="p-6">
@@ -166,7 +159,7 @@ const Profile = () => {
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                 <Lock className="h-5 w-5 text-primary" />
               </div>
-              <span className="font-medium">Cambia Password</span>
+              <span className="font-medium">Cambia password</span>
             </div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </Button>
@@ -180,7 +173,7 @@ const Profile = () => {
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
-              <span className="font-medium">Privacy e Sicurezza</span>
+              <span className="font-medium">Privacy e sicurezza</span>
             </div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </Button>
@@ -202,16 +195,24 @@ const Profile = () => {
         </p>
       </div>
 
-      {/* Change Password Modal */}
+      {/* Change Password Modal - Fullscreen */}
       <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-primary" />
-              Cambia Password
+              Cambia password
             </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setShowChangePassword(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="oldPassword">Password attuale</Label>
               <Input
@@ -222,6 +223,7 @@ const Profile = () => {
                   setPasswordForm({ ...passwordForm, oldPassword: e.target.value })
                 }
                 placeholder="Inserisci la password attuale"
+                className="px-4"
               />
             </div>
             <div className="space-y-2">
@@ -234,6 +236,7 @@ const Profile = () => {
                   setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                 }
                 placeholder="Inserisci la nuova password"
+                className="px-4"
               />
             </div>
             <div className="space-y-2">
@@ -249,8 +252,11 @@ const Profile = () => {
                   })
                 }
                 placeholder="Conferma la nuova password"
+                className="px-4"
               />
             </div>
+          </div>
+          <div className="shrink-0 pt-4 border-t">
             <Button
               className="w-full"
               onClick={handleChangePassword}
@@ -269,19 +275,27 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Privacy Modal */}
+      {/* Privacy Modal - Fullscreen */}
       <Dialog open={showPrivacy} onOpenChange={setShowPrivacy}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              Privacy e Sicurezza
+              Privacy e sicurezza
             </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setShowPrivacy(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <section>
               <h3 className="font-semibold text-primary mb-2">
-                Trattamento dei Dati Personali
+                Trattamento dei dati personali
               </h3>
               <p className="text-sm text-muted-foreground">
                 I tuoi dati personali sono trattati in conformità al Regolamento
@@ -292,7 +306,7 @@ const Profile = () => {
 
             <section>
               <h3 className="font-semibold text-primary mb-2">
-                Finalità del Trattamento
+                Finalità del trattamento
               </h3>
               <p className="text-sm text-muted-foreground">
                 I dati sono raccolti e trattati per le seguenti finalità:
@@ -307,7 +321,7 @@ const Profile = () => {
 
             <section>
               <h3 className="font-semibold text-primary mb-2">
-                Conservazione dei Dati
+                Conservazione dei dati
               </h3>
               <p className="text-sm text-muted-foreground">
                 I dati sono conservati per il tempo necessario al raggiungimento
@@ -317,7 +331,7 @@ const Profile = () => {
             </section>
 
             <section>
-              <h3 className="font-semibold text-primary mb-2">I Tuoi Diritti</h3>
+              <h3 className="font-semibold text-primary mb-2">I tuoi diritti</h3>
               <p className="text-sm text-muted-foreground">
                 Hai il diritto di accedere ai tuoi dati, richiederne la rettifica
                 o la cancellazione, opporti al trattamento e richiedere la
@@ -328,7 +342,7 @@ const Profile = () => {
 
             <section>
               <h3 className="font-semibold text-primary mb-2">
-                Sicurezza dell'App
+                Sicurezza dell'app
               </h3>
               <p className="text-sm text-muted-foreground">
                 L'app utilizza protocolli di sicurezza avanzati per proteggere i
