@@ -49,12 +49,12 @@ const PatientDiary = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background safe-area-top">
-        <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+        <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center z-40 safe-area-top border-b border-white/20 shadow-lg">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-12 w-12 rounded-full bg-primary-foreground/20" />
+            <Skeleton className="h-12 w-12 rounded-full bg-white/40" />
             <div className="space-y-1">
-              <Skeleton className="h-5 w-32 bg-primary-foreground/20" />
-              <Skeleton className="h-3 w-28 bg-primary-foreground/20" />
+              <Skeleton className="h-5 w-32 bg-white/30" />
+              <Skeleton className="h-3 w-28 bg-white/30" />
             </div>
           </div>
         </header>
@@ -69,16 +69,16 @@ const PatientDiary = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height with title */}
-      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center z-40 safe-area-top">
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center z-40 safe-area-top border-b border-white/20 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-            <BookOpen className="h-6 w-6 text-primary" />
+          <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+            <BookOpen className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-primary-foreground">
+            <h1 className="text-lg font-bold text-white">
               Diario paziente
             </h1>
-            <p className="text-xs text-primary-foreground/80">
+            <p className="text-xs text-white/80">
               Monitora il tuo piano terapeutico
             </p>
           </div>

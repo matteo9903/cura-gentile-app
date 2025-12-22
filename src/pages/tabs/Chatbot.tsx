@@ -114,19 +114,19 @@ const Chatbot = () => {
   return (
     <div className="min-h-screen bg-background safe-area-top">
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-[70px] bg-primary px-4 flex items-center justify-between z-40 safe-area-top">
+      <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center justify-between z-40 safe-area-top border-b border-white/20 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-            <Bot className="h-7 w-7 text-primary" />
+          <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+            <Bot className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-primary-foreground">
+            <h1 className="text-lg font-bold text-white">
               {chatbotInfo.nome}
             </h1>
-            <div className="text-xs text-primary-foreground/80">
+            <div className="text-xs text-white/80">
               <div className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
-                <span className="text-xs text-primary-foreground/80">online</span>
+                <span className="text-xs text-white/80">online</span>
               </div>
             </div>
             {/* <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ const Chatbot = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="text-primary-foreground hover:bg-primary-foreground/10 h-12 w-12"
+          className="text-white hover:bg-white/10 h-12 w-12"
           onClick={() => setShowInfo(true)}
         >
           <Info className="h-7 w-7" />

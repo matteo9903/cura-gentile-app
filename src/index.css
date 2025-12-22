@@ -48,6 +48,21 @@
     --iov-yellow: 51 100% 50%;
     --iov-pink: 340 82% 76%;
     --iov-green: 142 55% 49%;
+    /* Extended IOV Palette */
+    --iov-dark-blue: 214.1538 52% 24.51%;
+    --iov-dark-blue-hover: 214.8 54.35% 18.04%;
+    --iov-yellow-light: 50.8989 100% 65.10%;
+    --iov-yellow-dark: 50.6087 100% 45.10%;
+    --iov-light-blue: 198.9041 92.41% 84.51%;
+    --iov-light-blue-light: 198.6207 93.55% 93.92%;
+    --iov-light-blue-dark: 198.8430 92.37% 74.31%;
+    --iov-pink-light: 339.3443 81.33% 85.29%;
+    --iov-pink-dark: 339.6060 82.19% 51.57%;
+    --iov-veneto-red: 350.2174 85.19% 42.35%;
+    --iov-gray-text: 0 0% 20%;
+    --iov-gray-light: 0 0% 96.08%;
+    --iov-gradient: linear-gradient(135deg, hsl(var(--iov-light-blue)), hsl(var(--iov-dark-blue)));
+    --iov-gradient-alt: linear-gradient(135deg, hsl(var(--iov-dark-blue)), hsl(var(--iov-pink)), hsl(var(--iov-yellow)));
 
     /* Tab bar */
     --tab-bar: 0 0% 100%;
@@ -98,6 +113,20 @@
     --iov-yellow: 51 100% 50%;
     --iov-pink: 340 82% 76%;
     --iov-green: 142 55% 49%;
+    --iov-dark-blue: 214.1538 52% 24.51%;
+    --iov-dark-blue-hover: 214.8 54.35% 18.04%;
+    --iov-yellow-light: 50.8989 100% 65.10%;
+    --iov-yellow-dark: 50.6087 100% 45.10%;
+    --iov-light-blue: 198.9041 92.41% 84.51%;
+    --iov-light-blue-light: 198.6207 93.55% 93.92%;
+    --iov-light-blue-dark: 198.8430 92.37% 74.31%;
+    --iov-pink-light: 339.3443 81.33% 85.29%;
+    --iov-pink-dark: 339.6060 82.19% 51.57%;
+    --iov-veneto-red: 350.2174 85.19% 42.35%;
+    --iov-gray-text: 0 0% 20%;
+    --iov-gray-light: 0 0% 96.08%;
+    --iov-gradient: linear-gradient(135deg, hsl(var(--iov-light-blue)), hsl(var(--iov-dark-blue)));
+    --iov-gradient-alt: linear-gradient(135deg, hsl(var(--iov-dark-blue)), hsl(var(--iov-pink)), hsl(var(--iov-yellow)));
 
     --tab-bar: 212 52% 15%;
     --tab-inactive: 210 20% 50%;
@@ -140,10 +169,10 @@
   }
 }
 
-@layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+  @layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -158,5 +187,62 @@
   }
   .border-iov-green {
     border-color: hsl(var(--iov-green));
+  }
+  .border-iov-yellow {
+    border-color: hsl(var(--iov-yellow));
+  }
+  .border-iov-light-blue {
+    border-color: hsl(var(--iov-light-blue));
+  }
+  .border-iov-dark-blue {
+    border-color: hsl(var(--iov-dark-blue));
+  }
+  .border-iov-pink {
+    border-color: hsl(var(--iov-pink));
+  }
+  .border-iov-veneto-red {
+    border-color: hsl(var(--iov-veneto-red));
+  }
+  .bg-iov-dark-blue {
+    background-color: hsl(var(--iov-dark-blue));
+  }
+  .bg-iov-dark-blue-hover {
+    background-color: hsl(var(--iov-dark-blue-hover));
+  }
+  .text-iov-dark-blue {
+    color: hsl(var(--iov-dark-blue));
+  }
+  .text-iov-gray-text {
+    color: hsl(var(--iov-gray-text));
+  }
+  .bg-iov-gray-light {
+    background-color: hsl(var(--iov-gray-light));
+  }
+  .bg-iov-gradient {
+    background-image: var(--iov-gradient);
+  }
+  .bg-iov-gradient-alt {
+    background-image: var(--iov-gradient-alt);
+  }
+  .bg-iov-light-blue {
+    background-color: hsl(var(--iov-light-blue));
+  }
+  .bg-iov-light-blue-light {
+    background-color: hsl(var(--iov-light-blue-light));
+  }
+  .bg-iov-light-blue-dark {
+    background-color: hsl(var(--iov-light-blue-dark));
+  }
+  .bg-iov-pink {
+    background-color: hsl(var(--iov-pink));
+  }
+  .bg-iov-pink-light {
+    background-color: hsl(var(--iov-pink-light));
+  }
+  .bg-iov-pink-dark {
+    background-color: hsl(var(--iov-pink-dark));
+  }
+  .bg-iov-veneto-red {
+    background-color: hsl(var(--iov-veneto-red));
   }
 }
