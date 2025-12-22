@@ -22,7 +22,7 @@ const TabsLayout = () => {
 
       {/* Tab Bar - Fixed */}
       <nav className="fixed bottom-0 left-0 right-0 bg-tab-bar border-t border-border safe-area-bottom z-50">
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-center justify-around py-1">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;
             const Icon = tab.icon;
@@ -32,15 +32,15 @@ const TabsLayout = () => {
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
                 className={cn(
-                  "flex flex-col items-center justify-center px-3 py-2 min-w-[64px] transition-colors"
+                  "flex flex-col items-center justify-center px-3 py-1 min-w-[60px] transition-colors"
                 )}
               >
                 <div
                   className={cn(
-                    "flex items-center justify-center w-10 h-10 rounded-full mb-1 transition-colors",
+                    "flex items-center justify-center w-9 h-9 rounded-full mb-1 transition-colors",
                     isActive 
                       ? "bg-primary text-primary-foreground" 
-                      : "bg-secondary/50 text-muted-foreground"
+                      : "bg-transparent text-muted-foreground"
                   )}
                 >
                   <Icon

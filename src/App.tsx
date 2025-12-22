@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  console.log("CAPACITOR PLATFORM",Capacitor.getPlatform())
+  // console.log("CAPACITOR PLATFORM",Capacitor.getPlatform())
 
   if (isLoading) {
     return (
