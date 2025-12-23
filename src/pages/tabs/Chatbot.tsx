@@ -99,7 +99,7 @@ const Chatbot = () => {
     } else {
       toast({
         title: "Non disponibile",
-        description: "La sintesi vocale non Ã¨ supportata dal tuo browser.",
+        description: "La sintesi vocale non ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨ supportata dal tuo browser.",
       });
     }
   };
@@ -189,12 +189,7 @@ const Chatbot = () => {
                   )}
                 >
                   <div className={cn("flex items-center gap-3", isUser && "flex-row-reverse")}>
-                    <p
-                      className={cn(
-                        "text-base whitespace-pre-wrap break-words flex-1",
-                        isUser && "text-right"
-                      )}
-                    >
+                    <p className="text-base whitespace-pre-wrap break-words flex-1 text-left">
                       {message.content}
                     </p>
                     <button
@@ -248,19 +243,19 @@ const Chatbot = () => {
 
       {/* Input Bar - Fixed */}
       <div className="fixed bottom-20 left-0 right-0 bg-card border-t border-border p-3 z-40">
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 text-muted-foreground h-12 w-12"
+            className="shrink-0 text-muted-foreground h-14 w-14"
             onClick={() =>
               toast({
                 title: "Microfono",
-                description: "FunzionalitÃ  vocale in arrivo...",
+                description: "Funzionalità",
               })
             }
           >
-            <Mic className="h-6 w-6" />
+            <Mic className="h-7 w-7" />
           </Button>
           <textarea
             value={inputValue}
@@ -275,9 +270,9 @@ const Chatbot = () => {
             size="icon"
             onClick={handleSend}
             disabled={!inputValue.trim() || isLoading}
-            className="shrink-0 h-12 w-12"
+            className="shrink-0 h-14 w-14"
           >
-            <Send className="h-6 w-6" />
+            <Send className="h-7 w-7" />
           </Button>
         </div>
       </div>
@@ -293,7 +288,7 @@ const Chatbot = () => {
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
-              Scopri cosa puÃ² fare {chatbotInfo.nome} per te:
+              Scopri cosa può fare {chatbotInfo.nome} per te:
             </p>
             {chatbotInfo.funzionalita.map((func, idx) => (
               <Card key={idx} className="bg-muted/50">
@@ -320,6 +315,7 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
 
 
 
