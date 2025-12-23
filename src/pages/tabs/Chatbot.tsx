@@ -99,7 +99,7 @@ const Chatbot = () => {
     } else {
       toast({
         title: "Non disponibile",
-        description: "La sintesi vocale non ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨ supportata dal tuo browser.",
+        description: "La sintesi vocale non è supportata dal tuo browser.",
       });
     }
   };
@@ -189,7 +189,7 @@ const Chatbot = () => {
                   )}
                 >
                   <div className={cn("flex items-center gap-3", isUser && "flex-row-reverse")}>
-                    <p className="text-base whitespace-pre-wrap break-words flex-1 text-left">
+                    <p className="text-lg whitespace-pre-wrap break-words flex-1 text-left">
                       {message.content}
                     </p>
                     <button
@@ -255,14 +255,14 @@ const Chatbot = () => {
               })
             }
           >
-            <Mic className="h-7 w-7" />
+            <Mic style={{height: '1.7rem', width: '1.7rem'}} />
           </Button>
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Scrivi un messaggio..."
-            className="flex-1 px-4 py-3 min-h-[64px] max-h-32 rounded-lg border border-input bg-background text-base leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 min-h-[64px] max-h-32 rounded-lg border border-input bg-background text-lg leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-lg"
             disabled={isLoading}
             rows={2}
           />
@@ -272,7 +272,7 @@ const Chatbot = () => {
             disabled={!inputValue.trim() || isLoading}
             className="shrink-0 h-14 w-14"
           >
-            <Send className="h-7 w-7" />
+            <Send style={{height: '1.7rem', width: '1.7rem'}} />
           </Button>
         </div>
       </div>
