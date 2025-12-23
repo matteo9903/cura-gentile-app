@@ -13,6 +13,7 @@ import {
   Loader2,
   Bot,
   X,
+  User as UserIcon,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -162,54 +163,71 @@ const Chatbot = () => {
             </div>
           )}
 
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn(
-                "flex animate-fade-in",
-                message.role === "user" ? "justify-end" : "justify-start"
-              )}
-            >
+          {messages.map((message) => {
+            const isUser = message.role === "user";
+            return (
               <div
+                key={message.id}
                 className={cn(
-                  "max-w-[80%] rounded-2xl px-4 py-3 relative group",
-                  message.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-br-sm"
-                    : "bg-card border border-border rounded-bl-sm"
+                  "flex items-end gap-2 animate-fade-in",
+                  isUser ? "justify-end" : "justify-start"
                 )}
               >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {!isUser && (
+                  <div className="h-9 w-9 rounded-full bg-iov-light-blue/30 border border-iov-light-blue/60 flex items-center justify-center shadow-sm overflow-hidden">
+                    <img
+                      src="/chatbot.png"
+                      alt={`${chatbotInfo.nome} avatar`}
+                      className="h-6 w-6 object-contain"
+                    />
+                  </div>
+                )}
+
                 <div
                   className={cn(
-                    "flex items-center gap-2 mt-1",
-                    message.role === "user" ? "justify-end" : "justify-start"
+                    "max-w-[78%] rounded-2xl px-4 py-3 relative group",
+                    isUser
+                      ? "bg-primary text-primary-foreground rounded-br-sm ml-auto"
+                      : "bg-card border border-border rounded-bl-sm"
                   )}
                 >
-                  <span
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <div
                     className={cn(
-                      "text-xs",
-                      message.role === "user"
-                        ? "text-primary-foreground/70"
-                        : "text-muted-foreground"
+                      "flex items-center gap-2 mt-1",
+                      isUser ? "justify-end" : "justify-start"
                     )}
                   >
-                    {formatTime(message.timestamp)}
-                  </span>
-                  <button
-                    onClick={() => handleVoice(message.content)}
-                    className={cn(
-                      "opacity-0 group-hover:opacity-100 transition-opacity",
-                      message.role === "user"
-                        ? "text-primary-foreground/70 hover:text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <Volume2 className="h-3 w-3" />
-                  </button>
+                    <span
+                      className={cn(
+                        "text-xs",
+                        isUser ? "text-primary-foreground/70" : "text-muted-foreground"
+                      )}
+                    >
+                      {formatTime(message.timestamp)}
+                    </span>
+                    <button
+                      onClick={() => handleVoice(message.content)}
+                      className={cn(
+                        "opacity-0 group-hover:opacity-100 transition-opacity",
+                        isUser
+                          ? "text-primary-foreground/70 hover:text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Volume2 className="h-3 w-3" />
+                    </button>
+                  </div>
                 </div>
+
+                {isUser && (
+                  <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+                    <UserIcon className="h-5 w-5" />
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {isLoading && (
             <div className="flex justify-start animate-fade-in">
