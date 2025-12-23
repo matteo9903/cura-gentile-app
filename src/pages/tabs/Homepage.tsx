@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { patientService, CartaIdentitaTerapeutica } from "@/services/patientService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import {
-  User,
   Users,
   Stethoscope,
+  HeartPulse,
   Heart,
   AlertTriangle,
   Phone,
@@ -24,6 +18,9 @@ import {
   Ruler,
   CalendarDays,
   CreditCard,
+  Baby,
+  Syringe,
+  ActivitySquare,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -40,62 +37,22 @@ const Homepage = () => {
     loadData();
   }, []);
 
-  const anagraphicsCardClass =
-    "bg-iov-light-blue-light border border-iov-light-blue rounded-xl shadow-sm";
-  const anagraphicsDetailBoxClass =
-    "flex flex-col gap-1 rounded-lg bg-white/80 border border-iov-light-blue border-l-4 border-iov-yellow px-3 py-2 text-iov-dark-blue shadow-inner";
+  const initials = useMemo(() => {
+    if (!carta) return "";
+    const name = `${carta.paziente.nome} ${carta.paziente.cognome}`.trim();
+    const parts = name.split(" ").filter(Boolean);
+    if (!parts.length) return "";
+    const first = parts[0]?.[0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
+    return `${first}${last}`.toUpperCase();
+  }, [carta]);
 
-  const accordionItemBaseClass =
-    "border rounded-xl px-4 shadow-sm bg-iov-light-blue-light";
-  const innerCardBaseClass = "bg-white/90 border border-iov-light-blue rounded-lg shadow-sm";
-  const chipBase = "px-3 py-1 rounded-full text-[11px] font-semibold border-0";
-
-  const accordionThemes = {
-    caregiver: {
-      border: "border-iov-light-blue",
-      accent: "border-l-iov-light-blue-dark",
-      icon: "text-iov-dark-blue",
-      chip: "bg-iov-light-blue-dark text-iov-dark-blue",
-      count: "bg-iov-light-blue-dark text-iov-dark-blue",
-    },
-    specialisti: {
-      border: "border-iov-yellow",
-      accent: "border-l-iov-yellow-dark",
-      icon: "text-iov-yellow-dark",
-      chip: "bg-iov-yellow-dark text-iov-dark-blue",
-      count: "bg-iov-yellow-dark text-iov-dark-blue",
-    },
-    diagnosi: {
-      border: "border-iov-pink",
-      accent: "border-l-iov-pink-dark",
-      icon: "text-iov-pink-dark",
-      chip: "bg-iov-pink-dark text-white",
-    },
-    comorbidita: {
-      border: "border-iov-light-blue",
-      accent: "border-l-iov-light-blue-dark",
-      icon: "text-iov-dark-blue",
-      count: "bg-iov-light-blue-dark text-iov-dark-blue",
-    },
-    allergie: {
-      border: "border-iov-pink",
-      accent: "border-l-iov-pink-dark",
-      icon: "text-iov-pink-dark",
-      count: "bg-iov-pink-dark text-white",
-    },
-  } as const;
-
-  const caregiverTheme = accordionThemes.caregiver;
-  const specialistiTheme = accordionThemes.specialisti;
-  const diagnosiTheme = accordionThemes.diagnosi;
-  const comorbiditaTheme = accordionThemes.comorbidita;
-  const allergieTheme = accordionThemes.allergie;
-  const allergyBorderClass = (gravita: "lieve" | "moderata" | "grave") =>
-    gravita === "grave"
-      ? "border-l-destructive"
-      : gravita === "moderata"
-        ? "border-l-primary"
-        : "border-l-secondary";
+  const tagBase = "px-3 py-1 rounded-full text-[11px] font-semibold border-0";
+  const pillBase =
+    "flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 border border-white/40 shadow-sm";
+  const sectionTitleClass = "flex items-center gap-2 text-iov-dark-blue font-semibold text-base";
+  const sectionContainerClass = "bg-white/70 rounded-2xl p-3 shadow-sm border border-white/60";
+  const subtleLabel = "text-[11px] uppercase tracking-wide text-iov-dark-blue/70 font-semibold";
 
   if (isLoading || !carta) {
     return (
@@ -120,288 +77,305 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-iov-gray-light safe-area-top">
-      {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center z-40 safe-area-top border-b border-white/20 shadow-lg">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 h-[76px] bg-iov-gradient text-white px-4 flex items-center z-40 safe-area-top border-b border-white/20 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-            <CreditCard className="h-6 w-6 text-white" />
+          <div className="w-11 h-11 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center shadow-sm">
+            <CreditCard className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">Carta d'Identita Farmacologica</h1>
-            <p className="text-xs text-white/80">
-              I tuoi dati anagrafici e clinici
-            </p>
+            <h1 className="text-lg font-bold text-white">Carta d'Identità Farmacologica</h1>
+            <p className="text-[12px] text-white/85">Profilo clinico sempre a portata di mano</p>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <div className="pt-[94px] p-4 space-y-4 pb-24">
-        {/* Patient Info Card */}
-        <Card className={`${anagraphicsCardClass} backdrop-blur`}>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-3 text-iov-dark-blue">
-              <User className="h-10 w-10 shrink-0" />
-              {carta.paziente.nome} {carta.paziente.cognome}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
-                <Scale className="h-5 w-5 mb-1" />
-                <span className="text-[11px] uppercase tracking-wide">Peso</span>
-                <span className="font-semibold">{carta.paziente.peso} kg</span>
+      <div className="pt-[96px] p-4 pb-24 space-y-4">
+        {/* Identity Card */}
+        <Card className="bg-white/90 border-none shadow-xl rounded-3xl overflow-hidden">
+          <div className="bg-iov-gradient p-4 pb-5 text-white">
+            <div className="flex items-center gap-3">
+              <div className="h-14 w-14 rounded-full bg-white/25 border border-white/30 flex items-center justify-center text-lg font-bold">
+                {initials}
               </div>
-              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
-                <Ruler className="h-5 w-5 mb-1" />
-                <span className="text-[11px] uppercase tracking-wide">Altezza</span>
-                <span className="font-semibold">{carta.paziente.altezza} cm</span>
+              <div className="flex-1">
+                <p className="text-xs text-white/80 uppercase font-semibold">Paziente</p>
+                <h2 className="text-xl font-bold leading-snug">
+                  {carta.paziente.nome} {carta.paziente.cognome}
+                </h2>
+                <p className="text-[12px] text-white/80">{carta.paziente.codiceFiscale}</p>
               </div>
-              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
-                <CalendarDays className="h-5 w-5 mb-1" />
-                <span className="text-[11px] uppercase tracking-wide">Nascita</span>
-                <span className="font-semibold">{carta.paziente.dataNascita}</span>
+            </div>
+          </div>
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-3 gap-2">
+              <div className={`${pillBase} text-iov-dark-blue`}>
+                <Scale className="h-4 w-4 text-iov-dark-blue/80" />
+                <div>
+                  <p className={subtleLabel}>Peso</p>
+                  <p className="font-semibold">{carta.paziente.peso} kg</p>
+                </div>
+              </div>
+              <div className={`${pillBase} text-iov-dark-blue`}>
+                <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
+                <div>
+                  <p className={subtleLabel}>Altezza</p>
+                  <p className="font-semibold">{carta.paziente.altezza} cm</p>
+                </div>
+              </div>
+              <div className={`${pillBase} text-iov-dark-blue`}>
+                <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
+                <div>
+                  <p className={subtleLabel}>Data di nascita</p>
+                  <p className="font-semibold">{carta.paziente.dataNascita}</p>
+                </div>
               </div>
             </div>
             <div className="grid gap-2 text-sm">
-              <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
-                  Codice Fiscale
-                </span>
-                <span className="font-mono text-sm break-words">
-                  <strong>{carta.paziente.codiceFiscale}</strong>
-                </span>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
+                <p className={subtleLabel}>Codice Fiscale</p>
+                <p className="font-mono text-base font-semibold break-words">{carta.paziente.codiceFiscale}</p>
               </div>
-              <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
-                  Tessera Sanitaria
-                </span>
-                <span className="font-mono text-sm break-words"><strong>800 123 456 789012</strong></span>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
+                <p className={subtleLabel}>Tessera Sanitaria</p>
+                <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
               </div>
-              <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
-                  Residenza
-                </span>
-                <span className="text-sm font-medium leading-snug break-words">{carta.paziente.indirizzo}</span>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
+                <p className={subtleLabel}>Residenza</p>
+                <p className="text-[15px] font-semibold leading-snug break-words">{carta.paziente.indirizzo}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Accordion Sections */}
-        <Accordion type="multiple" className="space-y-3">
-          {/* Caregiver */}
-          <AccordionItem
-            value="caregiver"
-            className={`${accordionItemBaseClass} ${caregiverTheme.border}`}
-          >
-            <AccordionTrigger className="py-3 text-iov-dark-blue">
-              <div className="flex items-center gap-2">
-                <Users className={`h-5 w-5 ${caregiverTheme.icon}`} />
-                <span>Contatti Caregiver</span>
-                <Badge className={`ml-2 ${chipBase} ${caregiverTheme.count}`}>
-                  {carta.caregiver.length}
-                </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Swiper
-                modules={[Pagination]}
-                pagination={{ clickable: true }}
-                spaceBetween={12}
-                slidesPerView={1}
-                className="pb-8"
-              >
-                {carta.caregiver.map((cg, idx) => (
-                  <SwiperSlide key={idx}>
-                    <Card className={`${innerCardBaseClass} border-l-4 ${caregiverTheme.accent}`}>
-                      <CardContent className="p-3 space-y-2">
-                        <p className="font-semibold">
-                          {cg.nome} {cg.cognome}
-                        </p>
-                        <Badge className={`mb-1 ${chipBase} ${caregiverTheme.chip}`}>
-                          {cg.relazione}
-                        </Badge>
-                        <div className="space-y-1 text-sm">
-                          <p className="flex items-center gap-2">
-                            <Phone className="h-3 w-3" /> {cg.telefono}
-                          </p>
-                          <p className="flex items-center gap-2">
-                            <Mail className="h-3 w-3" /> {cg.email}
-                          </p>
+        {/* Contacts */}
+        <section className={sectionContainerClass}>
+          <div className={sectionTitleClass}>
+            <Users className="h-5 w-5 text-iov-dark-blue" />
+            <span>Contatti Caregiver</span>
+            <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
+              {carta.caregiver.length}
+            </Badge>
+          </div>
+          <div className="mt-3">
+            <Swiper
+              modules={[Pagination]}
+              pagination={{ clickable: true }}
+              spaceBetween={14}
+              slidesPerView={1}
+              className="pb-8"
+            >
+              {carta.caregiver.map((cg, idx) => (
+                <SwiperSlide key={idx}>
+                  <Card className="bg-white/90 border border-iov-light-blue/60 rounded-2xl shadow-sm">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-9 w-9 rounded-full bg-iov-light-blue-light text-iov-dark-blue font-bold flex items-center justify-center">
+                          {`${cg.nome[0]}${cg.cognome[0]}`.toUpperCase()}
                         </div>
-                      </CardContent>
-                    </Card>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </AccordionContent>
-          </AccordionItem>
-
-          {/* Specialisti */}
-          <AccordionItem
-            value="specialisti"
-            className={`${accordionItemBaseClass} ${specialistiTheme.border}`}
-          >
-            <AccordionTrigger className="py-3 text-iov-dark-blue">
-              <div className="flex items-center gap-2">
-                <Stethoscope className={`h-5 w-5 ${specialistiTheme.icon}`} />
-                <span>Contatti Specialisti</span>
-                <Badge className={`ml-2 ${chipBase} ${specialistiTheme.count}`}>
-                  {carta.specialisti.length}
-                </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Swiper
-                modules={[Pagination]}
-                pagination={{ clickable: true }}
-                spaceBetween={12}
-                slidesPerView={1}
-                className="pb-8"
-              >
-                {carta.specialisti.map((sp, idx) => (
-                  <SwiperSlide key={idx}>
-                    <Card className={`${innerCardBaseClass} border-l-4 ${specialistiTheme.accent}`}>
-                      <CardContent className="p-3 space-y-2">
-                        <p className="font-semibold">
-                          {sp.nome} {sp.cognome}
-                        </p>
-                        <Badge className={`mb-1 ${chipBase} ${specialistiTheme.chip}`}>
-                          {sp.specializzazione}
-                        </Badge>
-                        <p className="text-xs text-muted-foreground mb-2 leading-snug">
-                          {sp.ospedale}
-                        </p>
-                        <div className="space-y-1 text-sm">
-                          <p className="flex items-center gap-2">
-                            <Phone className="h-3 w-3" /> {sp.telefono}
+                        <div>
+                          <p className="font-semibold text-iov-dark-blue">
+                            {cg.nome} {cg.cognome}
                           </p>
-                          <p className="flex items-center gap-2">
-                            <Mail className="h-3 w-3" /> {sp.email}
-                          </p>
+                          <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue mt-1`}>
+                            {cg.relazione}
+                          </Badge>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </AccordionContent>
-          </AccordionItem>
+                      </div>
+                      <div className="space-y-1 text-sm text-iov-dark-blue">
+                        <p className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-iov-dark-blue/80" /> {cg.telefono}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-iov-dark-blue/80" /> {cg.email}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </section>
 
-          {/* Diagnosi Oncologica - Simplified */}
-          <AccordionItem
-            value="diagnosi"
-            className={`${accordionItemBaseClass} ${diagnosiTheme.border}`}
-          >
-            <AccordionTrigger className="py-3 text-iov-dark-blue">
-              <div className="flex items-center gap-2">
-                <Heart className={`h-5 w-5 ${diagnosiTheme.icon}`} />
-                <span>Diagnosi Oncologica</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Card className={`${innerCardBaseClass} border-l-4 ${diagnosiTheme.accent}`}>
-                <CardContent className="p-3 space-y-3">
-                  {/* Tumor info */}
-                  <div>
-                    <p className="font-semibold">{carta.diagnosiOncologica.tipo}</p>
-                    <Badge className={`mt-1 ${chipBase} ${diagnosiTheme.chip}`}>
-                      Stadio: {carta.diagnosiOncologica.stadio}
-                    </Badge>
+        {/* Specialists */}
+        <section className={sectionContainerClass}>
+          <div className={sectionTitleClass}>
+            <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
+            <span>Specialisti di riferimento</span>
+            <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
+              {carta.specialisti.length}
+            </Badge>
+          </div>
+          <div className="mt-3">
+            <Swiper
+              modules={[Pagination]}
+              pagination={{ clickable: true }}
+              spaceBetween={14}
+              slidesPerView={1}
+              className="pb-8"
+            >
+              {carta.specialisti.map((sp, idx) => (
+                <SwiperSlide key={idx}>
+                  <Card className="bg-white/90 border border-iov-yellow/60 rounded-2xl shadow-sm">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-9 w-9 rounded-full bg-iov-yellow-light text-iov-dark-blue font-bold flex items-center justify-center">
+                          {`${sp.nome[0]}${sp.cognome[0]}`.toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-iov-dark-blue">
+                            {sp.nome} {sp.cognome}
+                          </p>
+                          <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue mt-1`}>
+                            {sp.specializzazione}
+                          </Badge>
+                          <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.ospedale}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-1 text-sm text-iov-dark-blue">
+                        <p className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-iov-dark-blue/80" /> {sp.telefono}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-iov-dark-blue/80" /> {sp.email}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </section>
+
+        {/* Diagnosis */}
+        <section className={sectionContainerClass}>
+          <div className={sectionTitleClass}>
+            <HeartPulse className="h-5 w-5 text-iov-pink-dark" />
+            <span>Diagnosi Oncologica</span>
+          </div>
+          <div className="mt-3">
+            <Card className="bg-white/95 border border-iov-pink/60 rounded-2xl shadow-sm">
+              <CardContent className="p-4 space-y-3 text-iov-dark-blue">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-iov-pink-light flex items-center justify-center text-iov-pink-dark">
+                    <Heart className="h-5 w-5" />
                   </div>
-
-                  {/* Oncological therapies as text annotations */}
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Terapie oncologiche:</p>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm text-iov-dark-blue/70">Tipo</p>
+                    <p className="font-semibold leading-snug">{carta.diagnosiOncologica.tipo}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark`}>
+                    <ActivitySquare className="h-4 w-4" />
+                    <div>
+                      <p className={subtleLabel}>Stadio</p>
+                      <p className="font-semibold">{carta.diagnosiOncologica.stadio}</p>
+                    </div>
+                  </div>
+                  <div className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark`}>
+                    <Baby className="h-4 w-4" />
+                    <div>
+                      <p className={subtleLabel}>Data diagnosi</p>
+                      <p className="font-semibold">{carta.diagnosiOncologica.datadiagnosi}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
+                  <p className={subtleLabel}>Istologia</p>
+                  <p className="font-semibold">{carta.diagnosiOncologica.istologia}</p>
+                  <p className="text-sm text-iov-dark-blue/80 mt-1">{carta.diagnosiOncologica.note}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className={subtleLabel}>Terapie in corso</p>
+                  <div className="flex flex-col gap-2">
                     {carta.terapieOncologiche.map((tp, idx) => (
-                      <div key={idx} className="text-sm">
-                        <span className="font-medium">{tp.farmaco}</span>
-                        <span className="text-muted-foreground"> - {tp.dosaggio}, {tp.frequenza}</span>
-                        <span className="text-muted-foreground block text-xs">
-                          {tp.note && `(${tp.note})`} Via orale - {new Date(
-                            tp.dataInizio.split("/").reverse().join("-")
-                          ).getFullYear()}
-                        </span>
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
+                      >
+                        <Syringe className="h-4 w-4 text-iov-pink-dark mt-0.5" />
+                        <div className="flex-1">
+                          <p className="font-semibold">{tp.farmaco}</p>
+                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} • {tp.frequenza}</p>
+                          {tp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{tp.note}</p>}
+                          <p className="text-[11px] text-iov-dark-blue/60 mt-1">Avvio: {tp.dataInizio}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </AccordionContent>
-          </AccordionItem>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
-          {/* Comorbidita */}
-          <AccordionItem
-            value="comorbidita"
-            className={`${accordionItemBaseClass} ${comorbiditaTheme.border}`}
-          >
-            <AccordionTrigger className="py-3 text-iov-dark-blue">
-              <div className="flex items-center gap-2">
-                <Heart className={`h-5 w-5 ${comorbiditaTheme.icon}`} />
-                <span>Comorbidita</span>
-                <Badge className={`ml-2 ${chipBase} ${comorbiditaTheme.count}`}>
-                  {carta.comorbidita.length}
-                </Badge>
+        {/* Comorbidità & Allergie */}
+        <section className={sectionContainerClass}>
+          <div className={sectionTitleClass}>
+            <Heart className="h-5 w-5 text-iov-dark-blue" />
+            <span>Comorbidità</span>
+            <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
+              {carta.comorbidita.length}
+            </Badge>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {carta.comorbidita.map((cm, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-2 bg-iov-light-blue-light text-iov-dark-blue px-3 py-2 rounded-full border border-iov-light-blue/70"
+              >
+                <ActivitySquare className="h-4 w-4" />
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[13px] font-semibold">{cm.nome}</span>
+                  <span className="text-[11px] text-iov-dark-blue/70">Dal {cm.annoInsorgenza}</span>
+                </div>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-2">
-                {carta.comorbidita.map((cm, idx) => (
-                  <Card key={idx} className={`${innerCardBaseClass} border-l-4 ${comorbiditaTheme.accent}`}>
-                    <CardContent className="p-3 space-y-1">
-                      <p className="font-semibold">{cm.nome}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Dal {cm.annoInsorgenza}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+            ))}
+          </div>
 
-          {/* Allergie */}
-          <AccordionItem
-            value="allergie"
-            className={`${accordionItemBaseClass} ${allergieTheme.border}`}
-          >
-            <AccordionTrigger className="py-3 text-iov-dark-blue">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className={`h-5 w-5 ${allergieTheme.icon}`} />
-                <span>Allergie</span>
-                <Badge className={`ml-2 ${chipBase} ${allergieTheme.count}`}>
-                  {carta.allergie.length}
-                </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-2">
-                {carta.allergie.map((al, idx) => (
-                  <Card key={idx} className={`${innerCardBaseClass} border-l-4 ${allergyBorderClass(al.gravita)}`}>
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold">{al.sostanza}</p>
-                        <Badge
-                          variant={
-                            al.gravita === "grave"
-                              ? "destructive"
-                              : al.gravita === "moderata"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {al.gravita}
-                        </Badge>
-                      </div>
-                      <p className="text-sm mt-1">{al.reazione}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+          <div className="mt-5">
+            <div className={sectionTitleClass}>
+              <AlertTriangle className="h-5 w-5 text-iov-pink-dark" />
+              <span>Allergie</span>
+              <Badge className={`${tagBase} bg-iov-pink-dark text-white ml-auto`}>
+                {carta.allergie.length}
+              </Badge>
+            </div>
+            <div className="mt-3 flex flex-col gap-2">
+              {carta.allergie.map((al, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between bg-white/90 border border-iov-pink/40 rounded-xl px-3 py-2 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-full bg-iov-pink-light flex items-center justify-center text-iov-pink-dark font-bold">
+                      {al.sostanza[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-iov-dark-blue">{al.sostanza}</p>
+                      <p className="text-[12px] text-iov-dark-blue/70">{al.reazione}</p>
+                    </div>
+                  </div>
+                  <Badge
+                    className={`${tagBase} ${
+                      al.gravita === "grave"
+                        ? "bg-iov-veneto-red text-white"
+                        : al.gravita === "moderata"
+                        ? "bg-iov-yellow text-iov-dark-blue"
+                        : "bg-iov-light-blue-dark text-iov-dark-blue"
+                    }`}
+                  >
+                    {al.gravita}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
