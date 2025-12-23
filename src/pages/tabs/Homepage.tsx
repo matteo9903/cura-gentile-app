@@ -11,6 +11,7 @@ import {
   Stethoscope,
   HeartPulse,
   Heart,
+  Microscope,
   AlertTriangle,
   Phone,
   Mail,
@@ -18,7 +19,8 @@ import {
   Ruler,
   CalendarDays,
   CreditCard,
-  Baby,
+  ClipboardPlus,
+  ShieldPlus,
   Syringe,
   ActivitySquare,
 } from "lucide-react";
@@ -168,18 +170,13 @@ const Homepage = () => {
                 <SwiperSlide key={idx}>
                   <Card className="bg-white/90 border border-iov-light-blue/60 rounded-2xl shadow-sm">
                     <CardContent className="p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="h-9 w-9 rounded-full bg-iov-light-blue-light text-iov-dark-blue font-bold flex items-center justify-center">
-                          {`${cg.nome[0]}${cg.cognome[0]}`.toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-iov-dark-blue">
-                            {cg.nome} {cg.cognome}
-                          </p>
-                          <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue mt-1`}>
-                            {cg.relazione}
-                          </Badge>
-                        </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-iov-dark-blue text-lg">
+                          {cg.nome} {cg.cognome}
+                        </p>
+                        <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue`}>
+                          {cg.relazione}
+                        </Badge>
                       </div>
                       <div className="space-y-1 text-sm text-iov-dark-blue">
                         <p className="flex items-center gap-2">
@@ -201,7 +198,7 @@ const Homepage = () => {
         <section className={sectionContainerClass}>
           <div className={sectionTitleClass}>
             <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
-            <span>Specialisti di riferimento</span>
+            <span>Contatti specialisti</span>
             <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
               {carta.specialisti.length}
             </Badge>
@@ -218,19 +215,14 @@ const Homepage = () => {
                 <SwiperSlide key={idx}>
                   <Card className="bg-white/90 border border-iov-yellow/60 rounded-2xl shadow-sm">
                     <CardContent className="p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="h-9 w-9 rounded-full bg-iov-yellow-light text-iov-dark-blue font-bold flex items-center justify-center">
-                          {`${sp.nome[0]}${sp.cognome[0]}`.toUpperCase()}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-iov-dark-blue">
-                            {sp.nome} {sp.cognome}
-                          </p>
-                          <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue mt-1`}>
-                            {sp.specializzazione}
-                          </Badge>
-                          <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.ospedale}</p>
-                        </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-iov-dark-blue text-lg">
+                          {sp.nome} {sp.cognome}
+                        </p>
+                        <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue`}>
+                          {sp.specializzazione}
+                        </Badge>
+                        <p className="text-xs text-iov-dark-blue/70">{sp.ospedale}</p>
                       </div>
                       <div className="space-y-1 text-sm text-iov-dark-blue">
                         <p className="flex items-center gap-2">
@@ -251,7 +243,7 @@ const Homepage = () => {
         {/* Diagnosis */}
         <section className={sectionContainerClass}>
           <div className={sectionTitleClass}>
-            <HeartPulse className="h-5 w-5 text-iov-pink-dark" />
+            <ClipboardPlus className="h-5 w-5 text-iov-pink-dark" />
             <span>Diagnosi Oncologica</span>
           </div>
           <div className="mt-3">
@@ -259,7 +251,7 @@ const Homepage = () => {
               <CardContent className="p-4 space-y-3 text-iov-dark-blue">
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-xl bg-iov-pink-light flex items-center justify-center text-iov-pink-dark">
-                    <Heart className="h-5 w-5" />
+                    <Microscope className="h-5 w-5" />
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm text-iov-dark-blue/70">Tipo</p>
@@ -267,19 +259,23 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark`}>
-                    <ActivitySquare className="h-4 w-4" />
-                    <div>
+                  <div
+                    className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark flex-col items-start`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <HeartPulse className="h-4 w-4" />
                       <p className={subtleLabel}>Stadio</p>
-                      <p className="font-semibold">{carta.diagnosiOncologica.stadio}</p>
                     </div>
+                    <p className="font-semibold text-[14px]">{carta.diagnosiOncologica.stadio}</p>
                   </div>
-                  <div className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark`}>
-                    <Baby className="h-4 w-4" />
-                    <div>
-                      <p className={subtleLabel}>Data diagnosi</p>
-                      <p className="font-semibold">{carta.diagnosiOncologica.datadiagnosi}</p>
+                  <div
+                    className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark flex-col items-start`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4" />
+                      <p className={subtleLabel}>Diagnosi</p>
                     </div>
+                    <p className="font-semibold text-[14px]">{carta.diagnosiOncologica.datadiagnosi}</p>
                   </div>
                 </div>
                 {/* <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
@@ -314,7 +310,7 @@ const Homepage = () => {
         {/* Comorbidità & Allergie */}
         <section className={sectionContainerClass}>
           <div className={sectionTitleClass}>
-            <Heart className="h-5 w-5 text-iov-dark-blue" />
+            <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
             <span>Comorbidità</span>
             <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
               {carta.comorbidita.length}
@@ -349,15 +345,10 @@ const Homepage = () => {
                   key={idx}
                   className="flex items-center justify-between bg-white/90 border border-iov-pink/40 rounded-xl px-3 py-2 shadow-sm"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-iov-pink-light flex items-center justify-center text-iov-pink-dark font-bold">
-                      {al.sostanza[0].toUpperCase()}
-                    </div>
                     <div>
                       <p className="font-semibold text-iov-dark-blue">{al.sostanza}</p>
                       <p className="text-[12px] text-iov-dark-blue/70">{al.reazione}</p>
                     </div>
-                  </div>
                   <Badge
                     className={`${tagBase} ${
                       al.gravita === "grave"
