@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { chatService, ChatMessage } from "@/services/chatService";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -100,7 +99,7 @@ const Chatbot = () => {
     } else {
       toast({
         title: "Non disponibile",
-        description: "La sintesi vocale non è supportata dal tuo browser.",
+        description: "La sintesi vocale non Ã¨ supportata dal tuo browser.",
       });
     }
   };
@@ -151,7 +150,7 @@ const Chatbot = () => {
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="fixed top-[70px] bottom-36 left-0 right-0 overflow-y-auto p-4 flex flex-col"
+        className="fixed top-[70px] bottom-36 left-0 right-0 overflow-y-auto p-4 pb-[38px] flex flex-col"
       >
         {/* Spacer to push messages to bottom when few messages */}
         <div className="flex-1" />
@@ -174,25 +173,28 @@ const Chatbot = () => {
                 )}
               >
                 {!isUser && (
-                  <div className="h-9 w-9 rounded-full bg-iov-light-blue/30 border border-iov-light-blue/60 flex items-center justify-center shadow-sm overflow-hidden">
-                    <img
-                      src="/chatbot.png"
-                      alt={`${chatbotInfo.nome} avatar`}
-                      className="h-6 w-6 object-contain"
-                    />
-                  </div>
+                  <img
+                    src="/chatbot.png"
+                    alt={`${chatbotInfo.nome} avatar`}
+                    className="h-16 w-16 object-contain"
+                  />
                 )}
 
                 <div
                   className={cn(
-                    "max-w-[78%] rounded-2xl px-4 py-3 relative group",
+                    "max-w-[78%] min-w-0 rounded-2xl px-4 py-3 relative group",
                     isUser
                       ? "bg-primary text-primary-foreground rounded-br-sm ml-auto"
                       : "bg-card border border-border rounded-bl-sm"
                   )}
                 >
                   <div className={cn("flex items-center gap-3", isUser && "flex-row-reverse")}>
-                    <p className={cn("text-sm whitespace-pre-wrap flex-1", isUser && "text-right")}>
+                    <p
+                      className={cn(
+                        "text-base whitespace-pre-wrap break-words flex-1",
+                        isUser && "text-right"
+                      )}
+                    >
                       {message.content}
                     </p>
                     <button
@@ -246,35 +248,36 @@ const Chatbot = () => {
 
       {/* Input Bar - Fixed */}
       <div className="fixed bottom-20 left-0 right-0 bg-card border-t border-border p-3 z-40">
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 text-muted-foreground"
+            className="shrink-0 text-muted-foreground h-12 w-12"
             onClick={() =>
               toast({
                 title: "Microfono",
-                description: "Funzionalità vocale in arrivo...",
+                description: "FunzionalitÃ  vocale in arrivo...",
               })
             }
           >
-            <Mic className="h-5 w-5" />
+            <Mic className="h-6 w-6" />
           </Button>
-          <Input
+          <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Scrivi un messaggio..."
-            className="flex-1 px-4"
+            className="flex-1 px-4 py-3 min-h-[64px] max-h-32 rounded-lg border border-input bg-background text-base leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
+            rows={2}
           />
           <Button
             size="icon"
             onClick={handleSend}
             disabled={!inputValue.trim() || isLoading}
-            className="shrink-0"
+            className="shrink-0 h-12 w-12"
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-6 w-6" />
           </Button>
         </div>
       </div>
@@ -290,7 +293,7 @@ const Chatbot = () => {
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
-              Scopri cosa può fare {chatbotInfo.nome} per te:
+              Scopri cosa puÃ² fare {chatbotInfo.nome} per te:
             </p>
             {chatbotInfo.funzionalita.map((func, idx) => (
               <Card key={idx} className="bg-muted/50">
@@ -317,3 +320,6 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
+
+
