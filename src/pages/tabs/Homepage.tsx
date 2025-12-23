@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+Ôªøimport { useEffect, useMemo, useState } from "react";
 import { patientService, CartaIdentitaTerapeutica } from "@/services/patientService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +84,7 @@ const Homepage = () => {
             <CreditCard className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">Carta d'Identit‡ Farmacologica</h1>
+            <h1 className="text-lg font-bold text-white">Carta d'Identit√† Farmacologica</h1>
             <p className="text-[12px] text-white/85">Profilo clinico sempre a portata di mano</p>
           </div>
         </div>
@@ -100,36 +100,34 @@ const Homepage = () => {
                 {initials}
               </div>
               <div className="flex-1">
-                <p className="text-xs text-white/80 uppercase font-semibold">Paziente</p>
                 <h2 className="text-xl font-bold leading-snug">
                   {carta.paziente.nome} {carta.paziente.cognome}
                 </h2>
-                <p className="text-[12px] text-white/80">{carta.paziente.codiceFiscale}</p>
               </div>
             </div>
           </div>
           <CardContent className="p-4 space-y-4">
             <div className="grid grid-cols-3 gap-2">
-              <div className={`${pillBase} text-iov-dark-blue`}>
-                <Scale className="h-4 w-4 text-iov-dark-blue/80" />
-                <div>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+                <div className="flex items-center gap-2">
+                  <Scale className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Peso</p>
-                  <p className="font-semibold">{carta.paziente.peso} kg</p>
                 </div>
+                <p className="font-semibold text-[15px]">{carta.paziente.peso} kg</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue`}>
-                <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
-                <div>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+                <div className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Altezza</p>
-                  <p className="font-semibold">{carta.paziente.altezza} cm</p>
                 </div>
+                <p className="font-semibold text-[15px]">{carta.paziente.altezza} cm</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue`}>
-                <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
-                <div>
-                  <p className={subtleLabel}>Data di nascita</p>
-                  <p className="font-semibold">{carta.paziente.dataNascita}</p>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
+                  <p className={subtleLabel}>Nascita</p>
                 </div>
+                <p className="font-semibold text-[15px]">{carta.paziente.dataNascita}</p>
               </div>
             </div>
             <div className="grid gap-2 text-sm">
@@ -284,11 +282,11 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
+                {/* <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
                   <p className={subtleLabel}>Istologia</p>
                   <p className="font-semibold">{carta.diagnosiOncologica.istologia}</p>
                   <p className="text-sm text-iov-dark-blue/80 mt-1">{carta.diagnosiOncologica.note}</p>
-                </div>
+                </div> */}
                 <div className="space-y-2">
                   <p className={subtleLabel}>Terapie in corso</p>
                   <div className="flex flex-col gap-2">
@@ -300,7 +298,7 @@ const Homepage = () => {
                         <Syringe className="h-4 w-4 text-iov-pink-dark mt-0.5" />
                         <div className="flex-1">
                           <p className="font-semibold">{tp.farmaco}</p>
-                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} ï {tp.frequenza}</p>
+                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} ‚Ä¢ {tp.frequenza}</p>
                           {tp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{tp.note}</p>}
                           <p className="text-[11px] text-iov-dark-blue/60 mt-1">Avvio: {tp.dataInizio}</p>
                         </div>
@@ -313,11 +311,11 @@ const Homepage = () => {
           </div>
         </section>
 
-        {/* Comorbidit‡ & Allergie */}
+        {/* Comorbidit√† & Allergie */}
         <section className={sectionContainerClass}>
           <div className={sectionTitleClass}>
             <Heart className="h-5 w-5 text-iov-dark-blue" />
-            <span>Comorbidit‡</span>
+            <span>Comorbidit√†</span>
             <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
               {carta.comorbidita.length}
             </Badge>
