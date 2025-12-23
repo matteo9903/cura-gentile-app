@@ -43,45 +43,45 @@ const Homepage = () => {
   const anagraphicsCardClass =
     "bg-iov-light-blue-light border border-iov-light-blue rounded-xl shadow-sm";
   const anagraphicsDetailBoxClass =
-    "flex items-center gap-2 rounded-lg bg-white/80 border border-iov-light-blue border-l-4 border-iov-yellow px-3 py-2 text-iov-dark-blue shadow-inner";
+    "flex flex-col gap-1 rounded-lg bg-white/80 border border-iov-light-blue border-l-4 border-iov-yellow px-3 py-2 text-iov-dark-blue shadow-inner";
 
-  const accordionItemBaseClass = "border rounded-xl px-4 shadow-sm";
+  const accordionItemBaseClass =
+    "border rounded-xl px-4 shadow-sm bg-iov-light-blue-light";
   const innerCardBaseClass = "bg-white/90 border border-iov-light-blue rounded-lg shadow-sm";
+  const chipBase = "px-3 py-1 rounded-full text-[11px] font-semibold border-0";
 
   const accordionThemes = {
     caregiver: {
-      bg: "bg-iov-light-blue-light/70",
       border: "border-iov-light-blue",
-      accent: "border-iov-light-blue-dark",
-      icon: "text-iov-light-blue-dark",
+      accent: "border-l-iov-light-blue-dark",
+      icon: "text-iov-dark-blue",
+      chip: "bg-iov-light-blue-dark text-iov-dark-blue",
       count: "bg-iov-light-blue-dark text-iov-dark-blue",
     },
     specialisti: {
-      bg: "bg-iov-yellow-light/70",
       border: "border-iov-yellow",
-      accent: "border-iov-yellow-dark",
+      accent: "border-l-iov-yellow-dark",
       icon: "text-iov-yellow-dark",
+      chip: "bg-iov-yellow-dark text-iov-dark-blue",
       count: "bg-iov-yellow-dark text-iov-dark-blue",
     },
     diagnosi: {
-      bg: "bg-iov-pink-light/70",
       border: "border-iov-pink",
-      accent: "border-iov-pink-dark",
+      accent: "border-l-iov-pink-dark",
       icon: "text-iov-pink-dark",
+      chip: "bg-iov-pink-dark text-white",
     },
     comorbidita: {
-      bg: "bg-iov-light-blue/60",
       border: "border-iov-light-blue",
-      accent: "border-iov-light-blue-dark",
-      icon: "text-iov-light-blue-dark",
+      accent: "border-l-iov-light-blue-dark",
+      icon: "text-iov-dark-blue",
       count: "bg-iov-light-blue-dark text-iov-dark-blue",
     },
     allergie: {
-      bg: "bg-iov-gray-light",
       border: "border-iov-pink",
-      accent: "border-iov-veneto-red",
-      icon: "text-iov-veneto-red",
-      count: "bg-iov-veneto-red text-white",
+      accent: "border-l-iov-pink-dark",
+      icon: "text-iov-pink-dark",
+      count: "bg-iov-pink-dark text-white",
     },
   } as const;
 
@@ -90,6 +90,12 @@ const Homepage = () => {
   const diagnosiTheme = accordionThemes.diagnosi;
   const comorbiditaTheme = accordionThemes.comorbidita;
   const allergieTheme = accordionThemes.allergie;
+  const allergyBorderClass = (gravita: "lieve" | "moderata" | "grave") =>
+    gravita === "grave"
+      ? "border-l-destructive"
+      : gravita === "moderata"
+        ? "border-l-primary"
+        : "border-l-secondary";
 
   if (isLoading || !carta) {
     return (
@@ -141,17 +147,17 @@ const Homepage = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center p-3 bg-iov-light-blue-light rounded-lg shadow-inner text-iov-dark-blue border border-white/40">
+              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
                 <Scale className="h-5 w-5 mb-1" />
                 <span className="text-[11px] uppercase tracking-wide">Peso</span>
                 <span className="font-semibold">{carta.paziente.peso} kg</span>
               </div>
-              <div className="flex flex-col items-center p-3 bg-iov-light-blue-light rounded-lg shadow-inner text-iov-dark-blue border border-white/40">
+              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
                 <Ruler className="h-5 w-5 mb-1" />
                 <span className="text-[11px] uppercase tracking-wide">Altezza</span>
                 <span className="font-semibold">{carta.paziente.altezza} cm</span>
               </div>
-              <div className="flex flex-col items-center p-3 bg-iov-light-blue-light rounded-lg shadow-inner text-iov-dark-blue border border-white/40">
+              <div className="flex flex-col items-center p-3 bg-white/85 rounded-lg shadow-inner text-iov-dark-blue border border-iov-light-blue">
                 <CalendarDays className="h-5 w-5 mb-1" />
                 <span className="text-[11px] uppercase tracking-wide">Nascita</span>
                 <span className="font-semibold">{carta.paziente.dataNascita}</span>
@@ -159,16 +165,24 @@ const Homepage = () => {
             </div>
             <div className="grid gap-2 text-sm">
               <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase">CF</span>
-                <span className="font-mono text-sm">{carta.paziente.codiceFiscale}</span>
+                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
+                  Codice Fiscale
+                </span>
+                <span className="font-mono text-sm break-words">
+                  <strong>{carta.paziente.codiceFiscale}</strong>
+                </span>
               </div>
               <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase">TS</span>
-                <span className="font-mono text-sm">800 123 456 789012</span>
+                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
+                  Tessera Sanitaria
+                </span>
+                <span className="font-mono text-sm break-words"><strong>800 123 456 789012</strong></span>
               </div>
               <div className={anagraphicsDetailBoxClass}>
-                <span className="text-[11px] font-semibold uppercase">Residenza</span>
-                <span className="text-sm leading-snug">{carta.paziente.indirizzo}</span>
+                <span className="text-[11px] font-semibold uppercase text-iov-dark-blue/70">
+                  Residenza
+                </span>
+                <span className="text-sm font-medium leading-snug break-words">{carta.paziente.indirizzo}</span>
               </div>
             </div>
           </CardContent>
@@ -179,13 +193,13 @@ const Homepage = () => {
           {/* Caregiver */}
           <AccordionItem
             value="caregiver"
-            className={`${accordionItemBaseClass} ${caregiverTheme.bg} ${caregiverTheme.border}`}
+            className={`${accordionItemBaseClass} ${caregiverTheme.border}`}
           >
             <AccordionTrigger className="py-3 text-iov-dark-blue">
               <div className="flex items-center gap-2">
                 <Users className={`h-5 w-5 ${caregiverTheme.icon}`} />
                 <span>Contatti Caregiver</span>
-                <Badge className={`ml-2 ${caregiverTheme.count}`}>
+                <Badge className={`ml-2 ${chipBase} ${caregiverTheme.count}`}>
                   {carta.caregiver.length}
                 </Badge>
               </div>
@@ -205,7 +219,7 @@ const Homepage = () => {
                         <p className="font-semibold">
                           {cg.nome} {cg.cognome}
                         </p>
-                        <Badge className="bg-iov-yellow text-iov-dark-blue mb-1">
+                        <Badge className={`mb-1 ${chipBase} ${caregiverTheme.chip}`}>
                           {cg.relazione}
                         </Badge>
                         <div className="space-y-1 text-sm">
@@ -227,13 +241,13 @@ const Homepage = () => {
           {/* Specialisti */}
           <AccordionItem
             value="specialisti"
-            className={`${accordionItemBaseClass} ${specialistiTheme.bg} ${specialistiTheme.border}`}
+            className={`${accordionItemBaseClass} ${specialistiTheme.border}`}
           >
             <AccordionTrigger className="py-3 text-iov-dark-blue">
               <div className="flex items-center gap-2">
                 <Stethoscope className={`h-5 w-5 ${specialistiTheme.icon}`} />
                 <span>Contatti Specialisti</span>
-                <Badge className={`ml-2 ${specialistiTheme.count}`}>
+                <Badge className={`ml-2 ${chipBase} ${specialistiTheme.count}`}>
                   {carta.specialisti.length}
                 </Badge>
               </div>
@@ -253,7 +267,7 @@ const Homepage = () => {
                         <p className="font-semibold">
                           {sp.nome} {sp.cognome}
                         </p>
-                        <Badge className="bg-iov-light-blue text-iov-dark-blue border border-iov-dark-blue mb-1">
+                        <Badge className={`mb-1 ${chipBase} ${specialistiTheme.chip}`}>
                           {sp.specializzazione}
                         </Badge>
                         <p className="text-xs text-muted-foreground mb-2 leading-snug">
@@ -278,7 +292,7 @@ const Homepage = () => {
           {/* Diagnosi Oncologica - Simplified */}
           <AccordionItem
             value="diagnosi"
-            className={`${accordionItemBaseClass} ${diagnosiTheme.bg} ${diagnosiTheme.border}`}
+            className={`${accordionItemBaseClass} ${diagnosiTheme.border}`}
           >
             <AccordionTrigger className="py-3 text-iov-dark-blue">
               <div className="flex items-center gap-2">
@@ -292,7 +306,7 @@ const Homepage = () => {
                   {/* Tumor info */}
                   <div>
                     <p className="font-semibold">{carta.diagnosiOncologica.tipo}</p>
-                    <Badge variant="outline" className="mt-1">
+                    <Badge className={`mt-1 ${chipBase} ${diagnosiTheme.chip}`}>
                       Stadio: {carta.diagnosiOncologica.stadio}
                     </Badge>
                   </div>
@@ -320,13 +334,13 @@ const Homepage = () => {
           {/* Comorbidita */}
           <AccordionItem
             value="comorbidita"
-            className={`${accordionItemBaseClass} ${comorbiditaTheme.bg} ${comorbiditaTheme.border}`}
+            className={`${accordionItemBaseClass} ${comorbiditaTheme.border}`}
           >
             <AccordionTrigger className="py-3 text-iov-dark-blue">
               <div className="flex items-center gap-2">
                 <Heart className={`h-5 w-5 ${comorbiditaTheme.icon}`} />
                 <span>Comorbidita</span>
-                <Badge className={`ml-2 ${comorbiditaTheme.count}`}>
+                <Badge className={`ml-2 ${chipBase} ${comorbiditaTheme.count}`}>
                   {carta.comorbidita.length}
                 </Badge>
               </div>
@@ -350,13 +364,13 @@ const Homepage = () => {
           {/* Allergie */}
           <AccordionItem
             value="allergie"
-            className={`${accordionItemBaseClass} ${allergieTheme.bg} ${allergieTheme.border}`}
+            className={`${accordionItemBaseClass} ${allergieTheme.border}`}
           >
             <AccordionTrigger className="py-3 text-iov-dark-blue">
               <div className="flex items-center gap-2">
                 <AlertTriangle className={`h-5 w-5 ${allergieTheme.icon}`} />
                 <span>Allergie</span>
-                <Badge className={`ml-2 ${allergieTheme.count}`}>
+                <Badge className={`ml-2 ${chipBase} ${allergieTheme.count}`}>
                   {carta.allergie.length}
                 </Badge>
               </div>
@@ -364,7 +378,7 @@ const Homepage = () => {
             <AccordionContent>
               <div className="space-y-2">
                 {carta.allergie.map((al, idx) => (
-                  <Card key={idx} className={`${innerCardBaseClass} border-l-4 ${allergieTheme.accent}`}>
+                  <Card key={idx} className={`${innerCardBaseClass} border-l-4 ${allergyBorderClass(al.gravita)}`}>
                     <CardContent className="p-3">
                       <div className="flex items-center justify-between">
                         <p className="font-semibold">{al.sostanza}</p>

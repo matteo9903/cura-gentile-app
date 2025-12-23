@@ -39,9 +39,15 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
   useEffect(() => {
     const loadNoteStrutturate = async () => {
-      const data = await diaryService.getNoteStrutturate();
-      setNoteStrutturate(data);
-      setDomandeSpecialista(data.domandeSpecialista);
+      try {
+        const data = await diaryService.getNoteStrutturate();
+        setNoteStrutturate(data);
+        setDomandeSpecialista(data?.domandeSpecialista ?? "");
+      } catch (err) {
+        console.error("Errore caricamento note strutturate", err);
+        setNoteStrutturate({ altriFarmaci: [], domandeSpecialista: "" });
+        setDomandeSpecialista("");
+      }
     };
     loadNoteStrutturate();
   }, []);
@@ -116,9 +122,10 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
   };
 
   // Group calendar days into weeks
+  const safeCalendario = Array.isArray(calendario) ? calendario : [];
   const groupedDays = [];
-  for (let i = 0; i < calendario.length; i += 7) {
-    groupedDays.push(calendario.slice(i, i + 7));
+  for (let i = 0; i < safeCalendario.length; i += 7) {
+    groupedDays.push(safeCalendario.slice(i, i + 7));
   }
 
   return (
@@ -170,6 +177,13 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                       <Calendar className="h-4 w-4 text-secondary-foreground shrink-0" />
                       <span className="text-muted-foreground">Ciclo: </span>
                       <span className="font-medium">{farmaco.ciclo.giorniOn} giorni sì / {farmaco.ciclo.giorniOff} giorni no</span>
+                    </div>
+                  )}
+                  {farmaco.tipo === 'giornaliero' && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Calendar className="h-4 w-4 text-secondary-foreground shrink-0" />
+                      <span className="text-muted-foreground">Ciclo: </span>
+                      <span className="font-medium">Ogni giorno</span>
                     </div>
                   )}
                 </div>

@@ -1,19 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ClipboardList, Clock, Check, ChevronDown, ChevronRight, History } from "lucide-react";
+import { ArrowLeft, ClipboardList, Clock, Check, History } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Questionario, CompilazioneQuestionario, diaryService } from "@/services/diaryService";
-import { cn } from "@/lib/utils";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -28,7 +25,8 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
   const [risposte, setRisposte] = useState<Record<string, string | number>>({});
   const [showSubmit, setShowSubmit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [historyExpanded, setHistoryExpanded] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedCompilazione, setSelectedCompilazione] = useState<CompilazioneQuestionario | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +78,12 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
     return new Date(dateStr).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" });
   };
 
+  const getQuestionarioForCompilazione = (comp: CompilazioneQuestionario) =>
+    questionari.find((q) => q.id === comp.questionarioId);
+
+  const getRispostaForDomanda = (comp: CompilazioneQuestionario, domandaId: string) =>
+    comp.risposte.find((r) => r.domandaId === domandaId)?.risposta;
+
   // Group compilations by year
   const compilazioniByYear = compilazioni.reduce((acc, c) => {
     const year = new Date(c.dataCompilazione).getFullYear();
@@ -96,8 +100,8 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
           modules={[Pagination]}
           pagination={{ clickable: true }}
           spaceBetween={12}
-          slidesPerView={1.1}
-          className="!pb-8"
+          slidesPerView={1}
+          className="!pb-8 overflow-hidden"
         >
           {daCompilare.map((questionario) => (
             <SwiperSlide key={questionario.id}>
@@ -140,46 +144,115 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
         </Card>
       )}
 
-      {/* Previous Compilations - Collapsible */}
+      {/* Previous Compilations - Button + Modal */}
       {compilazioni.length > 0 && (
-        <Collapsible open={historyExpanded} onOpenChange={setHistoryExpanded}>
-          <Card>
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer py-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <History className="h-4 w-4 text-primary" />
-                    <CardTitle className="text-sm font-medium">Compilazioni precedenti</CardTitle>
-                    <span className="text-xs text-muted-foreground">({compilazioni.length})</span>
-                  </div>
-                  {historyExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                </div>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="pt-0 space-y-4">
-                {Object.entries(compilazioniByYear)
-                  .sort(([a], [b]) => Number(b) - Number(a))
-                  .map(([year, comps]) => (
-                    <div key={year}>
-                      <p className="text-xs font-semibold text-muted-foreground mb-2">{year}</p>
-                      <div className="space-y-2">
-                        {comps.map((comp) => (
-                          <div key={comp.id} className="bg-muted/50 p-3 rounded-lg flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium">{comp.titoloQuestionario}</p>
-                              <p className="text-xs text-muted-foreground">{formatDate(comp.dataCompilazione)}</p>
-                            </div>
-                            <Check className="h-4 w-4 text-iov-green" />
-                          </div>
-                        ))}
+        <>
+          <Button
+            variant="ghost"
+            className="w-full justify-between px-0 py-3 hover:bg-transparent active:bg-transparent active:opacity-70"
+            onClick={() => setHistoryOpen(true)}
+          >
+            <span className="flex items-center gap-2">
+              <History className="h-4 w-4 text-primary" />
+              <span>Compilazioni precedenti</span>
+            </span>
+            <span className="text-xs text-muted-foreground">({compilazioni.length})</span>
+          </Button>
+
+          <Dialog
+            open={historyOpen}
+            onOpenChange={(open) => {
+              setHistoryOpen(open);
+              if (!open) setSelectedCompilazione(null);
+            }}
+          >
+            <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
+              <DialogHeader className="shrink-0">
+                <DialogTitle>
+                  {selectedCompilazione ? "Risposte questionario" : "Compilazioni precedenti"}
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="flex-1 overflow-y-auto py-4 space-y-4">
+                {!selectedCompilazione ? (
+                  Object.entries(compilazioniByYear)
+                    .sort(([a], [b]) => Number(b) - Number(a))
+                    .map(([year, comps]) => (
+                      <div key={year} className="space-y-2">
+                        <p className="text-xs font-semibold text-muted-foreground">{year}</p>
+                        <div className="space-y-2">
+                          {comps.map((comp) => (
+                            <Button
+                              key={comp.id}
+                              variant="ghost"
+                              className="w-full h-auto justify-between bg-muted/40 hover:bg-muted/70 p-3 rounded-lg"
+                              onClick={() => setSelectedCompilazione(comp)}
+                            >
+                              <span className="text-left">
+                                <span className="block text-sm font-medium">{comp.titoloQuestionario}</span>
+                                <span className="block text-xs text-muted-foreground">{formatDate(comp.dataCompilazione)}</span>
+                              </span>
+                              <Check className="h-4 w-4 text-iov-green shrink-0" />
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => setSelectedCompilazione(null)}
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Indietro
+                      </Button>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(selectedCompilazione.dataCompilazione)}
+                        </p>
                       </div>
                     </div>
-                  ))}
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
+
+                    <div className="space-y-2">
+                      <h3 className="text-base font-semibold">{selectedCompilazione.titoloQuestionario}</h3>
+                      {(() => {
+                        const q = getQuestionarioForCompilazione(selectedCompilazione);
+                        if (!q) {
+                          return (
+                            <p className="text-sm text-muted-foreground">
+                              Dettagli del questionario non disponibili.
+                            </p>
+                          );
+                        }
+                        return (
+                          <div className="space-y-3">
+                            {q.domande.map((domanda, idx) => {
+                              const risposta = getRispostaForDomanda(selectedCompilazione, domanda.id);
+                              return (
+                                <div key={domanda.id} className="bg-muted/40 p-3 rounded-lg space-y-1">
+                                  <p className="text-sm font-medium">
+                                    {idx + 1}. {domanda.testo}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground break-words">
+                                    {risposta !== undefined && risposta !== "" ? String(risposta) : "—"}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
 
       {/* Questionnaire Modal - Fullscreen */}

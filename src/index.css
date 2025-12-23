@@ -200,8 +200,26 @@
   .border-iov-pink {
     border-color: hsl(var(--iov-pink));
   }
+  .border-iov-light-blue-dark {
+    border-color: hsl(var(--iov-light-blue-dark));
+  }
+  .border-iov-yellow-dark {
+    border-color: hsl(var(--iov-yellow-dark));
+  }
+  .border-iov-pink-dark {
+    border-color: hsl(var(--iov-pink-dark));
+  }
   .border-iov-veneto-red {
     border-color: hsl(var(--iov-veneto-red));
+  }
+  .border-l-iov-light-blue-dark {
+    border-left-color: hsl(var(--iov-light-blue-dark));
+  }
+  .border-l-iov-yellow-dark {
+    border-left-color: hsl(var(--iov-yellow-dark));
+  }
+  .border-l-iov-pink-dark {
+    border-left-color: hsl(var(--iov-pink-dark));
   }
   .bg-iov-dark-blue {
     background-color: hsl(var(--iov-dark-blue));
@@ -211,6 +229,15 @@
   }
   .text-iov-dark-blue {
     color: hsl(var(--iov-dark-blue));
+  }
+  .text-iov-light-blue-dark {
+    color: hsl(var(--iov-light-blue-dark));
+  }
+  .text-iov-yellow-dark {
+    color: hsl(var(--iov-yellow-dark));
+  }
+  .text-iov-pink-dark {
+    color: hsl(var(--iov-pink-dark));
   }
   .text-iov-gray-text {
     color: hsl(var(--iov-gray-text));
@@ -232,6 +259,15 @@
   }
   .bg-iov-light-blue-dark {
     background-color: hsl(var(--iov-light-blue-dark));
+  }
+  .bg-iov-yellow {
+    background-color: hsl(var(--iov-yellow));
+  }
+  .bg-iov-yellow-light {
+    background-color: hsl(var(--iov-yellow-light));
+  }
+  .bg-iov-yellow-dark {
+    background-color: hsl(var(--iov-yellow-dark));
   }
   .bg-iov-pink {
     background-color: hsl(var(--iov-pink));
