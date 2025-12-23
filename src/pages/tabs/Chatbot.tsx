@@ -191,13 +191,22 @@ const Chatbot = () => {
                       : "bg-card border border-border rounded-bl-sm"
                   )}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  <div
-                    className={cn(
-                      "flex items-center gap-2 mt-1",
-                      isUser ? "justify-end" : "justify-start"
-                    )}
-                  >
+                  <div className={cn("flex items-center gap-3", isUser && "flex-row-reverse")}>
+                    <p className={cn("text-sm whitespace-pre-wrap flex-1", isUser && "text-right")}>
+                      {message.content}
+                    </p>
+                    <button
+                      onClick={() => handleVoice(message.content)}
+                      className={cn(
+                        "shrink-0 transition-colors flex items-center justify-center",
+                        isUser ? "text-white/90 hover:text-white" : "text-black/80 hover:text-black"
+                      )}
+                      aria-label="Ascolta il messaggio"
+                    >
+                      <Volume2 className="h-5 w-5" strokeWidth={2.5} />
+                    </button>
+                  </div>
+                  <div className={cn("mt-2", isUser ? "text-right" : "text-left")}>
                     <span
                       className={cn(
                         "text-xs",
@@ -206,17 +215,6 @@ const Chatbot = () => {
                     >
                       {formatTime(message.timestamp)}
                     </span>
-                    <button
-                      onClick={() => handleVoice(message.content)}
-                      className={cn(
-                        "opacity-0 group-hover:opacity-100 transition-opacity",
-                        isUser
-                          ? "text-primary-foreground/70 hover:text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <Volume2 className="h-3 w-3" />
-                    </button>
                   </div>
                 </div>
 
