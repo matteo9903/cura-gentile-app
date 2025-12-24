@@ -58,9 +58,9 @@ const PatientDiary = () => {
         <header 
           className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
           style={{
-            paddingTop: "var(--safe-area-top)",
-            paddingBottom: "var(--safe-area-bottom)",
-            minHeight: "80px",
+            paddingTop: "calc(var(--safe-area-top)/2)",
+            paddingBottom: "calc(var(--safe-area-top)/2)",
+            minHeight: "70px",
           }}
           >
           <div className="flex items-center gap-3">
@@ -84,15 +84,15 @@ const PatientDiary = () => {
       className="min-h-screen bg-background"
       style={{
         paddingTop: "var(--safe-area-top)",
-        paddingBottom: "var(--safe-area-bottom)",
+        paddingBottom: "var(--safe-area-top)",
       }}>
       {/* Header - Fixed, uniform height with title */}
       <header
         className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
         style={{
-          paddingTop: "var(--safe-area-top)",
-          paddingBottom: "var(--safe-area-bottom)",
-          minHeight: "80px",
+          paddingTop: "calc(var(--safe-area-top)/2)",
+          paddingBottom: "calc(var(--safe-area-top)/2)",
+          minHeight: "70px",
         }}
       >
         <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ const PatientDiary = () => {
       </header>
 
       {/* Content */}
-      <div className="pt-[94px] pb-24 px-4 space-y-6">
+      <div className="pt-[75px] pb-4 px-4 space-y-6">
         {/* 1. Assunzioni di oggi - First section */}
         <section>
           <div className="flex items-center gap-2 mb-4">

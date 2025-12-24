@@ -15,8 +15,34 @@ import NotFound from "./pages/NotFound";
 import { PushNotificationSchema, PushNotifications, ActionPerformed, Token } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { useEffect } from 'react';
+
 
 const queryClient = new QueryClient();
+
+// Initialize Status Bar for mobile
+const initializeStatusBar = async () => {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      // Set status bar style
+      await StatusBar.setStyle({ style: Style.Default});
+      
+      // Set status bar background color (matching your header color)
+      // await StatusBar.setBackgroundColor({ color: '#5B8FA3' }); // Adjust to match your blue header
+      
+      // Show the status bar
+      await StatusBar.show();
+      
+      // Enable overlay mode to prevent content overlap
+      await StatusBar.setOverlaysWebView({ overlay: false });
+      
+      console.log('Status bar initialized');
+    } catch (error) {
+      console.error('Error initializing status bar:', error);
+    }
+  }
+};
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -87,7 +113,13 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
+const App = () => {
+  // Initialize status bar on app load
+  useEffect(() => {
+    initializeStatusBar();
+  }, []);
+
+  return(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
@@ -99,6 +131,7 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+)
+};
 
 export default App;

@@ -110,9 +110,9 @@ const Profile = () => {
       <header 
         className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
         style={{
-          paddingTop: "var(--safe-area-top)",
-          paddingBottom: "var(--safe-area-bottom)",
-          minHeight: "80px",
+          paddingTop: "calc(var(--safe-area-top)/2)",
+          paddingBottom: "calc(var(--safe-area-top)/2)",
+          minHeight: "70px",
         }}
       >
         <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ const Profile = () => {
       </header>
 
       {/* Content */}
-      <div className="pt-[94px] p-4 space-y-4 pb-24">
+      <div className="pt-[75px] p-4 space-y-4 pb-4">
         {/* User Card */}
         <Card>
           <CardContent className="p-6">

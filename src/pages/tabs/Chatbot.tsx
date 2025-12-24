@@ -123,9 +123,9 @@ const Chatbot = () => {
       <header
         className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
         style={{
-          paddingTop: "var(--safe-area-top)",
-          paddingBottom: "var(--safe-area-bottom)",
-          minHeight: "80px",
+          paddingTop: "calc(var(--safe-area-top)/2)",
+          paddingBottom: "calc(var(--safe-area-top)/2)",
+          minHeight: "70px",
         }}
       >
         <div className="flex items-center gap-3">
@@ -206,13 +206,13 @@ const Chatbot = () => {
                   )}
                 >
                   <div className={cn("flex items-center gap-3", isUser && "flex-row-reverse")}>
-                    <p className="text-lg whitespace-pre-wrap break-words flex-1 text-left">
+                    <p className="text-md whitespace-pre-wrap break-words flex-1 text-left">
                       {message.content}
                     </p>
                     <button
                       onClick={() => handleVoice(message.content)}
                       className={cn(
-                        "shrink-0 transition-colors flex items-center justify-center",
+                        "shrink-0 transition-colors flex items-center justify-center text-md",
                         isUser ? "text-white/90 hover:text-white" : "text-black/80 hover:text-black"
                       )}
                       aria-label="Ascolta il messaggio"
@@ -262,14 +262,14 @@ const Chatbot = () => {
       <div
         className="fixed left-0 right-0 bg-card border-t border-border p-3 z-40 shadow-md"
         style={{
-          bottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom))",
+          bottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom) - 5px)",
         }}
       >
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            className="shrink-0 text-muted-foreground h-14 w-14"
+            className="shrink-0 text-muted-foreground h-12 w-12"
             onClick={() =>
               toast({
                 title: "Microfono",
@@ -277,14 +277,14 @@ const Chatbot = () => {
               })
             }
           >
-            <Mic style={{height: '1.7rem', width: '1.7rem'}} />
+            <Mic style={{height: '1.5rem', width: '1.5rem'}} />
           </Button>
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Scrivi un messaggio..."
-            className="flex-1 px-4 py-3 min-h-[64px] max-h-32 rounded-lg border border-input bg-background text-lg leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-lg"
+            placeholder="Messaggio..."
+            className="flex-1 px-4 py-3 min-h-[32px] max-h-32 rounded-lg border border-input bg-background text-lg leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-lg"
             disabled={isLoading}
             rows={1}
           />
@@ -292,9 +292,9 @@ const Chatbot = () => {
             size="icon"
             onClick={handleSend}
             disabled={!inputValue.trim() || isLoading}
-            className="shrink-0 h-14 w-14"
+            className="shrink-0 h-12 w-12"
           >
-            <Send style={{height: '1.7rem', width: '1.7rem'}} />
+            <Send style={{height: '1.5rem', width: '1.5rem'}} />
           </Button>
         </div>
       </div>
