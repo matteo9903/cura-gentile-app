@@ -111,7 +111,11 @@ const PatientDiary = () => {
       </header>
 
       {/* Content */}
-      <div className="pt-[75px] pb-4 px-4 space-y-6">
+      <div className="pb-4 px-4 space-y-6"
+        style={{
+          paddingTop: 'calc(70px + var(--safe-area-top)/2)'
+        }}
+      >
         {/* 1. Assunzioni di oggi - First section */}
         <section>
           <div className="flex items-center gap-2 mb-4">

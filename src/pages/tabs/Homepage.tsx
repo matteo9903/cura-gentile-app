@@ -119,7 +119,11 @@ const Homepage = () => {
       </header>
 
       {/* Content */}
-      <div className="pt-[75px] p-4 pb-4 space-y-4">
+      <div className="p-4 pb-4 space-y-4"
+        style={{
+          paddingTop: 'calc(70px + var(--safe-area-top)/2)'
+        }}
+      >
         {/* Identity Card */}
         <Card className="bg-white/90 border-none shadow-xl rounded-3xl overflow-hidden">
           <div className="bg-iov-gradient p-4 pb-5 text-white">

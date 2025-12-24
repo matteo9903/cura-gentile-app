@@ -131,7 +131,11 @@ const Profile = () => {
       </header>
 
       {/* Content */}
-      <div className="pt-[75px] p-4 space-y-4 pb-4">
+      <div className="p-4 space-y-4 pb-4"
+        style={{
+          paddingTop: 'calc(70px + var(--safe-area-top)/2)'
+        }}
+      >
         {/* User Card */}
         <Card>
           <CardContent className="p-6">
