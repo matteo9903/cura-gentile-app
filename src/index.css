@@ -68,6 +68,11 @@
     --tab-bar: 0 0% 100%;
     --tab-inactive: 212 20% 60%;
     --tab-active: 212 52% 25%;
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    /* UI chrome sizes */
+    --tab-bar-height: 78px;
+    --chat-input-height: 104px;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 212 52% 20%;
@@ -153,6 +158,13 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
+  @supports (padding: max(0px)) {
+    :root {
+      --safe-area-top: max(env(safe-area-inset-top), 0px);
+      --safe-area-bottom: max(env(safe-area-inset-bottom), 0px);
+    }
+  }
+
   /* Mobile app styling */
   html, body, #root {
     @apply h-full;
@@ -161,11 +173,11 @@
 
   /* Safe area padding for notched devices */
   .safe-area-top {
-    padding-top: env(safe-area-inset-top);
+    padding-top: var(--safe-area-top);
   }
 
   .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: var(--safe-area-bottom);
   }
 }
 

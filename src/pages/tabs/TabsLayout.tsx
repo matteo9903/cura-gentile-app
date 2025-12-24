@@ -16,12 +16,17 @@ const TabsLayout = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Page Content */}
-      <main className="pb-20">
+      <main
+        style={{ paddingBottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom))" }}
+      >
         <Outlet />
       </main>
 
       {/* Tab Bar - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-tab-bar border-t border-border safe-area-bottom z-50">
+      <nav
+        className="fixed bottom-0 left-0 right-0 bg-tab-bar border-t border-border safe-area-bottom z-50"
+        style={{ minHeight: "var(--tab-bar-height)" }}
+      >
         <div className="flex items-center justify-around py-1">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;

@@ -99,9 +99,22 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background safe-area-top">
+    <div 
+      className="min-h-screen bg-background"
+      style={{
+        paddingTop: "var(--safe-area-top)",
+        paddingBottom: "var(--safe-area-bottom)",
+      }}
+    >
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center z-40 safe-area-top border-b border-white/20 shadow-lg">
+      <header 
+        className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
+        style={{
+          paddingTop: "var(--safe-area-top)",
+          paddingBottom: "var(--safe-area-bottom)",
+          minHeight: "80px",
+        }}
+      >
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
             <User className="h-6 w-6 text-white" />

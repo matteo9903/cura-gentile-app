@@ -112,9 +112,22 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background safe-area-top">
+    <div
+      className="min-h-screen bg-background"
+      style={{
+        paddingTop: "var(--safe-area-top)",
+        paddingBottom: "var(--safe-area-bottom)",
+      }}
+    >
       {/* Header - Fixed, uniform height */}
-      <header className="fixed top-0 left-0 right-0 h-[70px] bg-iov-gradient text-white px-4 flex items-center justify-between z-40 safe-area-top border-b border-white/20 shadow-lg">
+      <header
+        className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
+        style={{
+          paddingTop: "var(--safe-area-top)",
+          paddingBottom: "var(--safe-area-bottom)",
+          minHeight: "80px",
+        }}
+      >
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
             <Bot className="h-7 w-7 text-white" />
@@ -150,7 +163,11 @@ const Chatbot = () => {
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="fixed top-[70px] bottom-36 left-0 right-0 overflow-y-auto p-4 pb-[38px] flex flex-col"
+        className="fixed left-0 right-0 overflow-y-auto px-4 pb-6 flex flex-col"
+        style={{
+          top: "calc(82px + var(--safe-area-top))",
+          bottom: "calc(var(--tab-bar-height) + var(--chat-input-height) + var(--safe-area-bottom))",
+        }}
       >
         {/* Spacer to push messages to bottom when few messages */}
         <div className="flex-1" />
@@ -242,7 +259,12 @@ const Chatbot = () => {
       </div>
 
       {/* Input Bar - Fixed */}
-      <div className="fixed bottom-20 left-0 right-0 bg-card border-t border-border p-3 z-40">
+      <div
+        className="fixed left-0 right-0 bg-card border-t border-border p-3 z-40 shadow-md"
+        style={{
+          bottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom))",
+        }}
+      >
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -264,7 +286,7 @@ const Chatbot = () => {
             placeholder="Scrivi un messaggio..."
             className="flex-1 px-4 py-3 min-h-[64px] max-h-32 rounded-lg border border-input bg-background text-lg leading-relaxed resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-lg"
             disabled={isLoading}
-            rows={2}
+            rows={1}
           />
           <Button
             size="icon"
