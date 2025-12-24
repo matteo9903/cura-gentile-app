@@ -110,7 +110,7 @@ const Profile = () => {
             <h1 className="text-lg font-bold text-white">
               Il mio profilo
             </h1>
-            <p className="text-xs text-white/80">
+            <p className="text-[14px] text-white/80">
               Gestisci il tuo account 
             </p>
           </div>

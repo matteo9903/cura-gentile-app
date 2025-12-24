@@ -87,7 +87,7 @@ const Homepage = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold text-white">Carta d'Identità Farmacologica</h1>
-            <p className="text-[12px] text-white/85">Profilo clinico sempre a portata di mano</p>
+            <p className="text-[14px] text-white/85">Profilo clinico a portata di mano</p>
           </div>
         </div>
       </header>

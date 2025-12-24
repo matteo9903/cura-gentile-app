@@ -78,7 +78,7 @@ const PatientDiary = () => {
             <h1 className="text-lg font-bold text-white">
               Diario paziente
             </h1>
-            <p className="text-xs text-white/80">
+            <p className="text-[14px] text-white/80">
               Monitora il tuo piano terapeutico
             </p>
           </div>

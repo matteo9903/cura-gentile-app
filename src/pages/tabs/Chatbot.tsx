@@ -126,7 +126,7 @@ const Chatbot = () => {
             <div className="text-xs text-white/80">
               <div className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
-                <span className="text-xs text-white/80">online</span>
+                <span className="text-[14px] text-white/80">ONLINE</span>
               </div>
             </div>
             {/* <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ const Chatbot = () => {
                   <img
                     src="/chatbot.png"
                     alt={`${chatbotInfo.nome} avatar`}
-                    className="h-16 w-16 object-contain"
+                    className="h-14 w-14 object-contain"
                   />
                 )}
 
