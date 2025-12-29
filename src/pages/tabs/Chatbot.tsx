@@ -164,7 +164,7 @@ const Chatbot = () => {
                 <div className="flex items-center gap-1">
                 {/* <span className={"w-2 h-2 rounded-full animate-pulse-soft" + (isOnline ? " bg-iov-green" : " bg-red-500")} />
                 <span className="text-[14px] text-white/80">{isOnline ? "ONLINE" : "OFFLINE"}</span> */}
-                <span className={"w-2 h-2 rounded-full animate-pulse-soft" + "bg-iov-green"}/>
+                <span className={"w-2 h-2 rounded-full animate-pulse-soft" + " bg-iov-green"}/>
                 <span className="text-[14px] text-white/80">{"ONLINE"}</span>
                 </div>
             </div>

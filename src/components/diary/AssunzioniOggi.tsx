@@ -6,7 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Pill, Clock, Check, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AssunzioneGiornaliera, diaryService } from "@/services/diaryService";
@@ -20,48 +29,45 @@ interface AssunzioniOggiProps {
 }
 
 const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
-  const [actionModal, setActionModal] = useState<{ assunzione: AssunzioneGiornaliera; type: 'conferma' | 'salta' } | null>(null);
-  const [effettiCollaterali, setEffettiCollaterali] = useState("");
+  const [skipModalAssunzione, setSkipModalAssunzione] = useState<AssunzioneGiornaliera | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ assunzione: AssunzioneGiornaliera; type: "conferma" | "salta" } | null>(null);
   const [motivo, setMotivo] = useState("");
-  const [intensita, setIntensita] = useState<"bassa" | "media" | "alta">("media");
   const [isLoading, setIsLoading] = useState(false);
 
-  const pendingAssunzioni = assunzioni.filter(a => a.stato === 'da_confermare');
+  const handleConfirmAction = async () => {
+    if (!confirmAction) return;
+    const currentAction = confirmAction;
 
-  const resetForm = () => {
-    setEffettiCollaterali("");
-    setMotivo("");
-    setIntensita("media");
-    setActionModal(null);
-  };
-
-  const handleAction = async () => {
-    if (!actionModal) return;
     setIsLoading(true);
     try {
-      if (actionModal.type === 'conferma') {
-        await diaryService.confermaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita);
+      if (currentAction.type === "conferma") {
+        await diaryService.confermaAssunzione(currentAction.assunzione.id, "", "media");
         toast({
           title: "Assunzione confermata",
-          description: `${actionModal.assunzione.farmacoNome} alle ${actionModal.assunzione.orario}`,
+          description: `${currentAction.assunzione.farmacoNome} alle ${currentAction.assunzione.orario}`,
           className: "bg-iov-green text-white border-iov-green",
         });
       } else {
-        await diaryService.saltaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita, motivo);
+        await diaryService.saltaAssunzione(currentAction.assunzione.id, "", "media", motivo || undefined);
         toast({
           title: "Assunzione saltata",
-          description: `${actionModal.assunzione.farmacoNome} alle ${actionModal.assunzione.orario}`,
+          description: `${currentAction.assunzione.farmacoNome} alle ${currentAction.assunzione.orario}`,
           variant: "destructive",
         });
       }
-      resetForm();
+
+      setConfirmAction(null);
+      if (currentAction.type === "salta") {
+        setSkipModalAssunzione(null);
+        setMotivo("");
+      }
       onUpdate();
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (pendingAssunzioni.length === 0) {
+  if (assunzioni.length === 0) {
     return (
       <Card className="border-iov-green/30 bg-iov-green/5">
         <CardContent className="p-4 flex items-center gap-3">
@@ -79,14 +85,8 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
 
   return (
     <>
-      <Swiper
-        modules={[Pagination]}
-        pagination={{ clickable: true }}
-        spaceBetween={16}
-        slidesPerView={1}
-        className="!pb-8"
-      >
-        {pendingAssunzioni.map((assunzione) => (
+      <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="!pb-8">
+        {assunzioni.map((assunzione) => (
           <SwiperSlide key={assunzione.id}>
             <Card className="border-secondary mx-1">
               <CardContent className="p-4">
@@ -96,7 +96,9 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-foreground truncate">{assunzione.farmacoNome}</h4>
-                    <p className="text-sm text-muted-foreground">{assunzione.unita} {assunzione.unita === 1 ? 'compressa' : 'compresse'}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {assunzione.unita} {assunzione.unita === 1 ? "compressa" : "compresse"}
+                    </p>
                     <div className="flex items-center gap-1 mt-1">
                       <Clock className="h-3 w-3 text-accent" />
                       <span className="text-sm font-medium text-accent">{assunzione.orario}</span>
@@ -104,104 +106,155 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => setActionModal({ assunzione, type: 'conferma' })}
-                    disabled={isLoading}
-                    className="flex-1 bg-iov-green hover:bg-iov-green/90"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    Conferma
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setActionModal({ assunzione, type: 'salta' })}
-                    disabled={isLoading}
-                    className="flex-1 border-destructive text-destructive hover:bg-destructive/10"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Salta
-                  </Button>
-                </div>
+                {assunzione.stato === "da_confermare" ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-foreground">Hai assunto il seguente farmaco?</p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setConfirmAction({ assunzione, type: "conferma" })}
+                        disabled={isLoading}
+                        className="flex-1 border-iov-green text-iov-green hover:bg-iov-green/10 font-semibold"
+                      >
+                        <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-iov-green text-white">
+                          <Check className="h-4 w-4" />
+                        </span>
+                        Sì
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setMotivo("");
+                          setSkipModalAssunzione(assunzione);
+                        }}
+                        disabled={isLoading}
+                        className="flex-1 border-destructive text-destructive hover:bg-destructive/10 font-semibold"
+                      >
+                        <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white">
+                          <X className="h-4 w-4" />
+                        </span>
+                        No
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Button
+                      disabled
+                      className={cn(
+                        "w-full text-white justify-center",
+                        assunzione.stato === "confermata" ? "bg-emerald-600 hover:bg-emerald-600" : "bg-destructive hover:bg-destructive",
+                      )}
+                    >
+                      {assunzione.stato === "confermata" ? (
+                        <>
+                          <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                            <Check className="h-4 w-4 text-emerald-600" />
+                          </span>
+                          Farmaco assunto
+                        </>
+                      ) : (
+                        <>
+                          <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                            <X className="h-4 w-4 text-destructive" />
+                          </span>
+                          Farmaco non assunto
+                        </>
+                      )}
+                    </Button>
+                    {assunzione.stato === "saltata" && assunzione.motivo && (
+                      <p className="text-sm font-semibold text-destructive">Motivo: {assunzione.motivo}</p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* Action Modal - Fullscreen, compact */}
-      <Dialog open={!!actionModal} onOpenChange={() => resetForm()}>
-        <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center">
-            <DialogTitle>
-              {actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}
-            </DialogTitle>
+      {/* Modal for skip reason (non-fullscreen) */}
+      <Dialog
+        open={!!skipModalAssunzione}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSkipModalAssunzione(null);
+            setMotivo("");
+          }
+        }}
+      >
+        <DialogContent className="w-[90%] max-w-md rounded-xl">
+          <DialogHeader>
+            <DialogTitle>Salta assunzione</DialogTitle>
           </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto space-y-4 py-4">
-            {actionModal && (
-              <>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <p className="font-medium">{actionModal.assunzione.farmacoNome}</p>
-                  <p className="text-sm text-muted-foreground">{actionModal.assunzione.orario} - {actionModal.assunzione.unita} {actionModal.assunzione.unita === 1 ? 'compressa' : 'compresse'}</p>
-                </div>
 
-                <div className="space-y-2">
-                  <Label>Effetti collaterali riscontrati</Label>
-                  <Textarea
-                    value={effettiCollaterali}
-                    onChange={(e) => setEffettiCollaterali(e.target.value)}
-                    placeholder="Descrivi eventuali effetti collaterali..."
-                    rows={3}
-                    className="px-3"
-                  />
-                </div>
+          {skipModalAssunzione && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="font-medium">{skipModalAssunzione.farmacoNome}</p>
+                <p className="text-sm text-muted-foreground">
+                  {skipModalAssunzione.orario} - {skipModalAssunzione.unita} {skipModalAssunzione.unita === 1 ? "compressa" : "compresse"}
+                </p>
+              </div>
 
-                <div className="space-y-2">
-                  <Label>Intensità</Label>
-                  <RadioGroup value={intensita} onValueChange={(v) => setIntensita(v as "bassa" | "media" | "alta")}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="bassa" id="bassa" />
-                      <Label htmlFor="bassa" className="font-normal cursor-pointer">Bassa</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="media" id="media" />
-                      <Label htmlFor="media" className="font-normal cursor-pointer">Media</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="alta" id="alta" />
-                      <Label htmlFor="alta" className="font-normal cursor-pointer">Alta</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
+              <div className="space-y-2">
+                <Label>Per quale motivo non stai assumendo il farmaco?</Label>
+                <Textarea
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                  placeholder="Scrivi la motivazione..."
+                  rows={3}
+                  className="px-3"
+                />
+              </div>
 
-                {actionModal.type === 'salta' && (
-                  <div className="space-y-2">
-                    <Label>Motivo (opzionale)</Label>
-                    <Textarea
-                      value={motivo}
-                      onChange={(e) => setMotivo(e.target.value)}
-                      placeholder="Indica il motivo per cui hai saltato l'assunzione..."
-                      rows={2}
-                      className="px-3"
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="shrink-0 pt-4 border-t">
-            <Button
-              onClick={handleAction}
-              disabled={isLoading}
-              className={cn("w-full", actionModal?.type === 'salta' && "bg-destructive hover:bg-destructive/90")}
-            >
-              {actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Conferma salto assunzione'}
-            </Button>
-          </div>
+              <Button
+                className="w-full bg-destructive hover:bg-destructive/90 text-white"
+                onClick={() => setConfirmAction({ assunzione: skipModalAssunzione, type: "salta" })}
+                disabled={isLoading}
+              >
+                Confermi di non volere assumere il farmaco?
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
+
+      {/* Double confirm popup */}
+      <AlertDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmAction(null);
+            if (!skipModalAssunzione) setMotivo("");
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmAction?.type === "conferma" ? "Vuoi assumere il farmaco?" : "Confermi di non volere assumere il farmaco?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmAction?.assunzione.farmacoNome} - {confirmAction?.assunzione.orario}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmAction}
+              disabled={isLoading}
+              className={
+                confirmAction?.type === "salta"
+                  ? "bg-destructive hover:bg-destructive/90"
+                  : "bg-iov-green hover:bg-iov-green/90 text-white"
+              }
+            >
+              Conferma
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
