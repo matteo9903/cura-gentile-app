@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pill, Clock, Check, X } from "lucide-react";
+import { Pill, Clock, Check, X, AlertTriangle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AssunzioneGiornaliera, diaryService } from "@/services/diaryService";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,9 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
   const [skipModalAssunzione, setSkipModalAssunzione] = useState<AssunzioneGiornaliera | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ assunzione: AssunzioneGiornaliera; type: "conferma" | "salta" } | null>(null);
   const [motivo, setMotivo] = useState("");
+  const [sideEffectsOpen, setSideEffectsOpen] = useState(false);
+  const [sideEffectsNote, setSideEffectsNote] = useState("");
+  const [sideEffectsIntensity, setSideEffectsIntensity] = useState<"lieve" | "moderato" | "severo">("lieve");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirmAction = async () => {
@@ -173,6 +176,16 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         ))}
       </Swiper>
 
+      <div className="mt-4">
+        <Button
+          onClick={() => setSideEffectsOpen(true)}
+          className="w-full bg-iov-yellow text-iov-dark-blue hover:bg-iov-yellow-dark font-semibold"
+        >
+          <AlertTriangle className="h-4 w-4 mr-2" />
+          Segnala effetti collaterali
+        </Button>
+      </div>
+
       {/* Modal for skip reason (non-fullscreen) */}
       <Dialog
         open={!!skipModalAssunzione}
@@ -257,6 +270,97 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Side effects modal */}
+      <Dialog
+        open={sideEffectsOpen}
+        onOpenChange={(open) => {
+          setSideEffectsOpen(open);
+          if (!open) {
+            setSideEffectsNote("");
+            setSideEffectsIntensity("lieve");
+          }
+        }}
+      >
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
+          <DialogHeader>
+            <DialogTitle>Segnala effetti collaterali</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>Quali disturbi hai avuto?</Label>
+              <Textarea
+                value={sideEffectsNote}
+                onChange={(e) => setSideEffectsNote(e.target.value)}
+                placeholder="Risposta..."
+                rows={3}
+                className="px-3 w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Intensità</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: "lieve", label: "Lieve", dots: 1, color: "bg-green-500" },
+                  { value: "moderato", label: "Moderato", dots: 2, color: "bg-amber-400" },
+                  { value: "severo", label: "Severo", dots: 3, color: "bg-orange-500" },
+                ].map((option) => (
+                  <button
+                    type="button"
+                    key={option.value}
+                    onClick={() => setSideEffectsIntensity(option.value as typeof sideEffectsIntensity)}
+                    className={cn(
+                      "rounded-lg border px-3 py-2 flex flex-col items-center gap-2 transition-colors",
+                      sideEffectsIntensity === option.value
+                        ? "border-iov-dark-blue bg-iov-light-blue-light"
+                        : "border-border bg-background"
+                    )}
+                  >
+                    <div className="flex gap-1">
+                      {Array.from({ length: option.dots }).map((_, idx) => (
+                        <span key={idx} className={cn("h-3.5 w-3.5 rounded-full", option.color)} />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setSideEffectsOpen(false);
+                  setSideEffectsNote("");
+                  setSideEffectsIntensity("lieve");
+                }}
+              >
+                Annulla
+              </Button>
+              <Button
+                className="flex-1 bg-iov-dark-blue text-white hover:bg-iov-dark-blue-hover"
+                onClick={() => {
+                  toast({
+                    title: "Segnalazione inviata",
+                    description: sideEffectsIntensity
+                      ? `Intensità: ${sideEffectsIntensity}`
+                      : undefined,
+                  });
+                  setSideEffectsOpen(false);
+                  setSideEffectsNote("");
+                  setSideEffectsIntensity("lieve");
+                }}
+              >
+                Invia
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
