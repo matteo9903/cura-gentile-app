@@ -69,8 +69,8 @@
     --tab-inactive: 212 20% 60%;
     --tab-active: 212 52% 25%;
     --safe-area-top: env(safe-area-inset-top, 24px);
-    /* Use zero fallback so tab bar sits closer to the bottom on devices without a notch */
-    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    /* Default to zero; enable only on iOS to avoid tall insets on Android devices */
+    --safe-area-bottom: 0px;
     /* UI chrome sizes */
     --tab-bar-height: 78px;
     --chat-input-height: 104px;
@@ -83,6 +83,11 @@
     --sidebar-accent-foreground: 212 52% 20%;
     --sidebar-border: 210 20% 90%;
     --sidebar-ring: 212 52% 25%;
+  }
+
+  /* Enable bottom safe-area only on iOS (set via data-platform in main.tsx) */
+  :root[data-platform="ios"] {
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .dark {
@@ -162,6 +167,10 @@
   @supports (padding: max(0px)) {
     :root {
       --safe-area-top: max(env(safe-area-inset-top), 25px);
+      --safe-area-bottom: 0px;
+    }
+
+    :root[data-platform="ios"] {
       --safe-area-bottom: max(env(safe-area-inset-bottom), 0px);
     }
   }
