@@ -89,7 +89,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         {assunzioni.map((assunzione) => (
           <SwiperSlide key={assunzione.id}>
             <Card className="border-secondary mx-1">
-              <CardContent className="p-4 flex flex-col min-h-[240px]">
+              <CardContent className="p-4 flex flex-col min-h-[190px]">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
                     <Pill className="h-6 w-6 text-primary" />
@@ -138,7 +138,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-2 mt-4">
                     <Button
                       disabled
                       className={cn(
@@ -149,7 +149,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                       {assunzione.stato === "confermata" ? (
                         <>
                           <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-white">
-                            <Check className="h-5 w-5 text-emerald-600" />
+                            <Check className="h-5 w-5 text-emerald-500" />
                           </span>
                           Farmaco assunto
                         </>
@@ -162,9 +162,9 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                         </>
                       )}
                     </Button>
-                    {assunzione.stato === "saltata" && assunzione.motivo && (
+                    {/* {assunzione.stato === "saltata" && assunzione.motivo && (
                       <p className="text-sm font-semibold text-destructive">Motivo: {assunzione.motivo}</p>
-                    )}
+                    )} */}
                   </div>
                 )}
               </CardContent>
@@ -183,7 +183,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
           }
         }}
       >
-        <DialogContent className="w-[90%] max-w-md rounded-xl">
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
           <DialogHeader>
             <DialogTitle>Salta assunzione</DialogTitle>
           </DialogHeader>
@@ -198,13 +198,15 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Per quale motivo non stai assumendo il farmaco?</Label>
+                <Label className="leading-snug break-words">
+                  Per quale motivo non stai assumendo il farmaco?
+                </Label>
                 <Textarea
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
                   placeholder="Scrivi la motivazione..."
                   rows={3}
-                  className="px-3"
+                  className="px-3 w-full"
                 />
               </div>
 
@@ -213,7 +215,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                 onClick={() => setConfirmAction({ assunzione: skipModalAssunzione, type: "salta" })}
                 disabled={isLoading}
               >
-                Confermi di non volere assumere il farmaco?
+                Non assumere il farmaco
               </Button>
             </div>
           )}
