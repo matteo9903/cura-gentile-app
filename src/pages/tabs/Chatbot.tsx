@@ -15,6 +15,7 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Network } from '@capacitor/network';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -111,6 +112,29 @@ const Chatbot = () => {
     });
   };
 
+  // const [isOnline, setIsOnline] = useState<boolean>(true);
+
+  // useEffect(() => {
+  //   async function initializeNetworkStatus() {
+  //     const status = await Network.getStatus();
+  //     setIsOnline(status.connected);
+  //     console.log("Initial network status:", status.connected);
+
+  //     Network.addListener('networkStatusChange', (status) => {
+  //       setIsOnline(status.connected);
+  //       console.log("Network status changed:", status.connected);
+  //     });
+  //   }
+
+  //   initializeNetworkStatus();
+
+  //   // Cleanup listener on unmount
+  //   return () => {
+  //     Network.removeAllListeners();
+  //     console.log("Network listeners removed");
+  //   };
+  // }, []);
+
   return (
     <div
       className="min-h-screen bg-background"
@@ -137,10 +161,12 @@ const Chatbot = () => {
               {chatbotInfo.nome}
             </h1>
             <div className="text-xs text-white/80">
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-iov-green animate-pulse-soft" />
-                <span className="text-[14px] text-white/80">ONLINE</span>
-              </div>
+                <div className="flex items-center gap-1">
+                {/* <span className={"w-2 h-2 rounded-full animate-pulse-soft" + (isOnline ? " bg-iov-green" : " bg-red-500")} />
+                <span className="text-[14px] text-white/80">{isOnline ? "ONLINE" : "OFFLINE"}</span> */}
+                <span className={"w-2 h-2 rounded-full animate-pulse-soft" + "bg-iov-green"}/>
+                <span className="text-[14px] text-white/80">{"ONLINE"}</span>
+                </div>
             </div>
             {/* <div className="flex items-center gap-2">
               <p className="text-xs text-primary-foreground/80">
