@@ -89,7 +89,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         {assunzioni.map((assunzione) => (
           <SwiperSlide key={assunzione.id}>
             <Card className="border-secondary mx-1">
-              <CardContent className="p-4">
+              <CardContent className="p-4 flex flex-col min-h-[240px]">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
                     <Pill className="h-6 w-6 text-primary" />
@@ -116,8 +116,8 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                         disabled={isLoading}
                         className="flex-1 border-iov-green text-iov-green hover:bg-iov-green/10 font-semibold"
                       >
-                        <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-iov-green text-white">
-                          <Check className="h-4 w-4" />
+                        <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-iov-green text-white">
+                          <Check className="h-5 w-5" />
                         </span>
                         Sì
                       </Button>
@@ -130,8 +130,8 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                         disabled={isLoading}
                         className="flex-1 border-destructive text-destructive hover:bg-destructive/10 font-semibold"
                       >
-                        <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white">
-                          <X className="h-4 w-4" />
+                        <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-destructive text-white">
+                          <X className="h-5 w-5" />
                         </span>
                         No
                       </Button>
@@ -148,15 +148,15 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
                     >
                       {assunzione.stato === "confermata" ? (
                         <>
-                          <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                            <Check className="h-4 w-4 text-emerald-600" />
+                          <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-white">
+                            <Check className="h-5 w-5 text-emerald-600" />
                           </span>
                           Farmaco assunto
                         </>
                       ) : (
                         <>
-                          <span className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                            <X className="h-4 w-4 text-destructive" />
+                          <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-white">
+                            <X className="h-5 w-5 text-destructive" />
                           </span>
                           Farmaco non assunto
                         </>
@@ -230,7 +230,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
           }
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[90%] max-w-sm rounded-xl">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {confirmAction?.type === "conferma" ? "Vuoi assumere il farmaco?" : "Confermi di non volere assumere il farmaco?"}
