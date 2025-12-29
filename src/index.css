@@ -69,7 +69,8 @@
     --tab-inactive: 212 20% 60%;
     --tab-active: 212 52% 25%;
     --safe-area-top: env(safe-area-inset-top, 24px);
-    --safe-area-bottom: env(safe-area-inset-bottom, 24px);
+    /* Use zero fallback so tab bar sits closer to the bottom on devices without a notch */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
     /* UI chrome sizes */
     --tab-bar-height: 78px;
     --chat-input-height: 104px;
@@ -161,7 +162,7 @@
   @supports (padding: max(0px)) {
     :root {
       --safe-area-top: max(env(safe-area-inset-top), 25px);
-      --safe-area-bottom: max(env(safe-area-inset-bottom), 25px);
+      --safe-area-bottom: max(env(safe-area-inset-bottom), 0px);
     }
   }
 
