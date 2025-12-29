@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,14 +28,62 @@ interface AssunzioniOggiProps {
   onUpdate: () => void;
 }
 
+type SideEffectIntensity = "lieve" | "moderato" | "severo" | null;
+
 const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
   const [skipModalAssunzione, setSkipModalAssunzione] = useState<AssunzioneGiornaliera | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ assunzione: AssunzioneGiornaliera; type: "conferma" | "salta" } | null>(null);
   const [motivo, setMotivo] = useState("");
   const [sideEffectsOpen, setSideEffectsOpen] = useState(false);
   const [sideEffectsNote, setSideEffectsNote] = useState("");
-  const [sideEffectsIntensity, setSideEffectsIntensity] = useState<"lieve" | "moderato" | "severo">("lieve");
+  const [sideEffectsIntensity, setSideEffectsIntensity] = useState<SideEffectIntensity>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sideEffectsHydrated, setSideEffectsHydrated] = useState(false);
+  const [sideEffectsSnapshot, setSideEffectsSnapshot] = useState<{ note: string; intensity: SideEffectIntensity } | null>(null);
+  const [sideEffectsSubmitted, setSideEffectsSubmitted] = useState(false);
+
+  const sideEffectsStorageKey = "assunzioni-side-effects";
+  const todayKey = new Date().toISOString().split("T")[0];
+  // console.log("TODAY KEY", todayKey);
+
+  // Hydrate side-effects draft, reset at day change
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = localStorage.getItem(sideEffectsStorageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as { date: string; note: string; intensity: SideEffectIntensity };
+        if (parsed.date === todayKey) {
+          setSideEffectsNote(parsed.note || "");
+          setSideEffectsIntensity(parsed.intensity ?? null);
+        } else {
+          localStorage.removeItem(sideEffectsStorageKey);
+        }
+      }
+    } catch {
+      // ignore malformed storage
+    } finally {
+      setSideEffectsHydrated(true);
+    }
+  }, [todayKey]);
+
+  // Persist draft after hydration
+  useEffect(() => {
+    if (!sideEffectsHydrated || typeof window === "undefined") return;
+    try {
+      localStorage.setItem(
+        sideEffectsStorageKey,
+        JSON.stringify({ date: todayKey, note: sideEffectsNote, intensity: sideEffectsIntensity })
+      );
+    } catch {
+      // ignore persistence errors (e.g., private mode)
+    }
+  }, [sideEffectsNote, sideEffectsIntensity, sideEffectsHydrated, todayKey]);
+
+  const clearSideEffects = () => {
+    setSideEffectsNote("");
+    setSideEffectsIntensity(null);
+  };
 
   const handleConfirmAction = async () => {
     if (!confirmAction) return;
@@ -275,11 +323,20 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
       <Dialog
         open={sideEffectsOpen}
         onOpenChange={(open) => {
-          setSideEffectsOpen(open);
-          if (!open) {
-            setSideEffectsNote("");
-            setSideEffectsIntensity("lieve");
+          if (open) {
+            setSideEffectsSnapshot({ note: sideEffectsNote, intensity: sideEffectsIntensity });
+            setSideEffectsSubmitted(false);
+            setSideEffectsOpen(true);
+            return;
           }
+          // closing: restore snapshot if nothing submitted
+          if (!sideEffectsSubmitted && sideEffectsSnapshot) {
+            setSideEffectsNote(sideEffectsSnapshot.note);
+            setSideEffectsIntensity(sideEffectsSnapshot.intensity);
+          }
+          setSideEffectsSnapshot(null);
+          setSideEffectsSubmitted(false);
+          setSideEffectsOpen(false);
         }}
       >
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
@@ -303,18 +360,18 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
               <Label>Intensità</Label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { value: "lieve", label: "Lieve", dots: 1, color: "bg-green-500" },
-                  { value: "moderato", label: "Moderato", dots: 2, color: "bg-amber-400" },
-                  { value: "severo", label: "Severo", dots: 3, color: "bg-orange-500" },
+                  { value: "lieve", label: "Lieve", dots: 1, color: "bg-green-500", tone: "bg-green-100" },
+                  { value: "moderato", label: "Moderato", dots: 2, color: "bg-amber-400", tone: "bg-amber-100" },
+                  { value: "severo", label: "Severo", dots: 3, color: "bg-orange-500", tone: "bg-orange-100" },
                 ].map((option) => (
                   <button
                     type="button"
                     key={option.value}
-                    onClick={() => setSideEffectsIntensity(option.value as typeof sideEffectsIntensity)}
+                    onClick={() => setSideEffectsIntensity(option.value as Exclude<SideEffectIntensity, null>)}
                     className={cn(
                       "rounded-lg border px-3 py-2 flex flex-col items-center gap-2 transition-colors",
                       sideEffectsIntensity === option.value
-                        ? "border-iov-dark-blue bg-iov-light-blue-light"
+                        ? cn("border-iov-dark-blue", option.tone)
                         : "border-border bg-background"
                     )}
                   >
@@ -329,30 +386,35 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
               </div>
             </div>
 
+            <Button
+              variant="outline"
+              className="w-full border-destructive text-destructive hover:bg-destructive/10"
+              onClick={clearSideEffects}
+              disabled={isLoading}
+            >
+              Cancella segnalazione
+            </Button>
+
             <div className="flex gap-2 pt-2">
               <Button
                 variant="outline"
                 className="flex-1"
                 onClick={() => {
                   setSideEffectsOpen(false);
-                  setSideEffectsNote("");
-                  setSideEffectsIntensity("lieve");
                 }}
               >
                 Annulla
               </Button>
               <Button
                 className="flex-1 bg-iov-dark-blue text-white hover:bg-iov-dark-blue-hover"
+                disabled={isLoading || !sideEffectsNote.trim() || !sideEffectsIntensity}
                 onClick={() => {
+                  setSideEffectsSubmitted(true);
                   toast({
                     title: "Segnalazione inviata",
-                    description: sideEffectsIntensity
-                      ? `Intensità: ${sideEffectsIntensity}`
-                      : undefined,
+                    description: sideEffectsIntensity ? `Intensità: ${sideEffectsIntensity}` : undefined,
                   });
                   setSideEffectsOpen(false);
-                  setSideEffectsNote("");
-                  setSideEffectsIntensity("lieve");
                 }}
               >
                 Invia
