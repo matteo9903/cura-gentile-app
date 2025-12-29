@@ -100,8 +100,9 @@ const Profile = () => {
 
   return (
     <div 
-      className="min-h-screen bg-background"
+      className="flex flex-col bg-background"
       style={{
+        height: "calc(100vh - var(--tab-bar-height) - var(--safe-area-bottom))",
         paddingTop: "var(--safe-area-top)",
         paddingBottom: "var(--safe-area-bottom)",
       }}
@@ -131,7 +132,7 @@ const Profile = () => {
       </header>
 
       {/* Content */}
-      <div className="p-4 space-y-4 pb-4"
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-4"
         style={{
           paddingTop: 'calc(70px + var(--safe-area-top)/2)'
         }}
