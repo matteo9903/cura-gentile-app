@@ -167,7 +167,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
             }}
           >
             <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-              <DialogHeader className="shrink-0">
+              <DialogHeader className="shrink-0 pb-3">
                 <DialogTitle>
                   {selectedCompilazione ? "Risposte questionario" : "Compilazioni precedenti"}
                 </DialogTitle>
@@ -258,7 +258,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
       {/* Questionnaire Modal - Fullscreen */}
       <Dialog open={!!selectedQuestionario} onOpenChange={() => setSelectedQuestionario(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0">
+          <DialogHeader className="shrink-0 pb-3">
             <DialogTitle>{selectedQuestionario?.titolo}</DialogTitle>
           </DialogHeader>
           

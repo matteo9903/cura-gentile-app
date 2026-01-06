@@ -7,7 +7,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Pill, Calendar, Info, Clock, FileText, Plus, Check, X, AlertCircle, Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { PianoTerapeutico as PianoTerapeuticoType, Farmaco, GiornoCalendario, NotaAggiuntiva, diaryService, AssunzioneGiornaliera, NoteStrutturate } from "@/services/diaryService";
@@ -31,10 +40,11 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
   const [newFarmacoDosaggio, setNewFarmacoDosaggio] = useState("");
   const [showAddFarmacoFields, setShowAddFarmacoFields] = useState(false);
   const [domandeSpecialista, setDomandeSpecialista] = useState("");
-  const [actionModal, setActionModal] = useState<{ assunzione: AssunzioneGiornaliera; type: 'conferma' | 'salta' } | null>(null);
-  const [effettiCollaterali, setEffettiCollaterali] = useState("");
-  const [motivo, setMotivo] = useState("");
-  const [intensita, setIntensita] = useState<"bassa" | "media" | "alta">("media");
+  const [calendarPendingAssunzione, setCalendarPendingAssunzione] = useState<AssunzioneGiornaliera | null>(null);
+  const [calendarSkipAssunzione, setCalendarSkipAssunzione] = useState<AssunzioneGiornaliera | null>(null);
+  const [calendarConfirmAction, setCalendarConfirmAction] = useState<{ assunzione: AssunzioneGiornaliera; type: "conferma" | "salta" } | null>(null);
+  const [calendarMotivo, setCalendarMotivo] = useState("");
+  const [calendarSelectedDate, setCalendarSelectedDate] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSideEffectDay, setSelectedSideEffectDay] = useState<{ data: string; effetti: NonNullable<GiornoCalendario["effettiCollaterali"]> } | null>(null);
   const [reportSideEffectDay, setReportSideEffectDay] = useState<string | null>(null);
@@ -108,25 +118,35 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     toast({ title: "Domande salvate" });
   };
 
-  const resetActionForm = () => {
-    setEffettiCollaterali("");
-    setMotivo("");
-    setIntensita("media");
-    setActionModal(null);
+  const resetCalendarFlow = () => {
+    setCalendarPendingAssunzione(null);
+    setCalendarSkipAssunzione(null);
+    setCalendarConfirmAction(null);
+    setCalendarMotivo("");
+    setCalendarSelectedDate(null);
   };
 
-  const handleCalendarAction = async () => {
-    if (!actionModal) return;
+  const handleCalendarConfirmAction = async () => {
+    if (!calendarConfirmAction) return;
+    const currentAction = calendarConfirmAction;
     setIsLoading(true);
     try {
-      if (actionModal.type === 'conferma') {
-        await diaryService.confermaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita);
-        toast({ title: "Assunzione confermata", className: "bg-iov-green text-white" });
+      if (currentAction.type === "conferma") {
+        await diaryService.confermaAssunzione(currentAction.assunzione.id, "", "media");
+        toast({
+          title: "Assunzione confermata",
+          description: `${currentAction.assunzione.farmacoNome} alle ${currentAction.assunzione.orario}`,
+          className: "bg-iov-green text-white border-iov-green"
+        });
       } else {
-        await diaryService.saltaAssunzione(actionModal.assunzione.id, effettiCollaterali, intensita, motivo);
-        toast({ title: "Assunzione saltata", variant: "destructive" });
+        await diaryService.saltaAssunzione(currentAction.assunzione.id, "", "media", calendarMotivo || undefined);
+        toast({
+          title: "Assunzione saltata",
+          description: `${currentAction.assunzione.farmacoNome} alle ${currentAction.assunzione.orario}`,
+          variant: "destructive"
+        });
       }
-      resetActionForm();
+      resetCalendarFlow();
       onUpdate();
     } finally {
       setIsLoading(false);
@@ -324,7 +344,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Drug Info Modal - Fullscreen */}
       <Dialog open={!!selectedFarmaco} onOpenChange={() => setSelectedFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center">
+          <DialogHeader className="shrink-0 flex flex-row items-center pb-3">
             <DialogTitle className="flex items-center gap-2">
               <Pill className="h-5 w-5 text-primary" />
               {selectedFarmaco?.nome}
@@ -383,7 +403,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Calendar Modal - Fullscreen */}
       <Dialog open={!!showCalendarioFarmaco} onOpenChange={() => setShowCalendarioFarmaco(null)}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center">
+          <DialogHeader className="shrink-0 flex flex-row items-center pb-3">
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
               Calendario - {showCalendarioFarmaco?.nome}
@@ -401,7 +421,6 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                       if (farmacoAssunzioni.length === 0) return null;
                       const isFuture = isDateFuture(giorno.data);
                       const isPast = isDatePast(giorno.data);
-                      const hasMissingIntakes = isPast && farmacoAssunzioni.some(a => a.stato === 'da_confermare');
                       const sideEffectIntensity = pickStrongestIntensity(giorno.effettiCollaterali);
                       const shouldShowSideEffectsButton = !isFuture;
                       
@@ -416,7 +435,12 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                                   <button
                                     key={assunzione.id}
                                     type="button"
-                                    onClick={() => !isFuture && assunzione.stato === 'da_confermare' && setActionModal({ assunzione, type: 'conferma' })}
+                                    onClick={() => {
+                                      if (!isFuture && assunzione.stato === 'da_confermare') {
+                                        setCalendarSelectedDate(giorno.data);
+                                        setCalendarPendingAssunzione(assunzione);
+                                      }
+                                    }}
                                     disabled={isFuture || assunzione.stato !== 'da_confermare'}
                                     className={cn(
                                       "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
@@ -475,7 +499,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Side effects detail from calendar */}
       <Dialog open={!!selectedSideEffectDay} onOpenChange={(open) => { if (!open) setSelectedSideEffectDay(null); }}>
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
-          <DialogHeader>
+          <DialogHeader className="pb-3">
             <DialogTitle>Effetti collaterali</DialogTitle>
           </DialogHeader>
           {selectedSideEffectDay && (
@@ -509,7 +533,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       {/* Report side effects for missing intakes */}
       <Dialog open={!!reportSideEffectDay} onOpenChange={(open) => { if (!open) resetReportModal(); }}>
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
-          <DialogHeader>
+          <DialogHeader className="pb-3">
             <DialogTitle>Segnala effetti collaterali</DialogTitle>
           </DialogHeader>
           {reportSideEffectDay && (
@@ -563,53 +587,149 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
         </DialogContent>
       </Dialog>
 
-      {/* Calendar Action Modal */}
-      <Dialog open={!!actionModal} onOpenChange={() => resetActionForm()}>
+      {/* Calendar intake question */}
+      <Dialog open={!!calendarPendingAssunzione} onOpenChange={(open) => { if (!open) resetCalendarFlow(); }}>
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
-          <DialogHeader>
-            <DialogTitle>{actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}</DialogTitle>
+          <DialogHeader className="pb-3">
+            <DialogTitle>Assunzione farmaco</DialogTitle>
           </DialogHeader>
-          {actionModal && (
+          {calendarPendingAssunzione && (
             <div className="space-y-4">
               <div className="bg-muted/50 p-3 rounded-lg text-center">
-                <p className="font-medium">{actionModal.assunzione.farmacoNome}</p>
-                <p className="text-sm text-muted-foreground">{actionModal.assunzione.orario}</p>
-                <p className="text-lg font-bold text-primary mt-2">{actionModal.assunzione.unita} {actionModal.assunzione.unita === 1 ? 'compressa' : 'compresse'}</p>
+                <p className="font-medium">{calendarPendingAssunzione.farmacoNome}</p>
+                <p className="text-sm text-muted-foreground">{calendarPendingAssunzione.orario}</p>
+                <p className="text-lg font-bold text-primary mt-2">
+                  {calendarPendingAssunzione.unita} {calendarPendingAssunzione.unita === 1 ? "compressa" : "compresse"}
+                </p>
               </div>
-              
-              <div className="space-y-2">
-                <Label className="text-sm">Effetti collaterali</Label>
-                <Textarea value={effettiCollaterali} onChange={(e) => setEffettiCollaterali(e.target.value)} placeholder="Descrivi eventuali effetti..." rows={2} className="px-3" />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm">Intensità</Label>
-                <RadioGroup value={intensita} onValueChange={(v) => setIntensita(v as "bassa" | "media" | "alta")} className="flex gap-4">
-                  <div className="flex items-center space-x-1"><RadioGroupItem value="bassa" id="cal-bassa" /><Label htmlFor="cal-bassa" className="text-sm">Bassa</Label></div>
-                  <div className="flex items-center space-x-1"><RadioGroupItem value="media" id="cal-media" /><Label htmlFor="cal-media" className="text-sm">Media</Label></div>
-                  <div className="flex items-center space-x-1"><RadioGroupItem value="alta" id="cal-alta" /><Label htmlFor="cal-alta" className="text-sm">Alta</Label></div>
-                </RadioGroup>
-              </div>
-
-              {actionModal.type === 'salta' && (
-                <div className="space-y-2">
-                  <Label className="text-sm">Motivo</Label>
-                  <Textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} placeholder="Motivo..." rows={2} className="px-3" />
+              {calendarSelectedDate && (
+                <div className="bg-muted/60 border border-border rounded-lg px-3 py-2 text-left">
+                  <p className="text-xs text-muted-foreground">Giorno</p>
+                  <p className="text-sm font-medium">{formatDateFull(calendarSelectedDate)}</p>
                 </div>
               )}
 
+              <p className="text-sm font-semibold text-foreground">Hai assunto il farmaco?</p>
               <div className="flex gap-2">
-                <Button className={cn("flex-1", actionModal.type === 'conferma' ? "bg-iov-green hover:bg-iov-green/90" : "")} onClick={() => { setActionModal({ ...actionModal, type: 'conferma' }); handleCalendarAction(); }} disabled={isLoading}>
-                  <Check className="h-4 w-4 mr-1" />Conferma
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCalendarConfirmAction({ assunzione: calendarPendingAssunzione, type: "conferma" });
+                    setCalendarPendingAssunzione(null);
+                  }}
+                  disabled={isLoading}
+                  className="flex-1 border-iov-green text-iov-green hover:bg-iov-green/10 font-semibold"
+                >
+                  <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-iov-green text-white">
+                    <Check className="h-5 w-5" />
+                  </span>
+                  Sì
                 </Button>
-                <Button variant="outline" className="flex-1 border-destructive text-destructive" onClick={() => { setActionModal({ ...actionModal, type: 'salta' }); handleCalendarAction(); }} disabled={isLoading}>
-                  <X className="h-4 w-4 mr-1" />Salta
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCalendarMotivo("");
+                    setCalendarSkipAssunzione(calendarPendingAssunzione);
+                    setCalendarPendingAssunzione(null);
+                  }}
+                  disabled={isLoading}
+                  className="flex-1 border-destructive text-destructive hover:bg-destructive/10 font-semibold"
+                >
+                  <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-destructive text-white">
+                    <X className="h-5 w-5" />
+                  </span>
+                  No
                 </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Skip reason for calendar intake */}
+      <Dialog
+        open={!!calendarSkipAssunzione}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCalendarSkipAssunzione(null);
+            setCalendarMotivo("");
+            setCalendarSelectedDate(null);
+          }
+        }}
+      >
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
+          <DialogHeader className="pb-3">
+            <DialogTitle>Salta assunzione</DialogTitle>
+          </DialogHeader>
+
+          {calendarSkipAssunzione && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="font-medium">{calendarSkipAssunzione.farmacoNome}</p>
+                <p className="text-sm text-muted-foreground">
+                  {calendarSkipAssunzione.orario} - {calendarSkipAssunzione.unita} {calendarSkipAssunzione.unita === 1 ? "compressa" : "compresse"}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="leading-snug break-words">Per quale motivo non stai assumendo il farmaco?</Label>
+                <Textarea
+                  value={calendarMotivo}
+                  onChange={(e) => setCalendarMotivo(e.target.value)}
+                  placeholder="Scrivi la motivazione..."
+                  rows={3}
+                  className="px-3 w-full"
+                />
+              </div>
+
+              <Button
+                className="w-full bg-destructive hover:bg-destructive/90 text-white"
+                onClick={() => setCalendarConfirmAction({ assunzione: calendarSkipAssunzione, type: "salta" })}
+                disabled={isLoading}
+              >
+                Non assumere il farmaco
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Double confirm for calendar */}
+      <AlertDialog
+        open={!!calendarConfirmAction}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCalendarConfirmAction(null);
+            if (!calendarSkipAssunzione) setCalendarMotivo("");
+            setCalendarSelectedDate(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="w-[90%] max-w-sm rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {calendarConfirmAction?.type === "conferma" ? "Vuoi assumere il farmaco?" : "Confermi di non volere assumere il farmaco?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {calendarConfirmAction?.assunzione.farmacoNome} - {calendarConfirmAction?.assunzione.orario}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCalendarConfirmAction}
+              disabled={isLoading}
+              className={
+                calendarConfirmAction?.type === "salta"
+                  ? "bg-destructive hover:bg-destructive/90"
+                  : "bg-iov-green hover:bg-iov-green/90 text-white"
+              }
+            >
+              Conferma
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

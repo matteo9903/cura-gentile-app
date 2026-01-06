@@ -218,7 +218,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         }}
       >
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
-          <DialogHeader>
+          <DialogHeader className="pb-3">
             <DialogTitle>Salta assunzione</DialogTitle>
           </DialogHeader>
 
@@ -267,7 +267,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         }}
       >
         <AlertDialogContent className="w-[90%] max-w-sm rounded-xl">
-          <AlertDialogHeader>
+          <AlertDialogHeader className="pb-3">
             <AlertDialogTitle>
               {confirmAction?.type === "conferma" ? "Vuoi assumere il farmaco?" : "Confermi di non volere assumere il farmaco?"}
             </AlertDialogTitle>
@@ -313,7 +313,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         }}
       >
         <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
-          <DialogHeader>
+          <DialogHeader className="pb-3">
             <DialogTitle>Segnala effetti collaterali</DialogTitle>
           </DialogHeader>
 

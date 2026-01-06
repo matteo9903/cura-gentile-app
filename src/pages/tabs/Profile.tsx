@@ -226,7 +226,7 @@ const Profile = () => {
       {/* Change Password Modal - Fullscreen */}
       <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center">
+          <DialogHeader className="shrink-0 flex flex-row items-center pb-3">
             <DialogTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-primary" />
               Cambia password
@@ -298,7 +298,7 @@ const Profile = () => {
       {/* Privacy Modal - Fullscreen */}
       <Dialog open={showPrivacy} onOpenChange={setShowPrivacy}>
         <DialogContent className="h-full max-h-full w-full max-w-full m-0 rounded-none flex flex-col">
-          <DialogHeader className="shrink-0 flex flex-row items-center">
+          <DialogHeader className="shrink-0 flex flex-row items-center pb-3">
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               Privacy e sicurezza
