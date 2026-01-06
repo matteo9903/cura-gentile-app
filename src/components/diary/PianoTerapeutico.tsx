@@ -41,16 +41,26 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
   const [reportNote, setReportNote] = useState("");
   const [reportIntensity, setReportIntensity] = useState<"bassa" | "media" | "alta" | null>(null);
   const [reportIsLoading, setReportIsLoading] = useState(false);
-  const intensityLabelMap: Record<"bassa" | "media" | "alta", string> = { bassa: "Basso", media: "Moderato", alta: "Intenso" };
+  const intensityLabelMap: Record<"bassa" | "media" | "alta", string> = { bassa: "Lieve", media: "Moderato", alta: "Severo" };
   const intensityBadgeMap: Record<"bassa" | "media" | "alta", string> = {
     bassa: "bg-green-100 text-green-800",
     media: "bg-amber-100 text-amber-800",
     alta: "bg-orange-100 text-orange-800"
   };
+  const intensityCardMap: Record<"bassa" | "media" | "alta", string> = {
+    bassa: "border-green-200 bg-green-50 text-green-900",
+    media: "border-amber-200 bg-amber-50 text-amber-900",
+    alta: "border-orange-200 bg-orange-50 text-orange-900"
+  };
+  const intensityIconMap: Record<"bassa" | "media" | "alta", string> = {
+    bassa: "border-green-300 bg-green-50 text-green-600 hover:bg-green-100",
+    media: "border-amber-300 bg-amber-50 text-amber-600 hover:bg-amber-100",
+    alta: "border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100"
+  };
   const intensityOptions = [
-    { value: "bassa", label: "Basso", dots: 1, color: "bg-green-500", tone: "bg-green-100" },
+    { value: "bassa", label: "Lieve", dots: 1, color: "bg-green-500", tone: "bg-green-100" },
     { value: "media", label: "Moderato", dots: 2, color: "bg-amber-400", tone: "bg-amber-100" },
-    { value: "alta", label: "Intenso", dots: 3, color: "bg-orange-500", tone: "bg-orange-100" }
+    { value: "alta", label: "Severo", dots: 3, color: "bg-orange-500", tone: "bg-orange-100" }
   ] as const;
 
   useEffect(() => {
@@ -135,7 +145,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     setReportIsLoading(true);
     toast({
       title: "Segnalazione inviata",
-      description: `${formatDateFull(reportSideEffectDay)} - IntensitÇÿ: ${intensityLabelMap[reportIntensity]}`
+      description: `${formatDateFull(reportSideEffectDay)} - Intensità: ${intensityLabelMap[reportIntensity]}`
     });
     resetReportModal();
   };
@@ -152,6 +162,12 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     const today = new Date();
     today.setHours(23, 59, 59, 999);
     return date > today;
+  };
+
+  const pickStrongestIntensity = (effetti?: NonNullable<GiornoCalendario["effettiCollaterali"]>): "bassa" | "media" | "alta" | null => {
+    if (!effetti || effetti.length === 0) return null;
+    const rank: Record<"bassa" | "media" | "alta", number> = { bassa: 1, media: 2, alta: 3 };
+    return effetti.reduce<"bassa" | "media" | "alta">((prev, curr) => (rank[curr.intensita] > rank[prev] ? curr.intensita : prev), effetti[0].intensita);
   };
 
   // Group calendar days into weeks
@@ -385,13 +401,14 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                       if (farmacoAssunzioni.length === 0) return null;
                       const isFuture = isDateFuture(giorno.data);
                       const isPast = isDatePast(giorno.data);
-                      const hasSideEffects = isPast && giorno.effettiCollaterali && giorno.effettiCollaterali.length > 0;
                       const hasMissingIntakes = isPast && farmacoAssunzioni.some(a => a.stato === 'da_confermare');
+                      const sideEffectIntensity = pickStrongestIntensity(giorno.effettiCollaterali);
+                      const shouldShowSideEffectsButton = !isFuture;
                       
                       return (
                         <div key={giorno.data} className="bg-muted/50 p-3 rounded-lg">
                           <p className="text-sm font-medium mb-2">{formatDateFull(giorno.data)}</p>
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-center gap-3">
                             <div className="flex flex-wrap gap-2 flex-1">
                               {farmacoAssunzioni.map((assunzione) => {
                                 const isForgotten = isPast && assunzione.stato === 'da_confermare';
@@ -405,7 +422,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                                       "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
                                       assunzione.stato === 'confermata' && "bg-iov-green/20 text-iov-green",
                                       assunzione.stato === 'saltata' && "bg-destructive/20 text-destructive",
-                                      isForgotten && "bg-orange-500/20 text-orange-600 hover:bg-orange-500/30 cursor-pointer",
+                                      isForgotten && "bg-transparent border border-border text-foreground hover:bg-muted/20 cursor-pointer",
                                       !isForgotten && assunzione.stato === 'da_confermare' && !isFuture && "bg-muted border border-border hover:bg-accent/20 cursor-pointer",
                                       isFuture && assunzione.stato === 'da_confermare' && "bg-muted/50 text-muted-foreground cursor-not-allowed"
                                     )}
@@ -418,31 +435,29 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                               })}
                             </div>
 
-                            {(hasSideEffects || hasMissingIntakes) && (
-                              <div className="flex flex-col gap-2 items-center">
-                                {hasSideEffects && (
-                                  <button
-                                    type="button"
-                                    onClick={() => setSelectedSideEffectDay({ data: giorno.data, effetti: giorno.effettiCollaterali || [] })}
-                                    className="h-10 w-10 rounded-lg border border-amber-300 bg-amber-50 text-amber-600 shadow-sm hover:bg-amber-100 transition-colors"
-                                  >
-                                    <AlertTriangle className="h-5 w-5 mx-auto" />
-                                  </button>
-                                )}
-                                {hasMissingIntakes && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
+                            {shouldShowSideEffectsButton && (
+                              <div className="flex flex-col gap-2 items-center self-center">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (sideEffectIntensity && (giorno.effettiCollaterali?.length ?? 0) > 0) {
+                                      setSelectedSideEffectDay({ data: giorno.data, effetti: giorno.effettiCollaterali || [] });
+                                    } else {
                                       setReportNote("");
                                       setReportIntensity(null);
                                       setReportIsLoading(false);
                                       setReportSideEffectDay(giorno.data);
-                                    }}
-                                    className="h-10 w-10 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive shadow-sm hover:bg-destructive/20 transition-colors"
-                                  >
-                                    <AlertTriangle className="h-5 w-5 mx-auto" />
-                                  </button>
-                                )}
+                                    }
+                                  }}
+                                  className={cn(
+                                    "h-10 w-10 rounded-lg shadow-sm transition-colors border",
+                                    sideEffectIntensity
+                                      ? intensityIconMap[sideEffectIntensity]
+                                      : "border border-border text-foreground bg-transparent hover:bg-muted/20"
+                                  )}
+                                >
+                                  <AlertTriangle className="h-5 w-5 mx-auto" />
+                                </button>
                               </div>
                             )}
                           </div>
@@ -459,27 +474,33 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
       {/* Side effects detail from calendar */}
       <Dialog open={!!selectedSideEffectDay} onOpenChange={(open) => { if (!open) setSelectedSideEffectDay(null); }}>
-        <DialogContent className="max-w-sm mx-4">
+        <DialogContent className="max-w-sm mx-4 rounded-2xl sm:rounded-2xl">
           <DialogHeader>
             <DialogTitle>Effetti collaterali</DialogTitle>
           </DialogHeader>
           {selectedSideEffectDay && (
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2">
               <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-xs text-muted-foreground">Giorno</p>
                 <p className="font-medium">{formatDateFull(selectedSideEffectDay.data)}</p>
               </div>
-              {selectedSideEffectDay.effetti.map((effetto) => (
-                <div key={effetto.id} className="border border-amber-200 bg-amber-50 p-3 rounded-lg space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-amber-800">Segnalazione</span>
-                    <span className={cn("px-2 py-1 rounded-full text-xs font-semibold", intensityBadgeMap[effetto.intensita])}>
-                      {intensityLabelMap[effetto.intensita]}
-                    </span>
-                  </div>
-                  <p className="text-sm text-amber-900">{effetto.descrizione}</p>
+              {selectedSideEffectDay.effetti.length === 0 ? (
+                <div className="border border-border bg-background p-3 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Nessuna segnalazione registrata per questo giorno.</p>
                 </div>
-              ))}
+              ) : (
+                selectedSideEffectDay.effetti.map((effetto) => (
+                  <div key={effetto.id} className={cn("border p-3 rounded-lg space-y-2", intensityCardMap[effetto.intensita])}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold">Segnalazione</span>
+                      <span className={cn("px-2 py-1 rounded-full text-xs font-semibold", intensityBadgeMap[effetto.intensita])}>
+                        {intensityLabelMap[effetto.intensita]}
+                      </span>
+                    </div>
+                    <p className="text-sm">{effetto.descrizione}</p>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </DialogContent>
@@ -487,12 +508,12 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
       {/* Report side effects for missing intakes */}
       <Dialog open={!!reportSideEffectDay} onOpenChange={(open) => { if (!open) resetReportModal(); }}>
-        <DialogContent className="max-w-sm mx-4">
+        <DialogContent className="max-w-sm mx-4 rounded-2xl sm:rounded-2xl">
           <DialogHeader>
             <DialogTitle>Segnala effetti collaterali</DialogTitle>
           </DialogHeader>
           {reportSideEffectDay && (
-            <div className="space-y-4">
+            <div className="space-y-4 pt-2">
               <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-xs text-muted-foreground">Giorno</p>
                 <p className="font-medium">{formatDateFull(reportSideEffectDay)}</p>
@@ -504,7 +525,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm">IntensitÇÿ</Label>
+                <Label className="text-sm">Intensità</Label>
                 <div className="grid grid-cols-3 gap-2">
                   {intensityOptions.map((option) => (
                     <button
