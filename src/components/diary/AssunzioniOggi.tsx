@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,47 +38,20 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
   const [sideEffectsNote, setSideEffectsNote] = useState("");
   const [sideEffectsIntensity, setSideEffectsIntensity] = useState<SideEffectIntensity>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [sideEffectsHydrated, setSideEffectsHydrated] = useState(false);
-  const [sideEffectsSnapshot, setSideEffectsSnapshot] = useState<{ note: string; intensity: SideEffectIntensity } | null>(null);
   const [sideEffectsSubmitted, setSideEffectsSubmitted] = useState(false);
+  const sideEffectsSnapshotRef = useRef<{ note: string; intensity: SideEffectIntensity } | null>(null);
 
-  const sideEffectsStorageKey = "assunzioni-side-effects";
   const todayKey = new Date().toISOString().split("T")[0];
-  // console.log("TODAY KEY", todayKey);
+  const [sideEffectsDate, setSideEffectsDate] = useState(todayKey);
 
-  // Hydrate side-effects draft, reset at day change
+  // Reset side-effects draft when the day changes
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const stored = localStorage.getItem(sideEffectsStorageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored) as { date: string; note: string; intensity: SideEffectIntensity };
-        if (parsed.date === todayKey) {
-          setSideEffectsNote(parsed.note || "");
-          setSideEffectsIntensity(parsed.intensity ?? null);
-        } else {
-          localStorage.removeItem(sideEffectsStorageKey);
-        }
-      }
-    } catch {
-      // ignore malformed storage
-    } finally {
-      setSideEffectsHydrated(true);
+    if (sideEffectsDate !== todayKey) {
+      setSideEffectsNote("");
+      setSideEffectsIntensity(null);
+      setSideEffectsDate(todayKey);
     }
-  }, [todayKey]);
-
-  // Persist draft after hydration
-  useEffect(() => {
-    if (!sideEffectsHydrated || typeof window === "undefined") return;
-    try {
-      localStorage.setItem(
-        sideEffectsStorageKey,
-        JSON.stringify({ date: todayKey, note: sideEffectsNote, intensity: sideEffectsIntensity })
-      );
-    } catch {
-      // ignore persistence errors (e.g., private mode)
-    }
-  }, [sideEffectsNote, sideEffectsIntensity, sideEffectsHydrated, todayKey]);
+  }, [todayKey, sideEffectsDate]);
 
   const clearSideEffects = () => {
     setSideEffectsNote("");
@@ -324,17 +297,17 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
         open={sideEffectsOpen}
         onOpenChange={(open) => {
           if (open) {
-            setSideEffectsSnapshot({ note: sideEffectsNote, intensity: sideEffectsIntensity });
+            sideEffectsSnapshotRef.current = { note: sideEffectsNote, intensity: sideEffectsIntensity };
             setSideEffectsSubmitted(false);
             setSideEffectsOpen(true);
             return;
           }
           // closing: restore snapshot if nothing submitted
-          if (!sideEffectsSubmitted && sideEffectsSnapshot) {
-            setSideEffectsNote(sideEffectsSnapshot.note);
-            setSideEffectsIntensity(sideEffectsSnapshot.intensity);
+          if (!sideEffectsSubmitted && sideEffectsSnapshotRef.current) {
+            setSideEffectsNote(sideEffectsSnapshotRef.current.note);
+            setSideEffectsIntensity(sideEffectsSnapshotRef.current.intensity);
           }
-          setSideEffectsSnapshot(null);
+          sideEffectsSnapshotRef.current = null;
           setSideEffectsSubmitted(false);
           setSideEffectsOpen(false);
         }}
