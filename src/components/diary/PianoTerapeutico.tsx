@@ -474,7 +474,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
       {/* Side effects detail from calendar */}
       <Dialog open={!!selectedSideEffectDay} onOpenChange={(open) => { if (!open) setSelectedSideEffectDay(null); }}>
-        <DialogContent className="max-w-sm mx-4 rounded-2xl sm:rounded-2xl">
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
           <DialogHeader>
             <DialogTitle>Effetti collaterali</DialogTitle>
           </DialogHeader>
@@ -508,7 +508,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
       {/* Report side effects for missing intakes */}
       <Dialog open={!!reportSideEffectDay} onOpenChange={(open) => { if (!open) resetReportModal(); }}>
-        <DialogContent className="max-w-sm mx-4 rounded-2xl sm:rounded-2xl">
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
           <DialogHeader>
             <DialogTitle>Segnala effetti collaterali</DialogTitle>
           </DialogHeader>
@@ -565,7 +565,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
 
       {/* Calendar Action Modal */}
       <Dialog open={!!actionModal} onOpenChange={() => resetActionForm()}>
-        <DialogContent className="max-w-sm mx-4">
+        <DialogContent className="w-[94vw] max-w-sm sm:max-w-md rounded-xl px-4 sm:px-6">
           <DialogHeader>
             <DialogTitle>{actionModal?.type === 'conferma' ? 'Conferma assunzione' : 'Salta assunzione'}</DialogTitle>
           </DialogHeader>
