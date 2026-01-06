@@ -43,6 +43,11 @@ export interface AssunzioneGiornaliera {
 export interface GiornoCalendario {
   data: string;
   assunzioni: AssunzioneGiornaliera[];
+  effettiCollaterali?: {
+    id: string;
+    descrizione: string;
+    intensita: 'bassa' | 'media' | 'alta';
+  }[];
 }
 
 export interface Questionario {
@@ -172,6 +177,18 @@ const mockPianoTerapeutico: PianoTerapeutico = {
   farmaci: mockFarmaci
 };
 
+const mockEffettiCollateraliCalendario: Record<number, { id: string; descrizione: string; intensita: 'bassa' | 'media' | 'alta'; }[]> = {
+  1: [
+    { id: 'eff-1', descrizione: 'Nausea leggera durata tutta la mattina, migliorata dopo il pranzo.', intensita: 'bassa' }
+  ],
+  3: [
+    { id: 'eff-2', descrizione: 'Arrossamento alle mani con lieve bruciore.', intensita: 'media' }
+  ],
+  4: [
+    { id: 'eff-3', descrizione: 'Diarrea episodica con crampi addominali.', intensita: 'alta' }
+  ]
+};
+
 // Generate calendar days
 function generateCalendario(): GiornoCalendario[] {
   const giorni: GiornoCalendario[] = [];
@@ -187,6 +204,10 @@ function generateCalendario(): GiornoCalendario[] {
     // Drug A - daily, twice a day
     mockFarmaci[0].orariAssunzione.forEach((orario, idx) => {
       const isPast = data < oggi || (data.toDateString() === oggi.toDateString() && parseInt(orario) < oggi.getHours());
+      const leaveUnmarked = isPast && i < 5 && Math.random() < 0.25;
+      const statoAssunzione = leaveUnmarked
+        ? 'da_confermare'
+        : (isPast && i < 5 ? (Math.random() > 0.2 ? 'confermata' : 'saltata') : 'da_confermare');
       assunzioni.push({
         id: `${dataStr}-a-${idx}`,
         farmacoId: 'farmaco-a',
@@ -195,7 +216,7 @@ function generateCalendario(): GiornoCalendario[] {
         unita: mockFarmaci[0].unitaPerDose,
         orario,
         data: dataStr,
-        stato: isPast && i < 5 ? (Math.random() > 0.2 ? 'confermata' : 'saltata') : 'da_confermare'
+        stato: statoAssunzione
       });
     });
     
@@ -204,6 +225,10 @@ function generateCalendario(): GiornoCalendario[] {
     if (cycleDay < 4) {
       const orario = mockFarmaci[1].orariAssunzione[0];
       const isPast = data < oggi || (data.toDateString() === oggi.toDateString() && parseInt(orario) < oggi.getHours());
+      const leaveUnmarked = isPast && i < 5 && Math.random() < 0.2;
+      const statoAssunzione = leaveUnmarked
+        ? 'da_confermare'
+        : (isPast && i < 5 ? (Math.random() > 0.3 ? 'confermata' : 'saltata') : 'da_confermare');
       assunzioni.push({
         id: `${dataStr}-b-0`,
         farmacoId: 'farmaco-b',
@@ -212,11 +237,12 @@ function generateCalendario(): GiornoCalendario[] {
         unita: mockFarmaci[1].unitaPerDose,
         orario,
         data: dataStr,
-        stato: isPast && i < 5 ? (Math.random() > 0.3 ? 'confermata' : 'saltata') : 'da_confermare'
+        stato: statoAssunzione
       });
     }
     
-    giorni.push({ data: dataStr, assunzioni });
+    const effettiDelGiorno = data < oggi ? mockEffettiCollateraliCalendario[i] : undefined;
+    giorni.push({ data: dataStr, assunzioni, effettiCollaterali: effettiDelGiorno });
   }
   
   return giorni;

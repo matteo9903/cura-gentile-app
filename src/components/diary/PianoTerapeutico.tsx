@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Pill, Calendar, Info, Clock, FileText, Plus, Check, X, AlertCircle, Trash2 } from "lucide-react";
+import { Pill, Calendar, Info, Clock, FileText, Plus, Check, X, AlertCircle, Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { PianoTerapeutico as PianoTerapeuticoType, Farmaco, GiornoCalendario, NotaAggiuntiva, diaryService, AssunzioneGiornaliera, NoteStrutturate } from "@/services/diaryService";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,22 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
   const [motivo, setMotivo] = useState("");
   const [intensita, setIntensita] = useState<"bassa" | "media" | "alta">("media");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSideEffectDay, setSelectedSideEffectDay] = useState<{ data: string; effetti: NonNullable<GiornoCalendario["effettiCollaterali"]> } | null>(null);
+  const [reportSideEffectDay, setReportSideEffectDay] = useState<string | null>(null);
+  const [reportNote, setReportNote] = useState("");
+  const [reportIntensity, setReportIntensity] = useState<"bassa" | "media" | "alta" | null>(null);
+  const [reportIsLoading, setReportIsLoading] = useState(false);
+  const intensityLabelMap: Record<"bassa" | "media" | "alta", string> = { bassa: "Basso", media: "Moderato", alta: "Intenso" };
+  const intensityBadgeMap: Record<"bassa" | "media" | "alta", string> = {
+    bassa: "bg-green-100 text-green-800",
+    media: "bg-amber-100 text-amber-800",
+    alta: "bg-orange-100 text-orange-800"
+  };
+  const intensityOptions = [
+    { value: "bassa", label: "Basso", dots: 1, color: "bg-green-500", tone: "bg-green-100" },
+    { value: "media", label: "Moderato", dots: 2, color: "bg-amber-400", tone: "bg-amber-100" },
+    { value: "alta", label: "Intenso", dots: 3, color: "bg-orange-500", tone: "bg-orange-100" }
+  ] as const;
 
   useEffect(() => {
     const loadNoteStrutturate = async () => {
@@ -105,6 +121,23 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const resetReportModal = () => {
+    setReportSideEffectDay(null);
+    setReportNote("");
+    setReportIntensity(null);
+    setReportIsLoading(false);
+  };
+
+  const handleReportSubmit = () => {
+    if (!reportSideEffectDay || !reportNote.trim() || !reportIntensity) return;
+    setReportIsLoading(true);
+    toast({
+      title: "Segnalazione inviata",
+      description: `${formatDateFull(reportSideEffectDay)} - IntensitÇÿ: ${intensityLabelMap[reportIntensity]}`
+    });
+    resetReportModal();
   };
 
   const isDatePast = (dateStr: string) => {
@@ -352,33 +385,66 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
                       if (farmacoAssunzioni.length === 0) return null;
                       const isFuture = isDateFuture(giorno.data);
                       const isPast = isDatePast(giorno.data);
+                      const hasSideEffects = isPast && giorno.effettiCollaterali && giorno.effettiCollaterali.length > 0;
+                      const hasMissingIntakes = isPast && farmacoAssunzioni.some(a => a.stato === 'da_confermare');
                       
                       return (
                         <div key={giorno.data} className="bg-muted/50 p-3 rounded-lg">
                           <p className="text-sm font-medium mb-2">{formatDateFull(giorno.data)}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {farmacoAssunzioni.map((assunzione) => {
-                              const isForgotten = isPast && assunzione.stato === 'da_confermare';
-                              return (
-                                <button
-                                  key={assunzione.id}
-                                  onClick={() => !isFuture && assunzione.stato === 'da_confermare' && setActionModal({ assunzione, type: 'conferma' })}
-                                  disabled={isFuture || assunzione.stato !== 'da_confermare'}
-                                  className={cn(
-                                    "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-                                    assunzione.stato === 'confermata' && "bg-iov-green/20 text-iov-green",
-                                    assunzione.stato === 'saltata' && "bg-destructive/20 text-destructive",
-                                    isForgotten && "bg-orange-500/20 text-orange-600 hover:bg-orange-500/30 cursor-pointer",
-                                    !isForgotten && assunzione.stato === 'da_confermare' && !isFuture && "bg-muted border border-border hover:bg-accent/20 cursor-pointer",
-                                    isFuture && assunzione.stato === 'da_confermare' && "bg-muted/50 text-muted-foreground cursor-not-allowed"
-                                  )}
-                                >
-                                  {assunzione.orario} - {assunzione.unita} cpr
-                                  {assunzione.stato === 'confermata' && <Check className="h-3 w-3 ml-1 inline" />}
-                                  {assunzione.stato === 'saltata' && <X className="h-3 w-3 ml-1 inline" />}
-                                </button>
-                              );
-                            })}
+                          <div className="flex items-start gap-3">
+                            <div className="flex flex-wrap gap-2 flex-1">
+                              {farmacoAssunzioni.map((assunzione) => {
+                                const isForgotten = isPast && assunzione.stato === 'da_confermare';
+                                return (
+                                  <button
+                                    key={assunzione.id}
+                                    type="button"
+                                    onClick={() => !isFuture && assunzione.stato === 'da_confermare' && setActionModal({ assunzione, type: 'conferma' })}
+                                    disabled={isFuture || assunzione.stato !== 'da_confermare'}
+                                    className={cn(
+                                      "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                                      assunzione.stato === 'confermata' && "bg-iov-green/20 text-iov-green",
+                                      assunzione.stato === 'saltata' && "bg-destructive/20 text-destructive",
+                                      isForgotten && "bg-orange-500/20 text-orange-600 hover:bg-orange-500/30 cursor-pointer",
+                                      !isForgotten && assunzione.stato === 'da_confermare' && !isFuture && "bg-muted border border-border hover:bg-accent/20 cursor-pointer",
+                                      isFuture && assunzione.stato === 'da_confermare' && "bg-muted/50 text-muted-foreground cursor-not-allowed"
+                                    )}
+                                  >
+                                    {assunzione.orario} - {assunzione.unita} cpr
+                                    {assunzione.stato === 'confermata' && <Check className="h-3 w-3 ml-1 inline" />}
+                                    {assunzione.stato === 'saltata' && <X className="h-3 w-3 ml-1 inline" />}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {(hasSideEffects || hasMissingIntakes) && (
+                              <div className="flex flex-col gap-2 items-center">
+                                {hasSideEffects && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedSideEffectDay({ data: giorno.data, effetti: giorno.effettiCollaterali || [] })}
+                                    className="h-10 w-10 rounded-lg border border-amber-300 bg-amber-50 text-amber-600 shadow-sm hover:bg-amber-100 transition-colors"
+                                  >
+                                    <AlertTriangle className="h-5 w-5 mx-auto" />
+                                  </button>
+                                )}
+                                {hasMissingIntakes && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setReportNote("");
+                                      setReportIntensity(null);
+                                      setReportIsLoading(false);
+                                      setReportSideEffectDay(giorno.data);
+                                    }}
+                                    className="h-10 w-10 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive shadow-sm hover:bg-destructive/20 transition-colors"
+                                  >
+                                    <AlertTriangle className="h-5 w-5 mx-auto" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -388,6 +454,91 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
               ))}
             </Swiper>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Side effects detail from calendar */}
+      <Dialog open={!!selectedSideEffectDay} onOpenChange={(open) => { if (!open) setSelectedSideEffectDay(null); }}>
+        <DialogContent className="max-w-sm mx-4">
+          <DialogHeader>
+            <DialogTitle>Effetti collaterali</DialogTitle>
+          </DialogHeader>
+          {selectedSideEffectDay && (
+            <div className="space-y-3">
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs text-muted-foreground">Giorno</p>
+                <p className="font-medium">{formatDateFull(selectedSideEffectDay.data)}</p>
+              </div>
+              {selectedSideEffectDay.effetti.map((effetto) => (
+                <div key={effetto.id} className="border border-amber-200 bg-amber-50 p-3 rounded-lg space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-amber-800">Segnalazione</span>
+                    <span className={cn("px-2 py-1 rounded-full text-xs font-semibold", intensityBadgeMap[effetto.intensita])}>
+                      {intensityLabelMap[effetto.intensita]}
+                    </span>
+                  </div>
+                  <p className="text-sm text-amber-900">{effetto.descrizione}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Report side effects for missing intakes */}
+      <Dialog open={!!reportSideEffectDay} onOpenChange={(open) => { if (!open) resetReportModal(); }}>
+        <DialogContent className="max-w-sm mx-4">
+          <DialogHeader>
+            <DialogTitle>Segnala effetti collaterali</DialogTitle>
+          </DialogHeader>
+          {reportSideEffectDay && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs text-muted-foreground">Giorno</p>
+                <p className="font-medium">{formatDateFull(reportSideEffectDay)}</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm">Quali disturbi hai avuto?</Label>
+                <Textarea value={reportNote} onChange={(e) => setReportNote(e.target.value)} placeholder="Risposta..." rows={3} className="px-3" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm">IntensitÇÿ</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {intensityOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.value}
+                      onClick={() => setReportIntensity(option.value)}
+                      className={cn(
+                        "rounded-lg border px-3 py-2 flex flex-col items-center gap-2 transition-colors",
+                        reportIntensity === option.value ? cn("border-iov-dark-blue", option.tone) : "border-border bg-background"
+                      )}
+                    >
+                      <div className="flex gap-1">
+                        {Array.from({ length: option.dots }).map((_, idx) => (
+                          <span key={idx} className={cn("h-3.5 w-3.5 rounded-full", option.color)} />
+                        ))}
+                      </div>
+                      <span className="text-sm font-medium text-foreground">{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={resetReportModal}>Annulla</Button>
+                <Button
+                  className="flex-1 bg-iov-dark-blue text-white hover:bg-iov-dark-blue-hover"
+                  disabled={reportIsLoading || !reportNote.trim() || !reportIntensity}
+                  onClick={handleReportSubmit}
+                >
+                  Invia
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
