@@ -107,7 +107,7 @@ const Homepage = () => {
           minHeight: "70px",
         }}
         >
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center shadow-sm">
             <CreditCard className="h-5 w-5 text-white" />
           </div>
@@ -115,7 +115,7 @@ const Homepage = () => {
             <h1 className="text-lg font-bold text-white">Carta d'Identità Farmacologica</h1>
             <p className="text-[14px] text-white/85">Profilo clinico a portata di mano</p>
           </div>
-        </div>
+        </div> */}
       </header>
 
       {/* Content */}

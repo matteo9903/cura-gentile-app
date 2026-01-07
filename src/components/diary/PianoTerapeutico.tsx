@@ -30,9 +30,10 @@ interface PianoTerapeuticoProps {
   calendario: GiornoCalendario[];
   note: NotaAggiuntiva[];
   onUpdate: () => void;
+  cardBorderClass?: string;
 }
 
-const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps) => {
+const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: PianoTerapeuticoProps) => {
   const [selectedFarmaco, setSelectedFarmaco] = useState<Farmaco | null>(null);
   const [showCalendarioFarmaco, setShowCalendarioFarmaco] = useState<Farmaco | null>(null);
   const [noteStrutturate, setNoteStrutturate] = useState<NoteStrutturate | null>(null);
@@ -197,10 +198,12 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
     groupedDays.push(safeCalendario.slice(i, i + 7));
   }
 
+  const cardBorder = cardBorderClass ?? "border-border";
+
   return (
     <>
       {/* Therapy Summary */}
-      <Card className="border-primary/20 bg-primary/5">
+      <Card className={cn("border-primary/20 bg-primary/5", cardBorder)}>
         <CardContent className="p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -215,10 +218,10 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       </Card>
 
       {/* Drug Cards Carousel - One at a time */}
-      <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="!pb-8">
+      <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="!pb-8 pt-3">
         {piano.farmaci.map((farmaco) => (
           <SwiperSlide key={farmaco.id}>
-            <Card className="h-full mx-1">
+            <Card className={cn("h-full mx-1 bg-white shadow-sm", cardBorder)}>
               <CardContent className="p-4">
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
@@ -274,7 +277,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
       </Swiper>
 
       {/* Note Aggiuntive - Refactored as single editable block */}
-      <Card>
+      <Card className={cn("bg-white shadow-sm", cardBorder)}>
         <CardHeader className="py-3">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-primary" />
@@ -336,7 +339,7 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate }: PianoTerapeuticoProps
           <div className="space-y-2">
             <Label className="text-xs font-medium text-muted-foreground">Domande per lo specialista</Label>
             <Textarea value={domandeSpecialista} onChange={(e) => setDomandeSpecialista(e.target.value)} placeholder="Scrivi qui le domande che vuoi fare al tuo specialista..." rows={3} className="px-3" />
-            <Button size="sm" onClick={handleSaveDomande} className="w-full">Salva domande</Button>
+            <Button size="sm" onClick={handleSaveDomande} className="w-full bg-iov-yellow-dark">Salva domande</Button>
           </div>
         </CardContent>
       </Card>

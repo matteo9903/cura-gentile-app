@@ -26,11 +26,12 @@ import "swiper/css/pagination";
 interface AssunzioniOggiProps {
   assunzioni: AssunzioneGiornaliera[];
   onUpdate: () => void;
+  cardBorderClass?: string;
 }
 
 type SideEffectIntensity = "lieve" | "moderato" | "severo" | null;
 
-const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
+const AssunzioniOggi = ({ assunzioni, onUpdate, cardBorderClass }: AssunzioniOggiProps) => {
   const [skipModalAssunzione, setSkipModalAssunzione] = useState<AssunzioneGiornaliera | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ assunzione: AssunzioneGiornaliera; type: "conferma" | "salta" } | null>(null);
   const [motivo, setMotivo] = useState("");
@@ -91,9 +92,11 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
     }
   };
 
+  const cardBorder = cardBorderClass ?? "border-border";
+
   if (assunzioni.length === 0) {
     return (
-      <Card className="border-iov-green/30 bg-iov-green/5">
+      <Card className={cn("bg-white shadow-sm", cardBorder)}>
         <CardContent className="p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-iov-green/20 flex items-center justify-center">
             <Check className="h-5 w-5 text-iov-green" />
@@ -112,7 +115,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
       <Swiper modules={[Pagination]} pagination={{ clickable: true }} spaceBetween={16} slidesPerView={1} className="!pb-8">
         {assunzioni.map((assunzione) => (
           <SwiperSlide key={assunzione.id}>
-            <Card className="border-secondary mx-1">
+            <Card className={cn("bg-white shadow-sm mx-1", cardBorder)}>
               <CardContent className="p-4 flex flex-col min-h-[190px]">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center shrink-0">
@@ -200,7 +203,7 @@ const AssunzioniOggi = ({ assunzioni, onUpdate }: AssunzioniOggiProps) => {
       <div className="mt-4">
         <Button
           onClick={() => setSideEffectsOpen(true)}
-          className="w-full bg-iov-yellow text-iov-dark-blue hover:bg-iov-yellow-dark font-semibold"
+          className="w-full bg-iov-light-blue-dark text-iov-dark-blue hover:bg-iov-light-blue font-semibold"
         >
           <AlertTriangle className="h-4 w-4 mr-2" />
           Segnala effetti collaterali

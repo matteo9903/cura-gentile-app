@@ -6,6 +6,7 @@ import PianoTerapeutico from "@/components/diary/PianoTerapeutico";
 import QuestionariClinici from "@/components/diary/QuestionariClinici";
 import FAQSection from "@/components/diary/FAQSection";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const PatientDiary = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -117,55 +118,73 @@ const PatientDiary = () => {
         }}
       >
         {/* 1. Assunzioni di oggi - First section */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Pill className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-foreground">Assunzioni di oggi</h2>
-          </div>
-          <AssunzioniOggi assunzioni={assunzioniOggi} onUpdate={handleUpdate} />
-        </section>
+        <Card className="bg-white border border-iov-light-blue rounded-2xl shadow-sm">
+          <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
+            <div className="w-11 h-11 rounded-xl bg-iov-light-blue-light flex items-center justify-center">
+              <Pill className="h-5 w-5 text-primary" />
+            </div>
+            <CardTitle className="text-lg font-bold">Assunzioni di oggi</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-5 pt-3">
+            <AssunzioniOggi
+              assunzioni={assunzioniOggi}
+              onUpdate={handleUpdate}
+              cardBorderClass="border-iov-light-blue"
+            />
+          </CardContent>
+        </Card>
 
         {/* 2. Piano terapeutico */}
         {piano && (
-          <section>
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold text-foreground">Piano terapeutico</h2>
-            </div>
-            <div className="space-y-4">
+          <Card className="bg-white border border-iov-yellow rounded-2xl shadow-sm">
+            <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
+              <div className="w-11 h-11 rounded-xl bg-iov-yellow-light flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-iov-dark-blue" />
+              </div>
+              <CardTitle className="text-lg font-bold">Piano terapeutico</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-5 pt-3">
               <PianoTerapeutico 
                 piano={piano} 
                 calendario={calendario} 
                 note={note} 
                 onUpdate={handleUpdate} 
+                cardBorderClass="border-iov-yellow"
               />
-            </div>
-          </section>
+            </CardContent>
+          </Card>
         )}
 
         {/* 3. Questionari clinici */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <ClipboardList className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-foreground">Questionari</h2>
-          </div>
-          <div className="space-y-4">
+        <Card className="bg-white border border-iov-pink rounded-2xl shadow-sm">
+          <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
+            <div className="w-11 h-11 rounded-xl bg-iov-pink-light flex items-center justify-center">
+              <ClipboardList className="h-5 w-5 text-iov-pink-dark" />
+            </div>
+            <CardTitle className="text-lg font-bold">Questionari</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-5 pt-3">
             <QuestionariClinici 
               questionari={questionari} 
               compilazioni={compilazioni} 
-              onUpdate={handleUpdate} 
+              onUpdate={handleUpdate}
+              cardBorderClass="border-iov-pink"
             />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* 4. FAQ */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <HelpCircle className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-bold text-foreground">Domande frequenti</h2>
-          </div>
-          <FAQSection />
-        </section>
+        <Card className="bg-white border border-iov-dark-blue rounded-2xl shadow-sm">
+          <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
+            <div className="w-11 h-11 rounded-xl bg-iov-light-blue-dark flex items-center justify-center">
+              <HelpCircle className="h-5 w-5 text-iov-dark-blue" />
+            </div>
+            <CardTitle className="text-lg font-bold">Domande frequenti</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-5 pt-3">
+            <FAQSection />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

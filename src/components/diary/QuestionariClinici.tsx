@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, ClipboardList, Clock, Check, History } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Questionario, CompilazioneQuestionario, diaryService } from "@/services/diaryService";
+import { cn } from "@/lib/utils";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -18,9 +19,10 @@ interface QuestionariCliniciProps {
   questionari: Questionario[];
   compilazioni: CompilazioneQuestionario[];
   onUpdate: () => void;
+  cardBorderClass?: string;
 }
 
-const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: QuestionariCliniciProps) => {
+const QuestionariClinici = ({ questionari, compilazioni, onUpdate, cardBorderClass }: QuestionariCliniciProps) => {
   const [selectedQuestionario, setSelectedQuestionario] = useState<Questionario | null>(null);
   const [risposte, setRisposte] = useState<Record<string, string | number>>({});
   const [showSubmit, setShowSubmit] = useState(false);
@@ -92,6 +94,8 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
     return acc;
   }, {} as Record<number, CompilazioneQuestionario[]>);
 
+  const cardBorder = cardBorderClass ?? "border-border";
+
   return (
     <>
       {/* Questionnaires to compile */}
@@ -105,7 +109,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
         >
           {daCompilare.map((questionario) => (
             <SwiperSlide key={questionario.id}>
-              <Card className="h-full">
+              <Card className={cn("h-full bg-white shadow-sm", cardBorder)}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
@@ -122,7 +126,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
                   
                   <p className="text-sm text-muted-foreground mb-4">{questionario.descrizione}</p>
                   
-                  <Button className="w-full" onClick={() => setSelectedQuestionario(questionario)}>
+                  <Button className="w-full bg-iov-pink-dark" onClick={() => setSelectedQuestionario(questionario)}>
                     Compila questionario
                   </Button>
                 </CardContent>
@@ -131,7 +135,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate }: Questionari
           ))}
         </Swiper>
       ) : (
-        <Card className="border-iov-green/30 bg-iov-green/5">
+        <Card className={cn("bg-white shadow-sm", cardBorder)}>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-iov-green/20 flex items-center justify-center">
               <Check className="h-5 w-5 text-iov-green" />
