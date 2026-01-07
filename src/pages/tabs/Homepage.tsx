@@ -109,7 +109,8 @@ const Homepage = () => {
     <div 
       className="min-h-screen bg-background"
       style={{
-        paddingTop: "var(--safe-area-top)",
+        // paddingTop: "var(--safe-area-top)",
+        paddingTop: "var(--safe-area-top)/3",
         paddingBottom: "var(--safe-area-bottom)",
       }}
     >

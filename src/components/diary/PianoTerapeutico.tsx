@@ -287,18 +287,8 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
         <CardContent className="pt-0 space-y-4">
           {/* Altri farmaci assunti */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium text-muted-foreground">Altri farmaci assunti</Label>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAddFarmacoFields((prev) => !prev)}
-                className="flex items-center gap-1"
-              >
-                <Plus className="h-4 w-4" />
-                {showAddFarmacoFields ? "Chiudi" : "Aggiungi"}
-              </Button>
-            </div>
+            <Label className="text-primary font-medium text-muted-foreground">Altri farmaci o prodotti assunti</Label>
+
             {noteStrutturate?.altriFarmaci.map((f) => (
               <div key={f.id} className="flex items-center gap-2 bg-muted/50 p-2 rounded">
                 <div className="flex-1">
@@ -310,34 +300,57 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
                 </Button>
               </div>
             ))}
-            {showAddFarmacoFields && (
-              <div className="space-y-2 pt-2">
-                <Input
-                  placeholder="Nome farmaco"
-                  value={newFarmacoNome}
-                  onChange={(e) => setNewFarmacoNome(e.target.value)}
-                  className="w-full px-3"
-                />
-                <Input
-                  placeholder="Dosaggio"
-                  value={newFarmacoDosaggio}
-                  onChange={(e) => setNewFarmacoDosaggio(e.target.value)}
-                  className="w-full px-3"
-                />
+
+            {showAddFarmacoFields ? (
+              <>
                 <Button
-                  onClick={handleAddFarmaco}
-                  disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}
-                  className="w-full"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddFarmacoFields(false)}
+                  className="flex items-center gap-1 w-full justify-center"
                 >
-                  Aggiungi farmaco
+                  <Plus className="h-4 w-4" />
+                  Chiudi
                 </Button>
-              </div>
+                <div className="space-y-2 pt-2">
+                  <Input
+                    placeholder="Nome prodotto"
+                    value={newFarmacoNome}
+                    onChange={(e) => setNewFarmacoNome(e.target.value)}
+                    className="w-full px-3"
+                  />
+                  <Input
+                    placeholder="Quando l'hai assunto?"
+                    value={newFarmacoDosaggio}
+                    onChange={(e) => setNewFarmacoDosaggio(e.target.value)}
+                    className="w-full px-3"
+                  />
+                  <Button
+                    onClick={handleAddFarmaco}
+                    disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}
+                    className="w-full"
+                  >
+                    Aggiungi nuovo prodotto
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAddFarmacoFields(true)}
+                // className="flex items-center gap-1 w-full justify-center"
+                className="flex items-center gap-1 w-full justify-center"
+              >
+                <Plus className="h-4 w-4" />
+                Aggiungi prodotto
+              </Button>
             )}
           </div>
 
           {/* Domande per lo specialista */}
           <div className="space-y-2">
-            <Label className="text-xs font-medium text-muted-foreground">Domande per lo specialista</Label>
+            <Label className="text-primary font-medium text-muted-foreground">Domande per lo specialista</Label>
             <Textarea value={domandeSpecialista} onChange={(e) => setDomandeSpecialista(e.target.value)} placeholder="Scrivi qui le domande che vuoi fare al tuo specialista..." rows={3} className="px-3" />
             <Button size="sm" onClick={handleSaveDomande} className="w-full bg-iov-yellow-dark">Salva domande</Button>
           </div>

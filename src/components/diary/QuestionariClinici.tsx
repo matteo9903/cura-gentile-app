@@ -158,9 +158,9 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate, cardBorderCla
           >
             <span className="flex items-center gap-2">
               <History className="h-4 w-4 text-primary" />
-              <span>Compilazioni precedenti</span>
+              <span className="text-primary">Compilazioni precedenti</span>
             </span>
-            <span className="text-xs text-muted-foreground">({compilazioni.length})</span>
+            <span className="text-primary text-muted-foreground">({compilazioni.length})</span>
           </Button>
 
           <Dialog
@@ -269,7 +269,7 @@ const QuestionariClinici = ({ questionari, compilazioni, onUpdate, cardBorderCla
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto py-4 space-y-6"
+            className="flex-1 overflow-y-auto py-4 px-2 space-y-6"
           >
             {selectedQuestionario?.domande.map((domanda, idx) => (
               <div key={domanda.id} className="space-y-3">
