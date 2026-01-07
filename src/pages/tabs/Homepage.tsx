@@ -10,7 +10,6 @@ import {
   Users,
   Stethoscope,
   HeartPulse,
-  Heart,
   Microscope,
   AlertTriangle,
   Phone,
@@ -18,7 +17,10 @@ import {
   Scale,
   Ruler,
   CalendarDays,
-  CreditCard,
+  Fingerprint,
+  MapPin,
+  ShieldCheck,
+  IdCard,
   ClipboardPlus,
   ShieldPlus,
   Syringe,
@@ -53,7 +55,7 @@ const Homepage = () => {
   const pillBase =
     "flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 border border-white/40 shadow-sm";
   const sectionTitleClass = "flex items-center gap-2 text-iov-dark-blue font-semibold text-base";
-  const sectionContainerClass = "bg-white/70 rounded-2xl p-3 shadow-sm border border-white/60";
+  const sectionContainerBaseClass = "bg-white/70 rounded-2xl p-3 shadow-sm";
   const subtleLabel = "text-[11px] uppercase tracking-wide text-iov-dark-blue/70 font-semibold";
 
   if (isLoading || !carta) {
@@ -125,7 +127,7 @@ const Homepage = () => {
         }}
       >
         {/* Identity Card */}
-        <Card className="bg-white/90 border-none shadow-xl rounded-3xl overflow-hidden">
+        <Card className="bg-white/90 border border-iov-dark-blue rounded-3xl shadow-xl overflow-hidden">
           <div className="bg-iov-gradient p-4 pb-5 text-white">
             <div className="flex items-center gap-3">
               <div className="h-14 w-14 rounded-full bg-white/25 border border-white/30 flex items-center justify-center text-lg font-bold">
@@ -138,23 +140,32 @@ const Homepage = () => {
               </div>
             </div>
           </div>
+        </Card>
+
+        <Card className="bg-white/95 border border-iov-light-blue rounded-2xl shadow-sm">
+          <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
+            <div className="w-11 h-11 rounded-xl bg-iov-light-blue-light flex items-center justify-center">
+              <IdCard className="h-5 w-5 text-iov-dark-blue" />
+            </div>
+            <CardTitle className="text-lg font-bold text-iov-dark-blue">Dati personali</CardTitle>
+          </CardHeader>
           <CardContent className="p-4 space-y-4">
             <div className="grid grid-cols-3 gap-2">
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
                 <div className="flex items-center gap-2">
                   <Scale className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Peso</p>
                 </div>
                 <p className="font-semibold text-[15px]">{carta.paziente.peso} kg</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
                 <div className="flex items-center gap-2">
                   <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Altezza</p>
                 </div>
                 <p className="font-semibold text-[15px]">{carta.paziente.altezza} cm</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Nascita</p>
@@ -163,24 +174,39 @@ const Homepage = () => {
               </div>
             </div>
             <div className="grid gap-2 text-sm">
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
-                <p className={subtleLabel}>Codice Fiscale</p>
-                <p className="font-mono text-base font-semibold break-words">{carta.paziente.codiceFiscale}</p>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+                  <Fingerprint className="h-5 w-5" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className={subtleLabel}>Codice Fiscale</p>
+                  <p className="font-mono text-base font-semibold break-words">{carta.paziente.codiceFiscale}</p>
+                </div>
               </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
-                <p className={subtleLabel}>Tessera Sanitaria</p>
-                <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className={subtleLabel}>Tessera Sanitaria</p>
+                  <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
+                </div>
               </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-white/60 text-iov-dark-blue">
-                <p className={subtleLabel}>Residenza</p>
-                <p className="text-[15px] font-semibold leading-snug break-words">{carta.paziente.indirizzo}</p>
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+                  <MapPin className="h-5 w-5" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className={subtleLabel}>Residenza</p>
+                  <p className="text-[15px] font-semibold leading-snug break-words">{carta.paziente.indirizzo}</p>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Contacts */}
-        <section className={sectionContainerClass}>
+        <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
           <div className={sectionTitleClass}>
             <Users className="h-5 w-5 text-iov-dark-blue" />
             <span>Contatti Caregiver</span>
@@ -198,7 +224,7 @@ const Homepage = () => {
             >
               {carta.caregiver.map((cg, idx) => (
                 <SwiperSlide key={idx}>
-                  <Card className="bg-white/90 border border-iov-light-blue/60 rounded-2xl shadow-sm">
+                  <Card className="bg-white/90 border border-iov-light-blue rounded-2xl shadow-sm">
                     <CardContent className="p-4 space-y-2">
                       <div className="space-y-1">
                         <p className="font-semibold text-iov-dark-blue text-lg">
@@ -225,7 +251,7 @@ const Homepage = () => {
         </section>
 
         {/* Specialists */}
-        <section className={sectionContainerClass}>
+        <section className={`${sectionContainerBaseClass} border border-iov-yellow`}>
           <div className={sectionTitleClass}>
             <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
             <span>Contatti specialisti</span>
@@ -243,7 +269,7 @@ const Homepage = () => {
             >
               {carta.specialisti.map((sp, idx) => (
                 <SwiperSlide key={idx}>
-                  <Card className="bg-white/90 border border-iov-yellow/60 rounded-2xl shadow-sm">
+                  <Card className="bg-white/90 border border-iov-yellow rounded-2xl shadow-sm">
                     <CardContent className="p-4 space-y-2">
                       <div className="space-y-1">
                         <p className="font-semibold text-iov-dark-blue text-lg">
@@ -271,13 +297,13 @@ const Homepage = () => {
         </section>
 
         {/* Diagnosis */}
-        <section className={sectionContainerClass}>
+        <section className={`${sectionContainerBaseClass} border border-iov-pink`}>
           <div className={sectionTitleClass}>
             <ClipboardPlus className="h-5 w-5 text-iov-pink-dark" />
             <span>Diagnosi Oncologica</span>
           </div>
           <div className="mt-3">
-            <Card className="bg-white/95 border border-iov-pink/60 rounded-2xl shadow-sm">
+            <Card className="bg-white/95 border border-iov-pink rounded-2xl shadow-sm">
               <CardContent className="p-4 space-y-3 text-iov-dark-blue">
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-xl bg-iov-pink-light flex items-center justify-center text-iov-pink-dark">
@@ -338,7 +364,7 @@ const Homepage = () => {
         </section>
 
         {/* Comorbidità & Allergie */}
-        <section className={sectionContainerClass}>
+        <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
           <div className={sectionTitleClass}>
             <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
             <span>Comorbidità</span>
@@ -369,12 +395,12 @@ const Homepage = () => {
                 {carta.allergie.length}
               </Badge>
             </div>
-            <div className="mt-3 flex flex-col gap-2">
-              {carta.allergie.map((al, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between bg-white/90 border border-iov-pink/40 rounded-xl px-3 py-2 shadow-sm"
-                >
+              <div className="mt-3 flex flex-col gap-2">
+                {carta.allergie.map((al, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between bg-white/90 border border-iov-pink rounded-xl px-3 py-2 shadow-sm"
+                  >
                     <div>
                       <p className="font-semibold text-iov-dark-blue">{al.sostanza}</p>
                       <p className="text-[12px] text-iov-dark-blue/70">{al.reazione}</p>
