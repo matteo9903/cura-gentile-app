@@ -326,9 +326,10 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
                     className="w-full px-3"
                   />
                   <Button
+                    size="sm"
                     onClick={handleAddFarmaco}
                     disabled={!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()}
-                    className="w-full"
+                    className="w-full bg-iov-yellow-dark"
                   >
                     Aggiungi nuovo prodotto
                   </Button>
@@ -336,11 +337,9 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
               </>
             ) : (
               <Button
-                variant="outline"
                 size="sm"
                 onClick={() => setShowAddFarmacoFields(true)}
-                // className="flex items-center gap-1 w-full justify-center"
-                className="flex items-center gap-1 w-full justify-center"
+                className="flex items-center gap-1 w-full justify-center bg-iov-yellow-dark"
               >
                 <Plus className="h-4 w-4" />
                 Aggiungi prodotto
