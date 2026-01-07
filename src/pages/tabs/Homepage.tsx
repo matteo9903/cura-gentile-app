@@ -25,6 +25,7 @@ import {
   ShieldPlus,
   Syringe,
   ActivitySquare,
+  CreditCard
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -46,10 +47,22 @@ const Homepage = () => {
     const name = `${carta.paziente.nome} ${carta.paziente.cognome}`.trim();
     const parts = name.split(" ").filter(Boolean);
     if (!parts.length) return "";
-    const first = parts[0]?.[0] ?? "";
-    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
-    return `${first}${last}`.toUpperCase();
+    const firstWord = parts[0] ?? "";
+    const firstChar = firstWord[0] ?? "";
+    const secondChar =
+      (parts.length > 1 ? parts[parts.length - 1]?.[0] : firstWord[1]) ?? firstChar;
+    return `${firstChar}${secondChar}`.slice(0, 2).toUpperCase();
   }, [carta]);
+
+  const formattedDate = useMemo(() => {
+    return new Intl.DateTimeFormat("it-IT", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    })
+      .format(new Date())
+      .toUpperCase();
+  }, []);
 
   const tagBase = "px-3 py-1 rounded-full text-[11px] font-semibold border-0";
   const pillBase =
@@ -101,7 +114,7 @@ const Homepage = () => {
       }}
     >
       {/* Header */}
-      <header 
+      {/* <header 
         className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
         style={{
           paddingTop: "calc(var(--safe-area-top)/2)",
@@ -109,7 +122,7 @@ const Homepage = () => {
           minHeight: "70px",
         }}
         >
-        {/* <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center shadow-sm">
             <CreditCard className="h-5 w-5 text-white" />
           </div>
@@ -117,26 +130,31 @@ const Homepage = () => {
             <h1 className="text-lg font-bold text-white">Carta d'Identità Farmacologica</h1>
             <p className="text-[14px] text-white/85">Profilo clinico a portata di mano</p>
           </div>
-        </div> */}
-      </header>
+        </div>
+      </header> */}
 
       {/* Content */}
       <div className="p-4 pb-4 space-y-4"
         style={{
-          paddingTop: 'calc(70px + var(--safe-area-top)/2)'
+          // paddingTop: 'calc(70px + var(--safe-area-top)/2)'
         }}
       >
         {/* Identity Card */}
         <Card className="bg-white/90 border border-iov-dark-blue rounded-3xl shadow-xl overflow-hidden">
-          <div className="bg-iov-gradient p-4 pb-5 text-white">
-            <div className="flex items-center gap-3">
+          <div className="bg-iov-gradient px-5 py-6 text-white">
+            <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-full bg-white/25 border border-white/30 flex items-center justify-center text-lg font-bold">
                 {initials}
               </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold leading-snug">
-                  {carta.paziente.nome} {carta.paziente.cognome}
-                </h2>
+              <div className="flex-1 min-w-0 flex flex-col gap-1">
+                <p className="text-xs uppercase tracking-[0.25em] text-white/80">Ciao</p>
+                <p
+                  className="text-3xl font-black leading-tight break-words text-iov-yellow-dark"
+                  style={{ textShadow: "0 8px 18px rgba(0, 0, 0, 0.35)" }}
+                >
+                  {carta.paziente.nome}
+                </p>
+                <p className="text-sm font-semibold text-white/85">{formattedDate}</p>
               </div>
             </div>
           </div>
@@ -192,8 +210,8 @@ const Homepage = () => {
                   <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
                 </div>
               </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue self-center">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div className="flex-1 space-y-1">
@@ -305,7 +323,7 @@ const Homepage = () => {
           <div className="mt-3">
             <Card className="bg-white/95 border border-iov-pink rounded-2xl shadow-sm">
               <CardContent className="p-4 space-y-3 text-iov-dark-blue">
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-xl bg-iov-pink-light flex items-center justify-center text-iov-pink-dark">
                     <Microscope className="h-5 w-5" />
                   </div>
@@ -345,9 +363,11 @@ const Homepage = () => {
                     {carta.terapieOncologiche.map((tp, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
+                        className="flex items-center gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
                       >
-                        <Syringe className="h-4 w-4 text-iov-pink-dark mt-0.5" />
+                        <div className="h-9 w-9 rounded-lg bg-white/80 border border-iov-pink/50 flex items-center justify-center shrink-0">
+                          <Syringe className="h-4 w-4 text-iov-pink-dark" />
+                        </div>
                         <div className="flex-1">
                           <p className="font-semibold">{tp.farmaco}</p>
                           <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} • {tp.frequenza}</p>

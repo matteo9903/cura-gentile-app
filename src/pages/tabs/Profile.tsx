@@ -34,7 +34,11 @@ const Profile = () => {
 
   const getInitials = () => {
     if (!user) return "U";
-    return `${user.nome?.[0] || ""}${user.cognome?.[0] || ""}`.toUpperCase();
+    const nome = user.nome?.trim() || "";
+    const cognome = user.cognome?.trim() || "";
+    const first = nome[0] || "";
+    const second = cognome[0] || nome[1] || first;
+    return `${first}${second}`.slice(0, 2).toUpperCase();
   };
 
   const handleLogout = () => {
@@ -141,11 +145,9 @@ const Profile = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 bg-white/10 border border-white/20 text-white">
-                <AvatarFallback className="text-xl font-bold text-white">
-                  {getInitials()}
-                </AvatarFallback>
-              </Avatar>
+              <div className="h-16 w-16 rounded-full bg-iov-gradient text-white font-bold border border-white/40 shadow-lg flex items-center justify-center text-2xl">
+                {getInitials()}
+              </div>
               <div>
                 <h2 className="text-xl font-semibold">
                   {user?.nome} {user?.cognome}
@@ -232,7 +234,7 @@ const Profile = () => {
               Cambia password
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto space-y-4 py-4">
+          <div className="flex-1 overflow-y-auto space-y-4 py-4 px-4">
             <div className="space-y-2">
               <Label htmlFor="oldPassword">Password attuale</Label>
               <Input
