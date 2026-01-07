@@ -56,9 +56,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background safe-area-top safe-area-bottom">
+    <div className="min-h-screen flex flex-col bg-background safe-area-bottom">
       {/* Header */}
-      <header className="bg-primary px-4 py-6 flex items-center justify-center">
+      <header className="bg-primary px-4 pb-6 pt-[var(--safe-area-top)] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-primary-foreground">IOV</h1>
           <p className="text-sm text-primary-foreground/80">

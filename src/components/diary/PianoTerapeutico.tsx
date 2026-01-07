@@ -260,12 +260,22 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
                   )}
                 </div>
 
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1" onClick={() => setSelectedFarmaco(farmaco)}>
+                <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-center whitespace-normal break-words text-center leading-tight"
+                    onClick={() => setSelectedFarmaco(farmaco)}
+                  >
                     <Info className="h-4 w-4 mr-1" />
                     Info farmaco
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1" onClick={() => setShowCalendarioFarmaco(farmaco)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-center whitespace-normal break-words text-center leading-tight"
+                    onClick={() => setShowCalendarioFarmaco(farmaco)}
+                  >
                     <Calendar className="h-4 w-4 mr-1" />
                     Calendario
                   </Button>
