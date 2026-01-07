@@ -151,21 +151,21 @@ const Homepage = () => {
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             <div className="grid grid-cols-3 gap-2">
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
                 <div className="flex items-center gap-2">
                   <Scale className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Peso</p>
                 </div>
                 <p className="font-semibold text-[15px]">{carta.paziente.peso} kg</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
                 <div className="flex items-center gap-2">
                   <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Altezza</p>
                 </div>
                 <p className="font-semibold text-[15px]">{carta.paziente.altezza} cm</p>
               </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue/80`}>
+              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Nascita</p>
@@ -174,8 +174,8 @@ const Homepage = () => {
               </div>
             </div>
             <div className="grid gap-2 text-sm">
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
                   <Fingerprint className="h-5 w-5" />
                 </div>
                 <div className="flex-1 space-y-1">
@@ -183,8 +183,8 @@ const Homepage = () => {
                   <p className="font-mono text-base font-semibold break-words">{carta.paziente.codiceFiscale}</p>
                 </div>
               </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
                   <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div className="flex-1 space-y-1">
@@ -192,8 +192,8 @@ const Homepage = () => {
                   <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
                 </div>
               </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue/80 text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue/60 flex items-center justify-center text-iov-dark-blue">
+              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div className="flex-1 space-y-1">
