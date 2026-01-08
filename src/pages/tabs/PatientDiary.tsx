@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Pill, ClipboardList, Calendar, HelpCircle, BookOpen } from "lucide-react";
 import { diaryService, AssunzioneGiornaliera, PianoTerapeutico as PianoTerapeuticoType, GiornoCalendario, Questionario, CompilazioneQuestionario, NotaAggiuntiva } from "@/services/diaryService";
 import AssunzioniOggi from "@/components/diary/AssunzioniOggi";
@@ -46,6 +46,13 @@ const PatientDiary = () => {
   const handleUpdate = () => {
     loadData();
   };
+
+  const todayLabel = useMemo(() => {
+    return new Date().toLocaleDateString("it-IT", {
+      day: "numeric",
+      month: "long",
+    });
+  }, []);
 
   if (isLoading) {
     return (
@@ -123,7 +130,12 @@ const PatientDiary = () => {
             <div className="w-11 h-11 rounded-xl bg-iov-light-blue-light flex items-center justify-center">
               <Pill className="h-5 w-5 text-primary" />
             </div>
-            <CardTitle className="text-lg font-bold">Assunzioni di oggi</CardTitle>
+            <div className="flex-1">
+              <CardTitle className="text-lg font-bold">Assunzioni di oggi</CardTitle>
+              <span className="inline-flex mt-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-iov-light-blue-dark text-iov-dark-blue">
+                {todayLabel}
+              </span>
+            </div>
           </CardHeader>
           <CardContent className="px-4 pb-5 pt-3">
             <AssunzioniOggi
