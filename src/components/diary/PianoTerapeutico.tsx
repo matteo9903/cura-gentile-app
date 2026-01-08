@@ -221,13 +221,14 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
       <Card className={cn("border-primary/20 bg-primary/5", cardBorder)}>
         <CardContent className="p-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <Calendar className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Durata terapia</span>
+              <span className="text-sm font-semibold text-foreground">Durata terapia</span>
             </div>
-            <span className="text-sm text-muted-foreground">
-              {formatDate(piano.dataInizio)} - {formatDate(piano.dataFine)} ({piano.durataTotale} giorni)
-            </span>
+            <div className="text-sm text-muted-foreground leading-snug text-right">
+              <div>{formatDate(piano.dataInizio)} - {formatDate(piano.dataFine)}</div>
+              <div>{piano.durataTotale} giorni</div>
+            </div>
           </div>
         </CardContent>
       </Card>
