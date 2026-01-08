@@ -148,7 +148,7 @@ const Homepage = () => {
                 {initials}
               </div>
               <div className="flex-1 min-w-0 flex flex-col gap-1">
-                <p className="text-xs uppercase tracking-[0.25em] text-white/80">Ciao</p>
+                <p className="text-primary uppercase tracking-[0.25em] text-white/80">Ciao</p>
                 <p
                   className="text-3xl font-black leading-tight break-words text-iov-yellow-dark"
                   style={{ textShadow: "0 8px 18px rgba(0, 0, 0, 0.35)" }}
