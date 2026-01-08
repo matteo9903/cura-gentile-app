@@ -175,14 +175,24 @@ const Chatbot = () => {
             </div> */}
           </div>
         </div>
-        <Button
+        <div 
+          style={{
+            width: '100%',
+            display:'flex',
+            justifyContent: 'flex-end',
+            alignContent: 'center',
+            marginRight: '-0.5rem'
+          }}
+        >
+          <Button
           variant="ghost"
           size="icon"
           className="text-white hover:bg-white/10 h-12 w-12"
           onClick={() => setShowInfo(true)}
         >
-          <Info className="h-7 w-7" />
+          <Info style={{width: '1.3rem', height: '1.3rem'}} />
         </Button>
+        </div>
       </header>
 
       {/* Messages Container - Fills space and scrolls from bottom */}
@@ -235,7 +245,7 @@ const Chatbot = () => {
                     <p className="text-md whitespace-pre-wrap break-words flex-1 text-left">
                       {message.content}
                     </p>
-                    <button
+                    {/* <button
                       onClick={() => handleVoice(message.content)}
                       className={cn(
                         "shrink-0 transition-colors flex items-center justify-center text-md",
@@ -244,7 +254,7 @@ const Chatbot = () => {
                       aria-label="Ascolta il messaggio"
                     >
                       <Volume2 className="h-5 w-5" strokeWidth={2.5} />
-                    </button>
+                    </button> */}
                   </div>
                   <div className={cn("mt-2", isUser ? "text-right" : "text-left")}>
                     <span
@@ -288,11 +298,11 @@ const Chatbot = () => {
       <div
         className="fixed left-0 right-0 bg-card border-t border-border p-3 z-40 shadow-md"
         style={{
-          bottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom) - 5px)",
+          bottom: "calc(var(--tab-bar-height) + var(--safe-area-bottom))",
         }}
       >
         <div className="flex items-center gap-2">
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="shrink-0 text-muted-foreground h-12 w-12"
@@ -304,7 +314,7 @@ const Chatbot = () => {
             }
           >
             <Mic style={{height: '1.5rem', width: '1.5rem'}} />
-          </Button>
+          </Button> */}
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
