@@ -9,6 +9,7 @@ export interface Farmaco {
   principioAttivo: string;
   dosaggioMg: number; // Stored in mg
   unitaPerDose: number; // Displayed in units
+  unitaFarmaco: string; // e.g. compressa, capsula, fiala
   orariAssunzione: string[];
   tipo: 'giornaliero' | 'ciclico';
   ciclo?: {
@@ -117,6 +118,7 @@ const mockFarmaci: Farmaco[] = [
     principioAttivo: 'Capecitabina',
     dosaggioMg: 500,
     unitaPerDose: 2,
+    unitaFarmaco: 'compressa',
     orariAssunzione: ['08:00', '20:00'],
     tipo: 'giornaliero',
     infoFarmaco: {
@@ -140,6 +142,7 @@ const mockFarmaci: Farmaco[] = [
     principioAttivo: 'Lapatinib ditosylate',
     dosaggioMg: 250,
     unitaPerDose: 1,
+    unitaFarmaco: 'compressa',
     orariAssunzione: ['15:00'],
     tipo: 'ciclico',
     ciclo: {

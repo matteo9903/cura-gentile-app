@@ -97,6 +97,21 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
     return new Date(dateStr).toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "short" });
   };
 
+  const formatUnitaFarmaco = (quantita: number, unitaFarmaco: string) => {
+    const base = unitaFarmaco.trim() || "unità";
+    if (quantita === 1) return `${quantita} ${base}`;
+    if (base.endsWith("a")) return `${quantita} ${base.slice(0, -1)}e`;
+    if (base.endsWith("o")) return `${quantita} ${base.slice(0, -1)}i`;
+    return `${quantita} ${base}`;
+  };
+
+  const formatModalitaSomministrazione = (farmaco: Farmaco) => {
+    const dose = formatUnitaFarmaco(farmaco.unitaPerDose, farmaco.unitaFarmaco);
+    const timesPerDay = farmaco.orariAssunzione.length;
+    const timesLabel = timesPerDay === 1 ? "1 volta al giorno" : `${timesPerDay} volte al giorno`;
+    return `${dose} - ${timesLabel}`;
+  };
+
   const handleAddFarmaco = async () => {
     if (!newFarmacoNome.trim() || !newFarmacoDosaggio.trim()) return;
     await diaryService.aggiungiFarmacoAggiuntivo(newFarmacoNome, newFarmacoDosaggio);
@@ -241,20 +256,20 @@ const PianoTerapeutico = ({ piano, calendario, onUpdate, cardBorderClass }: Pian
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Pill className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-muted-foreground">Dose: </span>
-                    <span className="font-medium">{farmaco.unitaPerDose} {farmaco.unitaPerDose === 1 ? 'compressa' : 'compresse'}</span>
+                    <span className="text-muted-foreground">Modalità di somministrazione: </span>
+                    <span className="font-medium">{formatModalitaSomministrazione(farmaco)}</span>
                   </div>
                   {farmaco.tipo === 'ciclico' && farmaco.ciclo && (
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-secondary-foreground shrink-0" />
-                      <span className="text-muted-foreground">Ciclo: </span>
+                      <span className="text-muted-foreground">Frequenza: </span>
                       <span className="font-medium">{farmaco.ciclo.giorniOn} giorni sì / {farmaco.ciclo.giorniOff} giorni no</span>
                     </div>
                   )}
                   {farmaco.tipo === 'giornaliero' && (
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-secondary-foreground shrink-0" />
-                      <span className="text-muted-foreground">Ciclo: </span>
+                      <span className="text-muted-foreground">Frequenza: </span>
                       <span className="font-medium">Ogni giorno</span>
                     </div>
                   )}

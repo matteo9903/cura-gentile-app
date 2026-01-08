@@ -227,7 +227,9 @@ const Homepage = () => {
         {/* Contacts */}
         <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
           <div className={sectionTitleClass}>
-            <Users className="h-5 w-5 text-iov-dark-blue" />
+            <div className="w-10 h-10 rounded-xl bg-iov-light-blue-light border border-iov-light-blue flex items-center justify-center">
+              <Users className="h-5 w-5 text-iov-dark-blue" />
+            </div>
             <span>Contatti Caregiver</span>
             <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
               {carta.caregiver.length}
@@ -272,7 +274,9 @@ const Homepage = () => {
         {/* Specialists */}
         <section className={`${sectionContainerBaseClass} border border-iov-yellow`}>
           <div className={sectionTitleClass}>
-            <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
+            <div className="w-10 h-10 rounded-xl bg-iov-yellow/20 border border-iov-yellow flex items-center justify-center">
+              <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
+            </div>
             <span>Contatti specialisti</span>
             <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
               {carta.specialisti.length}
@@ -318,7 +322,9 @@ const Homepage = () => {
         {/* Diagnosis */}
         <section className={`${sectionContainerBaseClass} border border-iov-pink`}>
           <div className={sectionTitleClass}>
-            <ClipboardPlus className="h-5 w-5 text-iov-pink-dark" />
+            <div className="w-10 h-10 rounded-xl bg-iov-pink-light border border-iov-pink flex items-center justify-center">
+              <ClipboardPlus className="h-5 w-5 text-iov-pink-dark" />
+            </div>
             <span>Diagnosi Oncologica</span>
           </div>
           <div className="mt-3">
@@ -387,7 +393,9 @@ const Homepage = () => {
         {/* Comorbidità & Allergie */}
         <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
           <div className={sectionTitleClass}>
-            <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
+            <div className="w-10 h-10 rounded-xl bg-iov-light-blue-dark flex items-center justify-center">
+              <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
+            </div>
             <span>Comorbidità</span>
             <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
               {carta.comorbidita.length}
@@ -410,7 +418,9 @@ const Homepage = () => {
 
           <div className="mt-5">
             <div className={sectionTitleClass}>
-              <AlertTriangle className="h-5 w-5 text-iov-pink-dark" />
+              <div className="w-10 h-10 rounded-xl bg-iov-pink-light border border-iov-pink flex items-center justify-center">
+                <AlertTriangle className="h-5 w-5 text-iov-pink-dark" />
+              </div>
               <span>Allergie</span>
               <Badge className={`${tagBase} bg-iov-pink-dark text-white ml-auto`}>
                 {carta.allergie.length}
