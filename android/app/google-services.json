@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1079658531454",
+    "project_id": "iov-telefarmacia",
+    "storage_bucket": "iov-telefarmacia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079658531454:android:68ed90e49f1c0c516be62f",
+        "android_client_info": {
+          "package_name": "com.iov.telefarmacia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGtxx-xnXocBH5YtrGGuL8YNCLgysbbEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
