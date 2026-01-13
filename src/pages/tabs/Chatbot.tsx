@@ -283,7 +283,7 @@ const Chatbot = () => {
                 <div className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-muted-foreground">
-                    Lia sta scrivendo...
+                    Mia sta scrivendo...
                   </span>
                 </div>
               </div>
