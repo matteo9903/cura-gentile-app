@@ -9,7 +9,6 @@ import "swiper/css/pagination";
 import {
   Users,
   Stethoscope,
-  HeartPulse,
   Microscope,
   AlertTriangle,
   Phone,
@@ -25,7 +24,7 @@ import {
   ShieldPlus,
   Syringe,
   ActivitySquare,
-  CreditCard
+  Pill
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -339,26 +338,6 @@ const Homepage = () => {
                     <p className="font-semibold leading-snug">{carta.diagnosiOncologica.tipo}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div
-                    className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark flex-col items-start`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <HeartPulse className="h-4 w-4" />
-                      <p className={subtleLabel}>Stadio</p>
-                    </div>
-                    <p className="font-semibold text-[14px]">{carta.diagnosiOncologica.stadio}</p>
-                  </div>
-                  <div
-                    className={`${pillBase} bg-iov-pink-light/70 text-iov-pink-dark flex-col items-start`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4" />
-                      <p className={subtleLabel}>Diagnosi</p>
-                    </div>
-                    <p className="font-semibold text-[14px]">{carta.diagnosiOncologica.datadiagnosi}</p>
-                  </div>
-                </div>
                 {/* <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
                   <p className={subtleLabel}>Istologia</p>
                   <p className="font-semibold">{carta.diagnosiOncologica.istologia}</p>
@@ -370,15 +349,21 @@ const Homepage = () => {
                     {carta.terapieOncologiche.map((tp, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
+                        className="flex items-start gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
                       >
                         <div className="h-9 w-9 rounded-lg bg-white/80 border border-iov-pink/50 flex items-center justify-center shrink-0">
-                          <Syringe className="h-4 w-4 text-iov-pink-dark" />
+                          {tp.somministrazione === "Orale" ? (
+                            <Pill className="h-4 w-4 text-iov-pink-dark" />
+                          ) : (
+                            <Syringe className="h-4 w-4 text-iov-pink-dark" />
+                          )}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 space-y-1">
                           <p className="font-semibold">{tp.farmaco}</p>
-                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} • {tp.frequenza}</p>
-                          {tp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{tp.note}</p>}
+                          <Badge className={`${tagBase} bg-iov-pink-dark text-white inline-flex w-fit`}>
+                            Terapia {tp.somministrazione}
+                          </Badge>
+                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} - {tp.frequenza}</p>
                           <p className="text-[11px] text-iov-dark-blue/60 mt-1">Avvio: {tp.dataInizio}</p>
                         </div>
                       </div>
@@ -408,10 +393,7 @@ const Homepage = () => {
                 className="flex items-center gap-2 bg-iov-light-blue-light text-iov-dark-blue px-3 py-2 rounded-full border border-iov-light-blue/70"
               >
                 <ActivitySquare className="h-4 w-4" />
-                <div className="flex flex-col leading-tight">
-                  <span className="text-[13px] font-semibold">{cm.nome}</span>
-                  <span className="text-[11px] text-iov-dark-blue/70">Dal {cm.annoInsorgenza}</span>
-                </div>
+                <span className="text-[13px] font-semibold">{cm.nome}</span>
               </div>
             ))}
           </div>
@@ -426,27 +408,14 @@ const Homepage = () => {
                 {carta.allergie.length}
               </Badge>
             </div>
-              <div className="mt-3 flex flex-col gap-2">
-                {carta.allergie.map((al, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between bg-white/90 border border-iov-pink rounded-xl px-3 py-2 shadow-sm"
-                  >
-                    <div>
-                      <p className="font-semibold text-iov-dark-blue">{al.sostanza}</p>
-                      <p className="text-[12px] text-iov-dark-blue/70">{al.reazione}</p>
-                    </div>
-                  <Badge
-                    className={`${tagBase} ${
-                      al.gravita === "grave"
-                        ? "bg-iov-veneto-red text-white"
-                        : al.gravita === "moderata"
-                        ? "bg-iov-yellow text-iov-dark-blue"
-                        : "bg-iov-light-blue-dark text-iov-dark-blue"
-                    }`}
-                  >
-                    {al.gravita}
-                  </Badge>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {carta.allergie.map((al, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center gap-2 bg-iov-pink-light/60 text-iov-pink-dark px-3 py-2 rounded-full border border-iov-pink/50 shadow-sm"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="text-[13px] font-semibold">{al.sostanza}</span>
                 </div>
               ))}
             </div>

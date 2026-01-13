@@ -56,6 +56,7 @@ export interface TerapiaOncologica {
   farmaco: string;
   dosaggio: string;
   frequenza: string;
+  somministrazione: "Orale" | "Endovena" | "Sottocute";
   dataInizio: string;
   dataFine?: string;
   note?: string;
@@ -175,6 +176,7 @@ export const mockCartaTerapeutica: CartaIdentitaTerapeutica = {
       farmaco: "Osimertinib",
       dosaggio: "80mg",
       frequenza: "1 volta al giorno",
+      somministrazione: "Orale",
       dataInizio: "01/07/2024",
       note: "Terapia target anti-EGFR",
     },
@@ -182,8 +184,9 @@ export const mockCartaTerapeutica: CartaIdentitaTerapeutica = {
       farmaco: "Pembrolizumab",
       dosaggio: "200mg",
       frequenza: "Ogni 3 settimane",
+      somministrazione: "Endovena",
       dataInizio: "15/08/2024",
-      note: "Immunoterapia",
+      note: "Somministrazione in day hospital",
     },
   ],
   noteGenerali:
