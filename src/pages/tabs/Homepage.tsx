@@ -2,17 +2,12 @@
 import { patientService, CartaIdentitaTerapeutica } from "@/services/patientService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
 import {
   Users,
   Stethoscope,
   Microscope,
   AlertTriangle,
   Phone,
-  Mail,
   Scale,
   Ruler,
   CalendarDays,
@@ -24,7 +19,8 @@ import {
   ShieldPlus,
   Syringe,
   ActivitySquare,
-  Pill
+  Pill,
+  BriefcaseMedical
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -69,6 +65,31 @@ const Homepage = () => {
   const sectionTitleClass = "flex items-center gap-2 text-iov-dark-blue font-semibold text-base";
   const sectionContainerBaseClass = "bg-white/70 rounded-2xl p-3 shadow-sm";
   const subtleLabel = "text-[11px] uppercase tracking-wide text-iov-dark-blue/70 font-semibold";
+
+  const specialistContacts = useMemo(() => {
+    if (!carta) return [];
+    const labels = ["Per consulenze", "Per urgenze", "Farmacia ospedaliera"];
+    return labels
+      .map((label, idx) => ({
+        label,
+        telefono:
+          carta.specialisti[idx]?.telefono ??
+          carta.specialisti[idx % carta.specialisti.length]?.telefono ??
+          "",
+        note: label === "Farmacia ospedaliera" ? "Orari: Lun-Ven 8.30-16.30" : undefined,
+      }))
+      .filter((item) => item.telefono);
+  }, [carta]);
+
+  const emergencyContacts = useMemo(
+    () => [
+      { label: "Soccorso Pubblico", telefono: "113" },
+      { label: "Emergenza Sanitaria", telefono: "118" },
+      { label: "N.U.E.", telefono: "112" },
+      { label: "Guardia Medica", telefono: "116117" },
+    ],
+    []
+  );
 
   if (isLoading || !carta) {
     return (
@@ -234,39 +255,26 @@ const Homepage = () => {
               {carta.caregiver.length}
             </Badge>
           </div>
-          <div className="mt-3">
-            <Swiper
-              modules={[Pagination]}
-              pagination={{ clickable: true }}
-              spaceBetween={14}
-              slidesPerView={1}
-              className="pb-8"
-            >
-              {carta.caregiver.map((cg, idx) => (
-                <SwiperSlide key={idx}>
-                  <Card className="bg-white/90 border border-iov-light-blue rounded-2xl shadow-sm">
-                    <CardContent className="p-4 space-y-2">
-                      <div className="space-y-1">
-                        <p className="font-semibold text-iov-dark-blue text-lg">
-                          {cg.nome} {cg.cognome}
-                        </p>
-                        <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue`}>
-                          {cg.relazione}
-                        </Badge>
-                      </div>
-                      <div className="space-y-1 text-sm text-iov-dark-blue">
-                        <p className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-iov-dark-blue/80" /> {cg.telefono}
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-iov-dark-blue/80" /> {cg.email}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+          <div className="mt-3 space-y-3">
+            {carta.caregiver.map((cg, idx) => (
+              <Card key={idx} className="bg-iov-light-blue-light border border-iov-light-blue rounded-2xl shadow-sm">
+                <CardContent className="p-3 flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="font-semibold text-iov-dark-blue text-base">
+                      {cg.nome} {cg.cognome}
+                    </p>
+                    <p className="text-xs text-iov-dark-blue/70">{cg.relazione}</p>
+                  </div>
+                  <a
+                    href={`tel:${cg.telefono}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white text-iov-dark-blue border border-iov-light-blue hover:bg-iov-light-blue/60 transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm font-semibold">{cg.telefono}</span>
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
@@ -278,43 +286,53 @@ const Homepage = () => {
             </div>
             <span>Contatti specialisti</span>
             <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
-              {carta.specialisti.length}
+              {specialistContacts.length}
             </Badge>
           </div>
-          <div className="mt-3">
-            <Swiper
-              modules={[Pagination]}
-              pagination={{ clickable: true }}
-              spaceBetween={14}
-              slidesPerView={1}
-              className="pb-8"
-            >
-              {carta.specialisti.map((sp, idx) => (
-                <SwiperSlide key={idx}>
-                  <Card className="bg-white/90 border border-iov-yellow rounded-2xl shadow-sm">
-                    <CardContent className="p-4 space-y-2">
-                      <div className="space-y-1">
-                        <p className="font-semibold text-iov-dark-blue text-lg">
-                          {sp.nome} {sp.cognome}
-                        </p>
-                        <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue`}>
-                          {sp.specializzazione}
-                        </Badge>
-                        <p className="text-xs text-iov-dark-blue/70">{sp.ospedale}</p>
-                      </div>
-                      <div className="space-y-1 text-sm text-iov-dark-blue">
-                        <p className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-iov-dark-blue/80" /> {sp.telefono}
-                        </p>
-                        <p className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-iov-dark-blue/80" /> {sp.email}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+          <div className="mt-3 space-y-3">
+            {specialistContacts.map((sp, idx) => (
+              <Card key={idx} className="bg-white/95 border border-iov-yellow rounded-2xl shadow-sm">
+                <CardContent className="p-3 flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="font-semibold text-iov-dark-blue text-base">{sp.label}</p>
+                    {sp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.note}</p>}
+                  </div>
+                  <a
+                    href={`tel:${sp.telefono}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow-light text-iov-dark-blue border border-iov-yellow hover:bg-iov-yellow/70 transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm font-semibold">{sp.telefono}</span>
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Emergency Contacts */}
+        <section className={`${sectionContainerBaseClass} border border-iov-veneto-red`}>
+          <div className={sectionTitleClass}>
+            <div className="w-10 h-10 rounded-xl bg-iov-yellow-light border border-iov-yellow flex items-center justify-center">
+              <BriefcaseMedical className="h-5 w-5 text-iov-yellow-dark" />
+            </div>
+            <span>Contatti emergenza</span>
+          </div>
+          <div className="mt-3 space-y-3">
+            {emergencyContacts.map((ec, idx) => (
+              <Card key={idx} className="bg-iov-yellow-light/70 border border-iov-veneto-red/50 rounded-2xl shadow-sm">
+                <CardContent className="p-3 flex items-center justify-between gap-3">
+                  <p className="font-semibold text-iov-dark-blue text-base">{ec.label}</p>
+                  <a
+                    href={`tel:${ec.telefono}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow text-iov-dark-blue border border-iov-yellow-dark hover:bg-iov-yellow-dark/90 transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm font-semibold">{ec.telefono}</span>
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
