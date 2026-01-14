@@ -313,12 +313,16 @@ const Homepage = () => {
           </section>
 
           {/* Contatti Emergenza - Orange theme, compact grid layout */}
-          <section className={`${sectionContainerBaseClass} border-2 bg-iov-emergency-orange-light border-iov-emergency-orange`}>
-            <div className={`${sectionTitleClass} text-iov-emergency-orange-dark`}>
-              <div className="w-10 h-10 rounded-xl bg-iov-emergency-orange/20 border border-iov-emergency-orange flex items-center justify-center">
+          <section className={`${sectionContainerBaseClass} border border-iov-emergency-orange`}>
+            <div className={`${sectionTitleClass}`}>
+              <div className="w-10 h-10 rounded-xl border border-iov-emergency-orange flex items-center justify-center"
+                style={{
+                  backgroundColor: 'hsla(24, 95%, 53%, 0.2)'
+                }}
+              >
                 <BriefcaseMedical className="h-5 w-5 text-iov-emergency-orange-dark" />
               </div>
-              <span className="text-iov-emergency-orange-dark">Contatti emergenza</span>
+              <span>Contatti emergenza</span>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {emergencyContacts.map((ec, idx) => (
@@ -433,8 +437,11 @@ const Homepage = () => {
                 <div
                   key={idx}
                   className="flex items-center gap-2 bg-iov-pink-light/60 text-iov-pink-dark px-3 py-2 rounded-full border border-iov-pink/50 shadow-sm"
+                  style={{
+                      backgroundColor: 'hsla(339.3443, 81.33%, 85.29%, 0.2)'
+                    }}
                 >
-                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTriangle className="h-4 w-4"/>
                   <span className="text-[13px] font-semibold">{al.sostanza}</span>
                 </div>
               ))}
