@@ -244,97 +244,99 @@ const Homepage = () => {
           </CardContent>
         </Card>
 
-        {/* Contacts */}
-        <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
-          <div className={sectionTitleClass}>
-            <div className="w-10 h-10 rounded-xl bg-iov-light-blue-light border border-iov-light-blue flex items-center justify-center">
-              <Users className="h-5 w-5 text-iov-dark-blue" />
+        {/* All Contacts - Compact Layout */}
+        <div className="space-y-3">
+          {/* Contatti Caregiver - White cards matching Specialists */}
+          <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
+            <div className={sectionTitleClass}>
+              <div className="w-10 h-10 rounded-xl bg-iov-light-blue-light border border-iov-light-blue flex items-center justify-center">
+                <Users className="h-5 w-5 text-iov-dark-blue" />
+              </div>
+              <span>Contatti Caregiver</span>
+              <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
+                {carta.caregiver.length}
+              </Badge>
             </div>
-            <span>Contatti Caregiver</span>
-            <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
-              {carta.caregiver.length}
-            </Badge>
-          </div>
-          <div className="mt-3 space-y-3">
-            {carta.caregiver.map((cg, idx) => (
-              <Card key={idx} className="bg-iov-light-blue-light border border-iov-light-blue rounded-2xl shadow-sm">
-                <CardContent className="p-3 flex items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <p className="font-semibold text-iov-dark-blue text-base">
-                      {cg.nome} {cg.cognome}
-                    </p>
-                    <p className="text-xs text-iov-dark-blue/70">{cg.relazione}</p>
-                  </div>
-                  <a
-                    href={`tel:${cg.telefono}`}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white text-iov-dark-blue border border-iov-light-blue hover:bg-iov-light-blue/60 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span className="text-sm font-semibold">{cg.telefono}</span>
-                  </a>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+            <div className="mt-2 space-y-2">
+              {carta.caregiver.map((cg, idx) => (
+                <Card key={idx} className="bg-white/95 border border-iov-light-blue rounded-2xl shadow-sm">
+                  <CardContent className="p-3 flex items-center justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="font-semibold text-iov-dark-blue text-base">
+                        {cg.nome} {cg.cognome}
+                      </p>
+                      <p className="text-xs text-iov-dark-blue/70">{cg.relazione}</p>
+                    </div>
+                    <a
+                      href={`tel:${cg.telefono}`}
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-light-blue-light text-iov-dark-blue border border-iov-light-blue hover:bg-iov-light-blue/80 transition-colors"
+                    >
+                      <Phone className="h-4 w-4" />
+                      <span className="text-sm font-semibold">{cg.telefono}</span>
+                    </a>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-        {/* Specialists */}
-        <section className={`${sectionContainerBaseClass} border border-iov-yellow`}>
-          <div className={sectionTitleClass}>
-            <div className="w-10 h-10 rounded-xl bg-iov-yellow/20 border border-iov-yellow flex items-center justify-center">
-              <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
+          {/* Contatti Specialisti - Unchanged */}
+          <section className={`${sectionContainerBaseClass} border border-iov-yellow`}>
+            <div className={sectionTitleClass}>
+              <div className="w-10 h-10 rounded-xl bg-iov-yellow/20 border border-iov-yellow flex items-center justify-center">
+                <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
+              </div>
+              <span>Contatti specialisti</span>
+              <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
+                {specialistContacts.length}
+              </Badge>
             </div>
-            <span>Contatti specialisti</span>
-            <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
-              {specialistContacts.length}
-            </Badge>
-          </div>
-          <div className="mt-3 space-y-3">
-            {specialistContacts.map((sp, idx) => (
-              <Card key={idx} className="bg-white/95 border border-iov-yellow rounded-2xl shadow-sm">
-                <CardContent className="p-3 flex items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <p className="font-semibold text-iov-dark-blue text-base">{sp.label}</p>
-                    {sp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.note}</p>}
-                  </div>
-                  <a
-                    href={`tel:${sp.telefono}`}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow-light text-iov-dark-blue border border-iov-yellow hover:bg-iov-yellow/70 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span className="text-sm font-semibold">{sp.telefono}</span>
-                  </a>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+            <div className="mt-2 space-y-2">
+              {specialistContacts.map((sp, idx) => (
+                <Card key={idx} className="bg-white/95 border border-iov-yellow rounded-2xl shadow-sm">
+                  <CardContent className="p-3 flex items-center justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="font-semibold text-iov-dark-blue text-base">{sp.label}</p>
+                      {sp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.note}</p>}
+                    </div>
+                    <a
+                      href={`tel:${sp.telefono}`}
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow-light text-iov-dark-blue border border-iov-yellow hover:bg-iov-yellow/70 transition-colors"
+                    >
+                      <Phone className="h-4 w-4" />
+                      <span className="text-sm font-semibold">{sp.telefono}</span>
+                    </a>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-        {/* Emergency Contacts */}
-        <section className={`${sectionContainerBaseClass} border border-iov-veneto-red`}>
-          <div className={sectionTitleClass}>
-            <div className="w-10 h-10 rounded-xl bg-iov-yellow-light border border-iov-yellow flex items-center justify-center">
-              <BriefcaseMedical className="h-5 w-5 text-iov-yellow-dark" />
+          {/* Contatti Emergenza - Orange theme, compact grid layout */}
+          <section className={`${sectionContainerBaseClass} border-2 bg-iov-emergency-orange-light border-iov-emergency-orange`}>
+            <div className={`${sectionTitleClass} text-iov-emergency-orange-dark`}>
+              <div className="w-10 h-10 rounded-xl bg-iov-emergency-orange/20 border border-iov-emergency-orange flex items-center justify-center">
+                <BriefcaseMedical className="h-5 w-5 text-iov-emergency-orange-dark" />
+              </div>
+              <span className="text-iov-emergency-orange-dark">Contatti emergenza</span>
             </div>
-            <span>Contatti emergenza</span>
-          </div>
-          <div className="mt-3 space-y-3">
-            {emergencyContacts.map((ec, idx) => (
-              <Card key={idx} className="bg-iov-yellow-light/70 border border-iov-veneto-red/50 rounded-2xl shadow-sm">
-                <CardContent className="p-3 flex items-center justify-between gap-3">
-                  <p className="font-semibold text-iov-dark-blue text-base">{ec.label}</p>
-                  <a
-                    href={`tel:${ec.telefono}`}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow text-iov-dark-blue border border-iov-yellow-dark hover:bg-iov-yellow-dark/90 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    <span className="text-sm font-semibold">{ec.telefono}</span>
-                  </a>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {emergencyContacts.map((ec, idx) => (
+                <a
+                  key={idx}
+                  href={`tel:${ec.telefono}`}
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl bg-white border border-iov-emergency-orange shadow-sm hover:bg-iov-emergency-orange/10 transition-colors active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-iov-emergency-orange flex items-center justify-center shadow">
+                    <Phone className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="font-bold text-lg text-iov-emergency-orange-dark">{ec.telefono}</p>
+                  <p className="text-xs font-medium text-iov-dark-blue/80 text-center leading-tight">{ec.label}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        </div>
 
         {/* Diagnosis */}
         <section className={`${sectionContainerBaseClass} border border-iov-pink`}>
