@@ -28,6 +28,9 @@ const Homepage = () => {
   const [carta, setCarta] = useState<CartaIdentitaTerapeutica | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+    // This returns a string like "Europe/Rome", "America/New_York", etc.
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   useEffect(() => {
     const loadData = async () => {
       const data = await patientService.getCartaTerapeutica();
@@ -209,7 +212,13 @@ const Homepage = () => {
                   <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
                   <p className={subtleLabel}>Nascita</p>
                 </div>
-                <p className="font-semibold text-[15px]">{carta.paziente.dataNascita}</p>
+                <p className="font-semibold text-[15px]">{new Date(carta.paziente.dataNascita).toLocaleString('it-IT',{
+                      timeZone: userTimezone,
+                      hour12: false,
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}</p>
               </div>
             </div>
             <div className="grid gap-2 text-sm">
@@ -253,9 +262,6 @@ const Homepage = () => {
                 <Users className="h-5 w-5 text-iov-dark-blue" />
               </div>
               <span>Contatti Caregiver</span>
-              <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
-                {carta.caregiver.length}
-              </Badge>
             </div>
             <div className="mt-2 space-y-2">
               {carta.caregiver.map((cg, idx) => (
@@ -265,7 +271,6 @@ const Homepage = () => {
                       <p className="font-semibold text-iov-dark-blue text-base">
                         {cg.nome} {cg.cognome}
                       </p>
-                      <p className="text-xs text-iov-dark-blue/70">{cg.relazione}</p>
                     </div>
                     <a
                       href={`tel:${cg.telefono}`}
@@ -287,9 +292,6 @@ const Homepage = () => {
                 <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
               </div>
               <span>Contatti specialisti</span>
-              <Badge className={`${tagBase} bg-iov-yellow-dark text-iov-dark-blue ml-auto`}>
-                {specialistContacts.length}
-              </Badge>
             </div>
             <div className="mt-2 space-y-2">
               {specialistContacts.map((sp, idx) => (
@@ -359,7 +361,7 @@ const Homepage = () => {
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm text-iov-dark-blue/70">Tipo</p>
-                    <p className="font-semibold leading-snug">{carta.diagnosiOncologica.tipo}</p>
+                    <p className="font-semibold leading-snug">{carta.diagnosiOncologica}</p>
                   </div>
                 </div>
                 {/* <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
@@ -376,7 +378,7 @@ const Homepage = () => {
                         className="flex items-start gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
                       >
                         <div className="h-9 w-9 rounded-lg bg-white/80 border border-iov-pink/50 flex items-center justify-center shrink-0">
-                          {tp.somministrazione === "Orale" ? (
+                          {tp.somministrazione.includes("Orale") ? (
                             <Pill className="h-4 w-4 text-iov-pink-dark" />
                           ) : (
                             <Syringe className="h-4 w-4 text-iov-pink-dark" />
@@ -387,8 +389,7 @@ const Homepage = () => {
                           <Badge className={`${tagBase} bg-iov-pink-dark text-white inline-flex w-fit`}>
                             Terapia {tp.somministrazione}
                           </Badge>
-                          <p className="text-sm text-iov-dark-blue/80">{tp.dosaggio} - {tp.frequenza}</p>
-                          <p className="text-[11px] text-iov-dark-blue/60 mt-1">Avvio: {tp.dataInizio}</p>
+                          {tp.note && <p className="text-[11px] text-iov-dark-blue/60 mt-1">{tp.note}</p>}
                         </div>
                       </div>
                     ))}
@@ -406,9 +407,6 @@ const Homepage = () => {
               <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
             </div>
             <span>Comorbidità</span>
-            <Badge className={`${tagBase} bg-iov-light-blue-dark text-iov-dark-blue ml-auto`}>
-              {carta.comorbidita.length}
-            </Badge>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {carta.comorbidita.map((cm, idx) => (
@@ -417,7 +415,7 @@ const Homepage = () => {
                 className="flex items-center gap-2 bg-iov-light-blue-light text-iov-dark-blue px-3 py-2 rounded-full border border-iov-light-blue/70"
               >
                 <ActivitySquare className="h-4 w-4" />
-                <span className="text-[13px] font-semibold">{cm.nome}</span>
+                <span className="text-[13px] font-semibold">{cm}</span>
               </div>
             ))}
           </div>
@@ -428,9 +426,6 @@ const Homepage = () => {
                 <AlertTriangle className="h-5 w-5 text-iov-pink-dark" />
               </div>
               <span>Allergie</span>
-              <Badge className={`${tagBase} bg-iov-pink-dark text-white ml-auto`}>
-                {carta.allergie.length}
-              </Badge>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               {carta.allergie.map((al, idx) => (
@@ -442,7 +437,7 @@ const Homepage = () => {
                     }}
                 >
                   <AlertTriangle className="h-4 w-4"/>
-                  <span className="text-[13px] font-semibold">{al.sostanza}</span>
+                  <span className="text-[13px] font-semibold">{al}</span>
                 </div>
               ))}
             </div>

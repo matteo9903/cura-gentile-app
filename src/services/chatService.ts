@@ -1,4 +1,4 @@
-// Mock Chat Service - Chatbot Mia
+// Mock Chat Service - Chatbot Iris
 
 export interface ChatMessage {
   id: string;
@@ -10,7 +10,7 @@ export interface ChatMessage {
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: "1",
-    content: "Ciao! Sono Mia, la tua assistente virtuale dell'IOV. Come posso aiutarti oggi?",
+    content: "Ciao! Sono Iris, la tua assistente virtuale dell'IOV. Come posso aiutarti oggi?",
     role: "assistant",
     timestamp: new Date(Date.now() - 3600000),
   },
@@ -86,7 +86,7 @@ export const chatService = {
   },
 
   getChatbotInfo: () => ({
-    nome: "Mia",
+    nome: "Iris",
     descrizione: "Assistente Virtuale IOV",
     funzionalita: [
       {
@@ -116,6 +116,6 @@ export const chatService = {
       },
     ],
     disclaimer:
-      "Le informazioni fornite da Mia sono a scopo informativo e non sostituiscono il parere medico. Per qualsiasi dubbio sulla tua salute, contatta sempre il tuo medico.",
+      "Le informazioni fornite da Iris sono a scopo informativo e non sostituiscono il parere medico. Per qualsiasi dubbio sulla tua salute, contatta sempre il tuo medico.",
   }),
 };
