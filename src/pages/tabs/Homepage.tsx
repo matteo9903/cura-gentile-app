@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { patientService, CartaIdentitaTerapeutica } from "@/services/patientService";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Users,
@@ -8,13 +8,6 @@ import {
   Microscope,
   AlertTriangle,
   Phone,
-  Scale,
-  Ruler,
-  CalendarDays,
-  Fingerprint,
-  MapPin,
-  ShieldCheck,
-  IdCard,
   ClipboardPlus,
   ShieldPlus,
   Syringe,
@@ -23,12 +16,14 @@ import {
   BriefcaseMedical
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TesseraPaziente } from "@/components/TesseraPaziente";
+import { ContattiCard } from "@/components/ContattiCard";
 
 const Homepage = () => {
   const [carta, setCarta] = useState<CartaIdentitaTerapeutica | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-    // This returns a string like "Europe/Rome", "America/New_York", etc.
+  // This returns a string like "Europe/Rome", "America/New_York", etc.
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   useEffect(() => {
@@ -96,14 +91,14 @@ const Homepage = () => {
 
   if (isLoading || !carta) {
     return (
-      <div 
+      <div
         className="min-h-screen bg-background"
         style={{
           paddingTop: "var(--safe-area-top)",
           paddingBottom: "var(--safe-area-bottom)",
         }}
       >
-        <header 
+        <header
           className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
           style={{
             paddingTop: "calc(var(--safe-area-top)/2)",
@@ -129,7 +124,7 @@ const Homepage = () => {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-background"
       style={{
         // paddingTop: "var(--safe-area-top)",
@@ -158,190 +153,55 @@ const Homepage = () => {
       </header> */}
 
       {/* Content */}
-      <div className="p-4 pb-4 space-y-4"
+      <div className="pb-24 space-y-5 px-4"
         style={{
           // paddingTop: 'calc(70px + var(--safe-area-top)/2)'
         }}
       >
-        {/* Identity Card */}
-        <Card className="bg-white/90 border border-iov-dark-blue rounded-3xl shadow-xl overflow-hidden">
-          <div className="bg-iov-gradient px-5 py-6 text-white">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-full bg-white/25 border border-white/30 flex items-center justify-center text-lg font-bold">
-                {initials}
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col gap-1">
-                <p className="text-primary uppercase tracking-[0.25em] text-white/80">Ciao</p>
-                <p
-                  className="text-3xl font-black leading-tight break-words text-iov-yellow-dark"
-                  style={{ textShadow: "0 8px 18px rgba(0, 0, 0, 0.35)" }}
-                >
-                  {carta.paziente.nome}
-                </p>
-                <p className="text-sm font-semibold text-white/85">{formattedDate}</p>
-              </div>
-            </div>
+        <div
+          className="pb-10 rounded-b-[3rem] shadow-lg mb-6"
+          style={{
+            background: "linear-gradient(to bottom, #002451, #104676)",
+            paddingTop: "max(20px, var(--safe-area-top))",
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+          }}
+        >
+          <div className="flex items-center justify-between gap-4 mb-8">
+            <img
+              src="https://www.ioveneto.it/wp-content/uploads/2025/03/IOV_20anni_oriz_bianco-1.svg"
+              alt="IOV 20 anni"
+              className="h-10 w-auto object-contain"
+            />
+            <img
+              src="https://www.ioveneto.it/wp-content/uploads/2025/03/logo-veneto-ok.png"
+              alt="Regione Veneto"
+              className="h-10 w-auto object-contain"
+            />
           </div>
-        </Card>
 
-        <Card className="bg-white/95 border border-iov-light-blue rounded-2xl shadow-sm">
-          <CardHeader className="pb-0 pt-4 px-4 flex-row items-center gap-3 space-y-0">
-            <div className="w-11 h-11 rounded-xl bg-iov-light-blue-light flex items-center justify-center">
-              <IdCard className="h-5 w-5 text-iov-dark-blue" />
-            </div>
-            <CardTitle className="text-lg font-bold text-iov-dark-blue">Dati personali</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-3 gap-2">
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
-                <div className="flex items-center gap-2">
-                  <Scale className="h-4 w-4 text-iov-dark-blue/80" />
-                  <p className={subtleLabel}>Peso</p>
-                </div>
-                <p className="font-semibold text-[15px]">{carta.paziente.peso} kg</p>
-              </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
-                <div className="flex items-center gap-2">
-                  <Ruler className="h-4 w-4 text-iov-dark-blue/80" />
-                  <p className={subtleLabel}>Altezza</p>
-                </div>
-                <p className="font-semibold text-[15px]">{carta.paziente.altezza} cm</p>
-              </div>
-              <div className={`${pillBase} text-iov-dark-blue flex-col items-start border-iov-light-blue`}>
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-iov-dark-blue/80" />
-                  <p className={subtleLabel}>Nascita</p>
-                </div>
-                <p className="font-semibold text-[15px]">{new Date(carta.paziente.dataNascita).toLocaleString('it-IT',{
-                      timeZone: userTimezone,
-                      hour12: false,
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}</p>
-              </div>
-            </div>
-            <div className="grid gap-2 text-sm">
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
-                  <Fingerprint className="h-5 w-5" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className={subtleLabel}>Codice Fiscale</p>
-                  <p className="font-mono text-base font-semibold break-words">{carta.paziente.codiceFiscale}</p>
-                </div>
-              </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className={subtleLabel}>Tessera Sanitaria</p>
-                  <p className="font-mono text-base font-semibold break-words">800 123 456 789012</p>
-                </div>
-              </div>
-              <div className="bg-iov-gray-light rounded-xl p-3 border border-iov-light-blue text-iov-dark-blue flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/80 border border-iov-light-blue flex items-center justify-center text-iov-dark-blue self-center">
-                  <MapPin className="h-5 w-5" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className={subtleLabel}>Residenza</p>
-                  <p className="text-[15px] font-semibold leading-snug break-words">{carta.paziente.indirizzo}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="flex flex-col gap-1 text-white px-2">
+            <p className="text-3xl font-bold tracking-tight text-white drop-shadow-md">
+              Ciao, {carta.paziente.nome}
+            </p>
+            <p className="text-sm font-medium text-white/80">
+              {formattedDate}
+            </p>
+          </div>
+        </div>
+
+        {/* Tessera Paziente */}
+        <div className="mb-6">
+          <TesseraPaziente paziente={carta.paziente} />
+        </div>
 
         {/* All Contacts - Compact Layout */}
         <div className="space-y-3">
-          {/* Contatti Caregiver - White cards matching Specialists */}
-          <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
-            <div className={sectionTitleClass}>
-              <div className="w-10 h-10 rounded-xl bg-iov-light-blue-light border border-iov-light-blue flex items-center justify-center">
-                <Users className="h-5 w-5 text-iov-dark-blue" />
-              </div>
-              <span>Contatti Caregiver</span>
-            </div>
-            <div className="mt-2 space-y-2">
-              {carta.caregiver.map((cg, idx) => (
-                <Card key={idx} className="bg-white/95 border border-iov-light-blue rounded-2xl shadow-sm">
-                  <CardContent className="p-3 flex items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <p className="font-semibold text-iov-dark-blue text-base">
-                        {cg.nome} {cg.cognome}
-                      </p>
-                    </div>
-                    <a
-                      href={`tel:${cg.telefono}`}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-light-blue-light text-iov-dark-blue border border-iov-light-blue hover:bg-iov-light-blue/80 transition-colors"
-                    >
-                      <Phone className="h-4 w-4" />
-                      <span className="text-sm font-semibold">{cg.telefono}</span>
-                    </a>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Contatti Specialisti - Unchanged */}
-          <section className={`${sectionContainerBaseClass} border border-iov-yellow`}>
-            <div className={sectionTitleClass}>
-              <div className="w-10 h-10 rounded-xl bg-iov-yellow/20 border border-iov-yellow flex items-center justify-center">
-                <Stethoscope className="h-5 w-5 text-iov-yellow-dark" />
-              </div>
-              <span>Contatti specialisti</span>
-            </div>
-            <div className="mt-2 space-y-2">
-              {specialistContacts.map((sp, idx) => (
-                <Card key={idx} className="bg-white/95 border border-iov-yellow rounded-2xl shadow-sm">
-                  <CardContent className="p-3 flex items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <p className="font-semibold text-iov-dark-blue text-base">{sp.label}</p>
-                      {sp.note && <p className="text-xs text-iov-dark-blue/70 mt-1">{sp.note}</p>}
-                    </div>
-                    <a
-                      href={`tel:${sp.telefono}`}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-iov-yellow-light text-iov-dark-blue border border-iov-yellow hover:bg-iov-yellow/70 transition-colors"
-                    >
-                      <Phone className="h-4 w-4" />
-                      <span className="text-sm font-semibold">{sp.telefono}</span>
-                    </a>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Contatti Emergenza - Orange theme, compact grid layout */}
-          <section className={`${sectionContainerBaseClass} border border-iov-emergency-orange`}>
-            <div className={`${sectionTitleClass}`}>
-              <div className="w-10 h-10 rounded-xl border border-iov-emergency-orange flex items-center justify-center"
-                style={{
-                  backgroundColor: 'hsla(24, 95%, 53%, 0.2)'
-                }}
-              >
-                <BriefcaseMedical className="h-5 w-5 text-iov-emergency-orange-dark" />
-              </div>
-              <span>Contatti emergenza</span>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {emergencyContacts.map((ec, idx) => (
-                <a
-                  key={idx}
-                  href={`tel:${ec.telefono}`}
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl bg-white border border-iov-emergency-orange shadow-sm hover:bg-iov-emergency-orange/10 transition-colors active:scale-[0.98]"
-                >
-                  <div className="w-10 h-10 rounded-full bg-iov-emergency-orange flex items-center justify-center shadow">
-                    <Phone className="h-5 w-5 text-white" />
-                  </div>
-                  <p className="font-bold text-lg text-iov-emergency-orange-dark">{ec.telefono}</p>
-                  <p className="text-xs font-medium text-iov-dark-blue/80 text-center leading-tight">{ec.label}</p>
-                </a>
-              ))}
-            </div>
-          </section>
+          <ContattiCard
+            caregivers={carta.caregiver}
+            specialisti={specialistContacts}
+            emergenza={emergencyContacts}
+          />
         </div>
 
         {/* Diagnosis */}
@@ -433,10 +293,10 @@ const Homepage = () => {
                   key={idx}
                   className="flex items-center gap-2 bg-iov-pink-light/60 text-iov-pink-dark px-3 py-2 rounded-full border border-iov-pink/50 shadow-sm"
                   style={{
-                      backgroundColor: 'hsla(339.3443, 81.33%, 85.29%, 0.2)'
-                    }}
+                    backgroundColor: 'hsla(339.3443, 81.33%, 85.29%, 0.2)'
+                  }}
                 >
-                  <AlertTriangle className="h-4 w-4"/>
+                  <AlertTriangle className="h-4 w-4" />
                   <span className="text-[13px] font-semibold">{al}</span>
                 </div>
               ))}

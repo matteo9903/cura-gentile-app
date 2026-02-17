@@ -87,6 +87,38 @@
     --sidebar-accent-foreground: 212 52% 20%;
     --sidebar-border: 210 20% 90%;
     --sidebar-ring: 212 52% 25%;
+
+    /* User Provided "Tessera" Palette */
+    --e-global-color-primary: #104676;
+    --e-global-color-secondary: #002451;
+    --e-global-color-text: #2F475E;
+    --e-global-color-accent: #F2C043;
+    --e-global-color-76ba222: #FFFFFF;
+    --e-global-color-95acd2f: #C99800;
+    --e-global-color-66a567a: #1A3552;
+    --e-global-color-c244568: #114677;
+    --e-global-color-84f2dc3: #657D93;
+    --e-global-color-26490e7: #416B92;
+    --e-global-color-4082d1e: #A0B5C9;
+    --e-global-color-60ba509: #CFDAE4;
+    --e-global-color-2ba0d54: #E7ECF1;
+    --e-global-color-578bffd: #FFFFFF;
+    --e-global-color-4910b0c: #F0F0F0;
+    --e-global-color-1f50104: #707070;
+    --e-global-color-d4fd2a4: #F8DADC;
+    --e-global-color-d0a3480: #E68388;
+    --e-global-color-e05eed6: #FAFAFA;
+    --e-global-color-2aa682b: #B1D9D9;
+    --e-global-color-593361d: #61C4C1;
+    --e-global-color-37fd0c9: #ECFFFF;
+    --e-global-color-14074e1: #BBBDBE;
+    --e-global-color-ac41fa4: #55595D;
+    --e-global-color-30aee76: #D4F2F2;
+    --e-global-color-e9c01dd: #FF0202;
+    --e-global-color-74623b0: #F5FCFF;
+    --e-global-color-1285cae: #204265;
+    --e-global-color-e2f2581: #F2C04326;
+    --e-global-color-8323bf9: #5F2007;
   }
 
   /* Enable bottom safe-area only on iOS (set via data-platform in main.tsx) */
@@ -159,6 +191,38 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 212 40% 25%;
     --sidebar-ring: 199 92% 84%;
+
+    /* User Provided "Tessera" Palette */
+    --e-global-color-primary: #104676;
+    --e-global-color-secondary: #002451;
+    --e-global-color-text: #2F475E;
+    --e-global-color-accent: #F2C043;
+    --e-global-color-76ba222: #FFFFFF;
+    --e-global-color-95acd2f: #C99800;
+    --e-global-color-66a567a: #1A3552;
+    --e-global-color-c244568: #114677;
+    --e-global-color-84f2dc3: #657D93;
+    --e-global-color-26490e7: #416B92;
+    --e-global-color-4082d1e: #A0B5C9;
+    --e-global-color-60ba509: #CFDAE4;
+    --e-global-color-2ba0d54: #E7ECF1;
+    --e-global-color-578bffd: #FFFFFF;
+    --e-global-color-4910b0c: #F0F0F0;
+    --e-global-color-1f50104: #707070;
+    --e-global-color-d4fd2a4: #F8DADC;
+    --e-global-color-d0a3480: #E68388;
+    --e-global-color-e05eed6: #FAFAFA;
+    --e-global-color-2aa682b: #B1D9D9;
+    --e-global-color-593361d: #61C4C1;
+    --e-global-color-37fd0c9: #ECFFFF;
+    --e-global-color-14074e1: #BBBDBE;
+    --e-global-color-ac41fa4: #55595D;
+    --e-global-color-30aee76: #D4F2F2;
+    --e-global-color-e9c01dd: #FF0202;
+    --e-global-color-74623b0: #F5FCFF;
+    --e-global-color-1285cae: #204265;
+    --e-global-color-e2f2581: #F2C04326;
+    --e-global-color-8323bf9: #5F2007;
   }
 }
 
@@ -184,7 +248,9 @@
   }
 
   /* Mobile app styling */
-  html, body, #root {
+  html,
+  body,
+  #root {
     @apply h-full;
     -webkit-tap-highlight-color: transparent;
   }
@@ -199,137 +265,178 @@
   }
 }
 
-  @layer utilities {
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   /* IOV Green color utility */
   .bg-iov-green {
     background-color: hsl(var(--iov-green));
   }
+
   .text-iov-green {
     color: hsl(var(--iov-green));
   }
+
   .border-iov-green {
     border-color: hsl(var(--iov-green));
   }
+
   .border-iov-yellow {
     border-color: hsl(var(--iov-yellow));
   }
+
   .border-iov-light-blue {
     border-color: hsl(var(--iov-light-blue));
   }
+
   .border-iov-dark-blue {
     border-color: hsl(var(--iov-dark-blue));
   }
+
   .border-iov-pink {
     border-color: hsl(var(--iov-pink));
   }
+
   .border-iov-light-blue-dark {
     border-color: hsl(var(--iov-light-blue-dark));
   }
+
   .border-iov-yellow-dark {
     border-color: hsl(var(--iov-yellow-dark));
   }
+
   .border-iov-pink-dark {
     border-color: hsl(var(--iov-pink-dark));
   }
+
   .border-iov-veneto-red {
     border-color: hsl(var(--iov-veneto-red));
   }
+
   .border-l-iov-light-blue-dark {
     border-left-color: hsl(var(--iov-light-blue-dark));
   }
+
   .border-l-iov-yellow-dark {
     border-left-color: hsl(var(--iov-yellow-dark));
   }
+
   .border-l-iov-pink-dark {
     border-left-color: hsl(var(--iov-pink-dark));
   }
+
   .bg-iov-dark-blue {
     background-color: hsl(var(--iov-dark-blue));
   }
+
   .bg-iov-dark-blue-hover {
     background-color: hsl(var(--iov-dark-blue-hover));
   }
+
   .text-iov-dark-blue {
     color: hsl(var(--iov-dark-blue));
   }
+
   .text-iov-light-blue-dark {
     color: hsl(var(--iov-light-blue-dark));
   }
+
   .text-iov-yellow-dark {
     color: hsl(var(--iov-yellow-dark));
   }
+
   .text-iov-pink-dark {
     color: hsl(var(--iov-pink-dark));
   }
+
   .text-iov-gray-text {
     color: hsl(var(--iov-gray-text));
   }
+
   .bg-iov-gray-light {
     background-color: hsl(var(--iov-gray-light));
   }
+
   .bg-iov-gradient {
     background-image: var(--iov-gradient);
   }
+
   .bg-iov-gradient-alt {
     background-image: var(--iov-gradient-alt);
   }
+
   .bg-iov-light-blue {
     background-color: hsl(var(--iov-light-blue));
   }
+
   .bg-iov-light-blue-light {
     background-color: hsl(var(--iov-light-blue-light));
   }
+
   .bg-iov-light-blue-dark {
     background-color: hsl(var(--iov-light-blue-dark));
   }
+
   .bg-iov-yellow {
     background-color: hsl(var(--iov-yellow));
   }
+
   .bg-iov-yellow-light {
     background-color: hsl(var(--iov-yellow-light));
   }
+
   .bg-iov-yellow-dark {
     background-color: hsl(var(--iov-yellow-dark));
   }
+
   .bg-iov-pink {
     background-color: hsl(var(--iov-pink));
   }
+
   .bg-iov-pink-light {
     background-color: hsl(var(--iov-pink-light));
   }
+
   .bg-iov-pink-dark {
     background-color: hsl(var(--iov-pink-dark));
   }
+
   .bg-iov-veneto-red {
     background-color: hsl(var(--iov-veneto-red));
   }
+
   /* Emergency Orange utilities - exclusive to emergency contacts */
   .bg-iov-emergency-orange {
     background-color: hsl(var(--iov-emergency-orange));
   }
+
   .bg-iov-emergency-orange-light {
     background-color: hsl(var(--iov-emergency-orange-light));
   }
+
   .bg-iov-emergency-orange-dark {
     background-color: hsl(var(--iov-emergency-orange-dark));
   }
+
   .text-iov-emergency-orange {
     color: hsl(var(--iov-emergency-orange));
   }
+
   .text-iov-emergency-orange-dark {
     color: hsl(var(--iov-emergency-orange-dark));
   }
+
   .border-iov-emergency-orange {
     border-color: hsl(var(--iov-emergency-orange));
   }
+
   .border-iov-emergency-orange-light {
     border-color: hsl(var(--iov-emergency-orange-light));
   }
