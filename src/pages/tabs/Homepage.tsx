@@ -5,19 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import {
   Users,
   Stethoscope,
-  Microscope,
   AlertTriangle,
   Phone,
-  ClipboardPlus,
   ShieldPlus,
-  Syringe,
   ActivitySquare,
-  Pill,
   BriefcaseMedical
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TesseraPaziente } from "@/components/TesseraPaziente";
 import { ContattiCard } from "@/components/ContattiCard";
+import { DiagnosiOncologicaCard } from "@/components/DiagnosiOncologicaCard";
+import { ComorbiditaAllergieCard } from "@/components/ComorbiditaAllergieCard";
 
 const Homepage = () => {
   const [carta, setCarta] = useState<CartaIdentitaTerapeutica | null>(null);
@@ -205,104 +203,16 @@ const Homepage = () => {
         </div>
 
         {/* Diagnosis */}
-        <section className={`${sectionContainerBaseClass} border border-iov-pink`}>
-          <div className={sectionTitleClass}>
-            <div className="w-10 h-10 rounded-xl bg-iov-pink-light border border-iov-pink flex items-center justify-center">
-              <ClipboardPlus className="h-5 w-5 text-iov-pink-dark" />
-            </div>
-            <span>Diagnosi Oncologica</span>
-          </div>
-          <div className="mt-3">
-            <Card className="bg-white/95 border border-iov-pink rounded-2xl shadow-sm">
-              <CardContent className="p-4 space-y-3 text-iov-dark-blue">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-iov-pink-light flex items-center justify-center text-iov-pink-dark">
-                    <Microscope className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm text-iov-dark-blue/70">Tipo</p>
-                    <p className="font-semibold leading-snug">{carta.diagnosiOncologica}</p>
-                  </div>
-                </div>
-                {/* <div className="bg-iov-pink-light/60 rounded-xl p-3 border border-iov-pink/40">
-                  <p className={subtleLabel}>Istologia</p>
-                  <p className="font-semibold">{carta.diagnosiOncologica.istologia}</p>
-                  <p className="text-sm text-iov-dark-blue/80 mt-1">{carta.diagnosiOncologica.note}</p>
-                </div> */}
-                <div className="space-y-2">
-                  <p className={subtleLabel}>Terapie in corso</p>
-                  <div className="flex flex-col gap-2">
-                    {carta.terapieOncologiche.map((tp, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3 bg-iov-gray-light rounded-xl p-3 border border-white/70"
-                      >
-                        <div className="h-9 w-9 rounded-lg bg-white/80 border border-iov-pink/50 flex items-center justify-center shrink-0">
-                          {tp.somministrazione.includes("Orale") ? (
-                            <Pill className="h-4 w-4 text-iov-pink-dark" />
-                          ) : (
-                            <Syringe className="h-4 w-4 text-iov-pink-dark" />
-                          )}
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <p className="font-semibold">{tp.farmaco}</p>
-                          <Badge className={`${tagBase} bg-iov-pink-dark text-white inline-flex w-fit`}>
-                            Terapia {tp.somministrazione}
-                          </Badge>
-                          {tp.note && <p className="text-[11px] text-iov-dark-blue/60 mt-1">{tp.note}</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+        <DiagnosiOncologicaCard
+          diagnosi={carta.diagnosiOncologica}
+          terapie={carta.terapieOncologiche}
+        />
 
         {/* Comorbidità & Allergie */}
-        <section className={`${sectionContainerBaseClass} border border-iov-light-blue`}>
-          <div className={sectionTitleClass}>
-            <div className="w-10 h-10 rounded-xl bg-iov-light-blue-dark flex items-center justify-center">
-              <ShieldPlus className="h-5 w-5 text-iov-dark-blue" />
-            </div>
-            <span>Comorbidità</span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {carta.comorbidita.map((cm, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-2 bg-iov-light-blue-light text-iov-dark-blue px-3 py-2 rounded-full border border-iov-light-blue/70"
-              >
-                <ActivitySquare className="h-4 w-4" />
-                <span className="text-[13px] font-semibold">{cm}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5">
-            <div className={sectionTitleClass}>
-              <div className="w-10 h-10 rounded-xl bg-iov-pink-light border border-iov-pink flex items-center justify-center">
-                <AlertTriangle className="h-5 w-5 text-iov-pink-dark" />
-              </div>
-              <span>Allergie</span>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {carta.allergie.map((al, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 bg-iov-pink-light/60 text-iov-pink-dark px-3 py-2 rounded-full border border-iov-pink/50 shadow-sm"
-                  style={{
-                    backgroundColor: 'hsla(339.3443, 81.33%, 85.29%, 0.2)'
-                  }}
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  <span className="text-[13px] font-semibold">{al}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ComorbiditaAllergieCard
+          comorbidita={carta.comorbidita}
+          allergie={carta.allergie}
+        />
       </div>
     </div>
   );
