@@ -143,55 +143,50 @@ const Chatbot = () => {
         paddingBottom: "var(--safe-area-bottom)",
       }}
     >
-      {/* Header - Fixed, uniform height */}
+      {/* Header - Fixed, rounded styling similar to Homepage */}
       <header
-        className="fixed top-0 left-0 right-0 bg-iov-gradient text-white px-4 flex items-center justify-between z-40 border-b border-white/20 shadow-lg"
+        className="fixed top-0 left-0 right-0 text-white z-40 pb-6 rounded-b-[2.5rem] shadow-lg overflow-hidden"
         style={{
-          paddingTop: "calc(var(--safe-area-top)/2)",
-          paddingBottom: "calc(var(--safe-area-top)/2)",
-          minHeight: "70px",
+          background: "linear-gradient(to bottom, #002451, #104676)",
+          paddingTop: "max(20px, var(--safe-area-top))",
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
         }}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-            <Bot className="h-7 w-7 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">
-              {chatbotInfo.nome}
-            </h1>
-            <div className="text-xs text-white/80">
-                <div className="flex items-center gap-1">
-                {/* <span className={"w-2 h-2 rounded-full animate-pulse-soft" + (isOnline ? " bg-iov-green" : " bg-red-500")} />
-                <span className="text-[14px] text-white/80">{isOnline ? "ONLINE" : "OFFLINE"}</span> */}
-                <span className={"w-2 h-2 rounded-full animate-pulse-soft" + " bg-iov-green"}/>
-                <span className="text-[14px] text-white/80">{"ONLINE"}</span>
-                </div>
+        <div className="absolute top-[-20%] right-[-10%] w-64 h-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+              <Bot className="h-7 w-7 text-white" />
             </div>
-            {/* <div className="flex items-center gap-2">
-              <p className="text-xs text-primary-foreground/80">
-                Assistente virtuale per il tuo supporto terapeutico
+            <div className="flex flex-col gap-1">
+              <p className="text-2xl font-bold tracking-tight text-white drop-shadow-md">
+                {chatbotInfo.nome}
               </p>
-            </div> */}
+              <div className="text-sm font-medium text-white/80 uppercase tracking-wide flex items-center gap-2">
+                <span className={"w-2.5 h-2.5 rounded-full animate-pulse-soft" + " bg-iov-green"} />
+                <span className="text-[14px]">{"ONLINE"}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div 
-          style={{
-            width: '100%',
-            display:'flex',
-            justifyContent: 'flex-end',
-            alignContent: 'center',
-            marginRight: '-0.5rem'
-          }}
-        >
-          <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/10 h-12 w-12"
-          onClick={() => setShowInfo(true)}
-        >
-          <Info style={{width: '1.3rem', height: '1.3rem'}} />
-        </Button>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignContent: 'center',
+              marginRight: '-0.5rem'
+            }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 h-12 w-12"
+              onClick={() => setShowInfo(true)}
+            >
+              <Info style={{ width: '1.3rem', height: '1.3rem' }} />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -201,7 +196,7 @@ const Chatbot = () => {
         onScroll={handleScroll}
         className="fixed left-0 right-0 overflow-y-auto px-4 pb-6 flex flex-col"
         style={{
-          top: "calc(82px + var(--safe-area-top))",
+          top: "calc(120px + var(--safe-area-top))",
           bottom: "calc(var(--tab-bar-height) + var(--chat-input-height) + var(--safe-area-bottom))",
         }}
       >
@@ -330,7 +325,7 @@ const Chatbot = () => {
             disabled={!inputValue.trim() || isLoading}
             className="shrink-0 h-12 w-12"
           >
-            <Send style={{height: '1.5rem', width: '1.5rem'}} />
+            <Send style={{ height: '1.5rem', width: '1.5rem' }} />
           </Button>
         </div>
       </div>

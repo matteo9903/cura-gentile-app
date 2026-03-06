@@ -1,12 +1,12 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Home, BookOpen, MessageCircle, User } from "lucide-react";
+import { Home, BookOpen, MessageCircle, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
   { path: "/tabs/homepage", label: "Home", icon: Home },
   { path: "/tabs/diario", label: "Diario", icon: BookOpen },
   { path: "/tabs/chatbot", label: "Iris", icon: MessageCircle },
-  { path: "/tabs/profilo", label: "Profilo", icon: User },
+  { path: "/tabs/profilo", label: "Impostazioni", icon: Settings },
 ];
 
 /**
@@ -70,8 +70,8 @@ const TabsLayout = () => {
                 <div
                   className={cn(
                     "flex items-center justify-center w-11 h-11 rounded-full mb-0 transition-colors",
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
+                    isActive
+                      ? "bg-primary text-primary-foreground"
                       : "bg-transparent text-muted-foreground"
                   )}
                 >
@@ -80,7 +80,7 @@ const TabsLayout = () => {
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                 </div>
-                <span 
+                <span
                   className={cn(
                     "text-sm font-medium",
                     isActive ? "text-tab-active" : "text-tab-inactive"
